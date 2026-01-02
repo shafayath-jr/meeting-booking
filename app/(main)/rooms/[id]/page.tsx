@@ -1,15 +1,21 @@
 import PageContainer from "@/components/page-container";
 import PageTitle from "@/components/page-title";
 import { MEETING_ROOMS } from "@/lib/constants";
+import { getMeetingsByRoom } from "@/actions/meeting";
+import DateCycle from "@/components/date-cycle";
 
 type Props = {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ date?: string }>;
 };
 
-async function RoomPage({ params }: Props) {
+async function RoomPage({ params, searchParams }: Props) {
   const { id } = await params;
-
+  const { date } = await searchParams;
   const currentRoom = MEETING_ROOMS.find((room) => room.id === Number(id));
+  const { meetings } = await getMeetingsByRoom(currentRoom?.name, date);
+
+  console.log(meetings);
 
   return (
     <PageContainer>
@@ -24,6 +30,9 @@ async function RoomPage({ params }: Props) {
             {currentRoom?.name}
           </h1>
         </div>
+
+        {/* date cycle */}
+        <DateCycle />
       </div>
     </PageContainer>
   );
