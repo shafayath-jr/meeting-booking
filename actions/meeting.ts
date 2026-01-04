@@ -20,12 +20,15 @@ export const getMeetingsByRoom = async (
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
   const formattedDate = format(dateObj, "yyyy-MM-dd");
+  const currentTime = format(new Date(), "HH:mm:ss");
 
   const { data, error } = await supabase
     .from("booking")
     .select("*")
     .eq("date", formattedDate)
-    .eq("room", room);
+    .eq("room", room)
+    .gte("end", currentTime)
+    .order("time", { ascending: true });
 
   return {
     error: error?.message,
