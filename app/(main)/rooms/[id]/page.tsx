@@ -3,6 +3,7 @@ import PageTitle from "@/components/page-title";
 import { MEETING_ROOMS } from "@/lib/constants";
 import { getMeetingsByRoom } from "@/actions/meeting";
 import DateCycle from "@/components/date-cycle";
+import ActionButtons from "./components/action-buttons";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -33,6 +34,10 @@ async function RoomPage({ params, searchParams }: Props) {
 
         {/* date cycle */}
         <DateCycle />
+
+        {/* actions */}
+
+        <ActionButtons />
       </div>
     </PageContainer>
   );
