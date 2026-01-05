@@ -1,4 +1,5 @@
 import Modal from "@/components/modal";
+import QuickMeetingForm from "./quick-meeting-form";
 
 type Props = {
   isOpen: boolean;
@@ -13,7 +14,7 @@ export default function QuickMeetingModal({ isOpen, onClose }: Props) {
       isOpen={isOpen}
       onClose={onClose}
     >
-      Quick Meeting Modal
+      <QuickMeetingForm />
     </Modal>
   );
 }
