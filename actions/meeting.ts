@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { Event } from "@/types/event";
 import { format } from "date-fns";
 
 export const getAllMeetings = async () => {
@@ -33,5 +34,35 @@ export const getMeetingsByRoom = async (
   return {
     error: error?.message,
     meetings: data,
+  };
+};
+
+export const getNextMeetingByRoom = async (room?: string) => {
+  const supabase = await createClient();
+  const currentTime = new Date().toISOString();
+  const currentDate = format(new Date(), "yyyy-MM-dd");
+
+  const { data, error } = await supabase
+    .from("booking")
+    .select("*")
+    .eq("room", room)
+    .eq("date", currentDate)
+    .gt("start", currentTime)
+    .order("start", { ascending: true })
+    .limit(1)
+    .single();
+
+  return {
+    error: error?.message,
+    meeting: data,
+  };
+};
+
+export const bookMeeting = async (event: Event) => {
+  const supabase = await createClient();
+  const { error } = await supabase.from("booking").insert([event]);
+
+  return {
+    error: error?.message,
   };
 };

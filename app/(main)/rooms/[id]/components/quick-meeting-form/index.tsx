@@ -1,3 +1,5 @@
+"use client";
+
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -19,16 +21,47 @@ import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { MEETING_DURATION_OPTIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
+import { getRoomById } from "@/actions/room";
+import { getPlaceById } from "@/actions/place";
+import { addMinutes, format } from "date-fns";
+import { bookMeeting } from "@/actions/meeting";
 
 export default function QuickMeetingForm() {
+  const { id: roomId } = useParams<{ id: string }>();
+
+  const room = getRoomById(+roomId);
+  const building = room?.placeId ? getPlaceById(room.placeId) : undefined;
+
   const form = useForm<QuickMeetingFormValues>({
     defaultValues: quickMeetingFormDefaultValues,
     resolver: zodResolver(formSchema),
   });
 
   const onSubmit = async (data: QuickMeetingFormValues) => {
-    console.log(data);
-    form.reset();
+    const startDate = new Date();
+    const endDate = addMinutes(startDate, Number(data.duration));
+    const date = startDate.toISOString();
+    const end = endDate.toISOString();
+    const time = format(startDate, "HH:mm:ss");
+
+    const event = {
+      title: data.name || "Quick meeting",
+      start: date,
+      end: end,
+      time: time,
+      duration: `${data.duration} minutes`,
+      bookedBy: "Quick meeting",
+      date: date,
+      email: `Quick meeting`,
+      guests: "",
+      room: room?.name,
+      building: building?.name,
+    };
+
+    const res = await bookMeeting(event);
+
+    console.log(res);
   };
 
   return (
