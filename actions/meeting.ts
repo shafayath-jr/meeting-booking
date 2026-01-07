@@ -19,22 +19,19 @@ export const getMeetingById = async (id: string) => {
   const { data, error } = await supabase.from("booking").select();
 };
 
-export const getMeetingsByRoom = async (
-  room: string | undefined,
-  date?: string
-) => {
+export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
   const formattedDate = format(dateObj, "yyyy-MM-dd");
-  const currentTime = format(new Date(), "HH:mm:ss");
+  const currentTime = new Date().toISOString();
 
   const { data, error } = await supabase
-    .from("booking")
+    .from("bookings")
     .select("*")
     .eq("date", formattedDate)
-    .eq("room", room)
-    .gte("end", currentTime)
-    .order("time", { ascending: true });
+    .eq("room_id", roomId)
+    .gte("end_time", currentTime)
+    .order("start_time", { ascending: true });
 
   return {
     error: error?.message,
