@@ -65,7 +65,7 @@ export const getNextMeetingByRoom = async (room?: string) => {
 
 export const bookMeeting = async (event: Event) => {
   const supabase = await createClient();
-  const { error } = await supabase.from("booking").insert([event]);
+  const { error } = await supabase.from("bookings").insert([event]);
 
   return {
     error: error?.message,

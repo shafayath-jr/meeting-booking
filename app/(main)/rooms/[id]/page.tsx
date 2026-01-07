@@ -1,6 +1,5 @@
 import PageContainer from "@/components/page-container";
 import PageTitle from "@/components/page-title";
-import { MEETING_ROOMS } from "@/lib/constants";
 import { getMeetingsByRoom, getNextMeetingByRoom } from "@/actions/meeting";
 import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";

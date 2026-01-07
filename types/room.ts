@@ -1,5 +1,6 @@
 export interface Room {
-  id: number;
+  id: string;
   name: string;
-  placeId: number;
+  place_id: string;
+  created_at: Date;
 }

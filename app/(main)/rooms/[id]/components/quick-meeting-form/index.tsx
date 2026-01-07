@@ -23,15 +23,26 @@ import { MEETING_DURATION_OPTIONS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { getPlaceById } from "@/actions/place";
-import { addMinutes, format } from "date-fns";
+import { addMinutes } from "date-fns";
 import { bookMeeting } from "@/actions/meeting";
+import { useEffect, useState } from "react";
+import { Room } from "@/types/room";
 
 export default function QuickMeetingForm() {
   const { id: roomId } = useParams<{ id: string }>();
+  const [room, setRoom] = useState<Room | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const room = getRoomById(+roomId);
-  const building = room?.placeId ? getPlaceById(room.placeId) : undefined;
+  useEffect(() => {
+    const fetchRoom = async () => {
+      setIsLoading(true);
+      const { room } = await getRoomById(roomId);
+      setRoom(room);
+      setIsLoading(false);
+    };
+
+    fetchRoom();
+  }, [roomId]);
 
   const form = useForm<QuickMeetingFormValues>({
     defaultValues: quickMeetingFormDefaultValues,
@@ -39,30 +50,37 @@ export default function QuickMeetingForm() {
   });
 
   const onSubmit = async (data: QuickMeetingFormValues) => {
+    if (!room) return;
+
     const startDate = new Date();
     const endDate = addMinutes(startDate, Number(data.duration));
-    const date = startDate.toISOString();
-    const end = endDate.toISOString();
-    const time = format(startDate, "HH:mm:ss");
+    const startTime = startDate.toISOString();
+    const endTime = endDate.toISOString();
 
     const event = {
       title: data.name || "Quick meeting",
-      start: date,
-      end: end,
-      time: time,
-      duration: `${data.duration} minutes`,
-      bookedBy: "Quick meeting",
-      date: date,
-      email: `Quick meeting`,
-      guests: "",
-      room: room?.name,
-      building: building?.name,
+      start_time: startTime,
+      end_time: endTime,
+      date: startDate,
+      booked_by: "Quick Meeting",
+      email: "Quick Meeting",
+      duration: `${data.duration} Minutes`,
+      room_id: room.id,
+      building_id: room.place_id,
     };
 
     const res = await bookMeeting(event);
 
     console.log(res);
   };
+
+  if (isLoading) {
+    return <div>Loading room details...</div>;
+  }
+
+  if (!room) {
+    return <div>Room not found</div>;
+  }
 
   return (
     <form id="quick-meeting-form" onSubmit={form.handleSubmit(onSubmit)}>
