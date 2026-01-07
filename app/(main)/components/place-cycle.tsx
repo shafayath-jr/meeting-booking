@@ -1,56 +1,69 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MEETING_PLACES } from "@/lib/constants";
+import { Building } from "@/types/building";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useEffect } from "react";
 
-export default function PlaceCycle() {
+type Props = {
+  buildings: Building[];
+};
+
+export default function PlaceCycle({ buildings }: Props) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
 
-  const placeId = searchParams.get("place");
-  const currentPlaceId = placeId ? parseInt(placeId, 10) : MEETING_PLACES[0].id;
+  const buildingId = searchParams.get("building");
+  const currentBuildingId = buildingId || (buildings[0]?.id ?? "");
 
-  const currentPlace =
-    MEETING_PLACES.find((place) => place.id === currentPlaceId) ||
-    MEETING_PLACES[0];
+  const currentBuilding =
+    buildings.find((building) => building.id === currentBuildingId) ||
+    buildings[0];
 
-  const currentIndex = MEETING_PLACES.findIndex(
-    (place) => place.id === currentPlace.id
+  useEffect(() => {
+    if (!buildingId && buildings.length > 0 && buildings[0]?.id) {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("building", buildings[0].id);
+      router.replace(`${pathname}?${params.toString()}`);
+    }
+  }, [buildingId, buildings, pathname, router, searchParams]);
+
+  const currentIndex = buildings.findIndex(
+    (building) => building.id === currentBuilding?.id
   );
 
-  const updatePlaceInUrl = (placeId: number) => {
+  const updateBuildingInUrl = (buildingId: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("place", placeId.toString());
+    params.set("building", buildingId);
     router.push(`${pathname}?${params.toString()}`);
   };
 
-  const handlePrevPlace = () => {
+  const handlePrevBuilding = () => {
     const prevIndex =
-      currentIndex === 0 ? MEETING_PLACES.length - 1 : currentIndex - 1;
-    updatePlaceInUrl(MEETING_PLACES[prevIndex].id);
+      currentIndex === 0 ? buildings.length - 1 : currentIndex - 1;
+    updateBuildingInUrl(buildings[prevIndex].id);
   };
 
-  const handleNextPlace = () => {
+  const handleNextBuilding = () => {
     const nextIndex =
-      currentIndex === MEETING_PLACES.length - 1 ? 0 : currentIndex + 1;
-    updatePlaceInUrl(MEETING_PLACES[nextIndex].id);
+      currentIndex === buildings.length - 1 ? 0 : currentIndex + 1;
+    updateBuildingInUrl(buildings[nextIndex].id);
   };
   return (
     <div className="flex items-center justify-between gap-4 mb-8">
-      <Button onClick={handlePrevPlace} size="icon-lg">
+      <Button onClick={handlePrevBuilding} size="icon-lg">
         <ChevronsLeft />
       </Button>
 
       <div className="text-center">
         <h2 className="text-2xl md:text-4xl font-semibold">
-          {currentPlace.name}
+          {currentBuilding.name}
         </h2>
       </div>
 
-      <Button onClick={handleNextPlace} size="icon-lg">
+      <Button onClick={handleNextBuilding} size="icon-lg">
         <ChevronsRight />
       </Button>
     </div>

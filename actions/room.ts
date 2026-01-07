@@ -1,6 +1,31 @@
-import { MEETING_ROOMS } from "@/lib/constants";
+"use server";
 
-export const getRoomById = (id: number) => {
-  const room = MEETING_ROOMS.find((room) => room.id === id);
-  return room;
+import { createClient } from "@/lib/supabase/server";
+import { Room } from "@/types/room";
+
+export const getRoomById = async (roomId: string) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("rooms")
+    .select()
+    .eq("id", roomId)
+    .single();
+
+  return {
+    error: error?.message,
+    room: data as Room,
+  };
+};
+
+export const getRoomsByBuilding = async (buildingId: string) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("rooms")
+    .select()
+    .eq("place_id", buildingId);
+
+  return {
+    error: error?.message,
+    rooms: data,
+  };
 };

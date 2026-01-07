@@ -4,6 +4,7 @@ import { MEETING_ROOMS } from "@/lib/constants";
 import { getMeetingsByRoom, getNextMeetingByRoom } from "@/actions/meeting";
 import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";
+import { getRoomById } from "@/actions/room";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,7 +14,7 @@ type Props = {
 async function RoomPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { date } = await searchParams;
-  const currentRoom = MEETING_ROOMS.find((room) => room.id === Number(id));
+  const { room: currentRoom } = await getRoomById(id);
   const { meetings } = await getMeetingsByRoom(currentRoom?.name, date);
 
   return (

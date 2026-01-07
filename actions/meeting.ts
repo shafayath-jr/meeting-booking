@@ -14,6 +14,11 @@ export const getAllMeetings = async () => {
   };
 };
 
+export const getMeetingById = async (id: string) => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("booking").select();
+};
+
 export const getMeetingsByRoom = async (
   room: string | undefined,
   date?: string

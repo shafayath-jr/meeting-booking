@@ -1,17 +1,30 @@
 "use client";
-import { MEETING_PLACES, MEETING_ROOMS } from "@/lib/constants";
+
 import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getRoomsByBuilding } from "@/actions/room";
+import { Room } from "@/types/room";
 import RoomCard from "./room-card";
 
 export default function RoomsSection() {
   const searchParams = useSearchParams();
+  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
-  const placeId = searchParams.get("place");
-  const currentPlaceId = placeId ? parseInt(placeId, 10) : MEETING_PLACES[0].id;
+  const buildingId = searchParams.get("building");
 
-  const availableRooms = MEETING_ROOMS.filter(
-    (room) => room.placeId === currentPlaceId
-  );
+  useEffect(() => {
+    if (!buildingId) return;
+
+    const fetchRooms = async () => {
+      const roomsResult = await getRoomsByBuilding(buildingId);
+
+      if (!roomsResult.error && roomsResult.rooms) {
+        setAvailableRooms(roomsResult.rooms);
+      }
+    };
+
+    fetchRooms();
+  }, [buildingId]);
 
   return (
     <div>
