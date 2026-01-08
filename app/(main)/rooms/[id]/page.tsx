@@ -1,9 +1,10 @@
 import PageContainer from "@/components/page-container";
 import PageTitle from "@/components/page-title";
-import { getMeetingsByRoom, getNextMeetingByRoom } from "@/actions/meeting";
+import { getMeetingsByRoom } from "@/actions/meeting";
 import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";
 import { getRoomById } from "@/actions/room";
+import MeetingCard from "../../components/meeting-card";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -15,8 +16,6 @@ async function RoomPage({ params, searchParams }: Props) {
   const { date } = await searchParams;
   const { room: currentRoom } = await getRoomById(id);
   const { meetings } = await getMeetingsByRoom(id, date);
-
-  console.log(meetings);
 
   return (
     <PageContainer>
@@ -38,6 +37,14 @@ async function RoomPage({ params, searchParams }: Props) {
         {/* actions */}
 
         <ActionButtons />
+      </div>
+
+      {/* list */}
+
+      <div className="grid grid-cols-4 gap-4 my-10">
+        {meetings?.map((meeting) => (
+          <MeetingCard key={meeting.id} meeting={meeting} />
+        ))}
       </div>
     </PageContainer>
   );

@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { Meeting } from "@/types/meeting";
 import { Event } from "@/types/event";
 import { format } from "date-fns";
 import { revalidatePath } from "next/cache";
@@ -13,11 +14,6 @@ export const getAllMeetings = async () => {
     error: error?.message,
     meetings: data,
   };
-};
-
-export const getMeetingById = async (id: string) => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("booking").select();
 };
 
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
@@ -36,7 +32,7 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 
   return {
     error: error?.message,
-    meetings: data,
+    meetings: data as Meeting[],
   };
 };
 
@@ -85,6 +81,22 @@ export const bookMeeting = async (event: Event) => {
 
   if (!error) {
     revalidatePath(`/rooms/${event.room_id}`);
+  }
+
+  return {
+    error: error?.message,
+  };
+};
+
+export const deleteMeeting = async (meetingId: string) => {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("bookings")
+    .delete()
+    .eq("id", meetingId);
+
+  if (!error) {
+    revalidatePath("/");
   }
 
   return {
