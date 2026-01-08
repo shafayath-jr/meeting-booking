@@ -39,24 +39,42 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   };
 };
 
-export const getNextMeetingByRoom = async (room?: string) => {
+export const getNextMeetingByRoom = async (roomId: string) => {
   const supabase = await createClient();
   const currentTime = new Date().toISOString();
   const currentDate = format(new Date(), "yyyy-MM-dd");
 
   const { data, error } = await supabase
-    .from("booking")
+    .from("bookings")
     .select("*")
-    .eq("room", room)
+    .eq("room_id", roomId)
     .eq("date", currentDate)
-    .gt("start", currentTime)
-    .order("start", { ascending: true })
+    .lte("start_time", currentTime)
+    .gte("end_time", currentTime)
+    .order("start_time", { ascending: true })
+    .limit(1)
+    .single();
+
+  if (data) {
+    return {
+      error: error?.message,
+      meeting: data,
+    };
+  }
+
+  const { data: nextData, error: nextError } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("room_id", roomId)
+    .eq("date", currentDate)
+    .gt("start_time", currentTime)
+    .order("start_time", { ascending: true })
     .limit(1)
     .single();
 
   return {
-    error: error?.message,
-    meeting: data,
+    error: nextError?.message,
+    meeting: nextData,
   };
 };
 

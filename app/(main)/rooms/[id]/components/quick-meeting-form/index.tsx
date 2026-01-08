@@ -24,24 +24,38 @@ import { Button } from "@/components/ui/button";
 import { useParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
 import { addMinutes } from "date-fns";
-import { bookMeeting } from "@/actions/meeting";
+import { bookMeeting, getNextMeetingByRoom } from "@/actions/meeting";
 import { useEffect, useState } from "react";
 import { Room } from "@/types/room";
+import {
+  calculateAvailableDurations,
+  MeetingAvailability,
+} from "@/lib/duration-helper";
 
 export default function QuickMeetingForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [availability, setAvailability] = useState<MeetingAvailability>({
+    isOngoingMeeting: false,
+    availableMinutes: Infinity,
+    enabledDurations: ["5", "10", "15"],
+  });
 
   useEffect(() => {
-    const fetchRoom = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
+
       const { room } = await getRoomById(roomId);
       setRoom(room);
+
+      const { meeting } = await getNextMeetingByRoom(roomId);
+      const availabilityData = calculateAvailableDurations(meeting);
+      setAvailability(availabilityData);
       setIsLoading(false);
     };
 
-    fetchRoom();
+    fetchData();
   }, [roomId]);
 
   const form = useForm<QuickMeetingFormValues>({
@@ -111,32 +125,58 @@ export default function QuickMeetingForm() {
           render={({ field, fieldState }) => (
             <FieldSet>
               <FieldLegend variant="label">Duration</FieldLegend>
+
+              {availability.isOngoingMeeting && (
+                <p className="text-sm text-destructive mb-2">
+                  There is an ongoing meeting. Please wait until it ends.
+                </p>
+              )}
+
+              {!availability.isOngoingMeeting &&
+                availability.availableMinutes !== Infinity &&
+                availability.availableMinutes < 15 && (
+                  <p className="text-sm text-yellow-600 mb-2">
+                    Only {availability.availableMinutes} minutes available until
+                    the next meeting.
+                  </p>
+                )}
+
               <RadioGroup
                 name={field.name}
                 value={field.value}
                 onValueChange={field.onChange}
               >
-                {MEETING_DURATION_OPTIONS.map((option, index) => (
-                  <FieldLabel
-                    key={index}
-                    htmlFor={`duration-radiogroup-${index}`}
-                  >
-                    <Field
-                      orientation="horizontal"
-                      data-invalid={fieldState.invalid}
-                    >
-                      <FieldContent>
-                        <FieldTitle>{option.label}</FieldTitle>
-                      </FieldContent>
+                {MEETING_DURATION_OPTIONS.map((option, index) => {
+                  const isDisabled = !availability.enabledDurations.includes(
+                    option.value as "5" | "10" | "15"
+                  );
 
-                      <RadioGroupItem
-                        value={option.value}
-                        id={`duration-radiogroup-${index}`}
-                        aria-invalid={fieldState.invalid}
-                      />
-                    </Field>
-                  </FieldLabel>
-                ))}
+                  return (
+                    <FieldLabel
+                      key={index}
+                      htmlFor={`duration-radiogroup-${index}`}
+                      className={
+                        isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                      }
+                    >
+                      <Field
+                        orientation="horizontal"
+                        data-invalid={fieldState.invalid}
+                      >
+                        <FieldContent>
+                          <FieldTitle>{option.label}</FieldTitle>
+                        </FieldContent>
+
+                        <RadioGroupItem
+                          value={option.value}
+                          id={`duration-radiogroup-${index}`}
+                          aria-invalid={fieldState.invalid}
+                          disabled={isDisabled}
+                        />
+                      </Field>
+                    </FieldLabel>
+                  );
+                })}
               </RadioGroup>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </FieldSet>
@@ -144,7 +184,15 @@ export default function QuickMeetingForm() {
         />
 
         <Field>
-          <Button type="submit">Submit</Button>
+          <Button
+            type="submit"
+            disabled={
+              availability.isOngoingMeeting ||
+              availability.enabledDurations.length === 0
+            }
+          >
+            Submit
+          </Button>
         </Field>
       </FieldGroup>
     </form>

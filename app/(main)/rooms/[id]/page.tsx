@@ -14,9 +14,7 @@ async function RoomPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { date } = await searchParams;
   const { room: currentRoom } = await getRoomById(id);
-  const { meetings, error } = await getMeetingsByRoom(id, date);
-
-  console.log(meetings);
+  const { meetings } = await getMeetingsByRoom(id, date);
 
   return (
     <PageContainer>
