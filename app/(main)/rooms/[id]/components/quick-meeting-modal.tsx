@@ -14,7 +14,7 @@ export default function QuickMeetingModal({ isOpen, onClose }: Props) {
       isOpen={isOpen}
       onClose={onClose}
     >
-      <QuickMeetingForm />
+      <QuickMeetingForm onClose={onClose} />
     </Modal>
   );
 }

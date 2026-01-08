@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Event } from "@/types/event";
 import { format } from "date-fns";
+import { revalidatePath } from "next/cache";
 
 export const getAllMeetings = async () => {
   const supabase = await createClient();
@@ -81,6 +82,10 @@ export const getNextMeetingByRoom = async (roomId: string) => {
 export const bookMeeting = async (event: Event) => {
   const supabase = await createClient();
   const { error } = await supabase.from("bookings").insert([event]);
+
+  if (!error) {
+    revalidatePath(`/rooms/${event.room_id}`);
+  }
 
   return {
     error: error?.message,

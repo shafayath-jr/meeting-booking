@@ -31,8 +31,13 @@ import {
   calculateAvailableDurations,
   MeetingAvailability,
 } from "@/lib/duration-helper";
+import { toast } from "sonner";
 
-export default function QuickMeetingForm() {
+type Props = {
+  onClose: () => void;
+};
+
+export default function QuickMeetingForm({ onClose }: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -85,7 +90,14 @@ export default function QuickMeetingForm() {
 
     const res = await bookMeeting(event);
 
-    console.log(res);
+    if (!res.error) {
+      form.reset();
+      onClose();
+      toast.success("Quick meeting booked successfully");
+    } else {
+      console.error(res.error);
+      toast.error("Something went wrong!");
+    }
   };
 
   if (isLoading) {
