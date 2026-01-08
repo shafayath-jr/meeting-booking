@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { Meeting } from "@/types/meeting";
 import { Event } from "@/types/event";
-import { format } from "date-fns";
+import { startOfDay, endOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 
 export const getAllMeetings = async () => {
@@ -19,14 +19,17 @@ export const getAllMeetings = async () => {
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
-  const formattedDate = format(dateObj, "yyyy-MM-dd");
+
+  const dayStart = startOfDay(dateObj).toISOString();
+  const dayEnd = endOfDay(dateObj).toISOString();
   const currentTime = new Date().toISOString();
 
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
-    .eq("date", formattedDate)
     .eq("room_id", roomId)
+    .gte("start_time", dayStart)
+    .lte("start_time", dayEnd)
     .gte("end_time", currentTime)
     .order("start_time", { ascending: true });
 
@@ -39,13 +42,11 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 export const getNextMeetingByRoom = async (roomId: string) => {
   const supabase = await createClient();
   const currentTime = new Date().toISOString();
-  const currentDate = format(new Date(), "yyyy-MM-dd");
 
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .eq("date", currentDate)
     .lte("start_time", currentTime)
     .gte("end_time", currentTime)
     .order("start_time", { ascending: true })
@@ -63,7 +64,6 @@ export const getNextMeetingByRoom = async (roomId: string) => {
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .eq("date", currentDate)
     .gt("start_time", currentTime)
     .order("start_time", { ascending: true })
     .limit(1)
