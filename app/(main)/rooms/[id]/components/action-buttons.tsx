@@ -18,12 +18,22 @@ export default function ActionButtons() {
         isOpen={quickMeetingModal.isOpen}
         onClose={quickMeetingModal.handleClose}
       />
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-4">
         {isTodayDate && (
-          <Button onClick={quickMeetingModal.handleOpen}>Quick meeting</Button>
+          <Button
+            onClick={quickMeetingModal.handleOpen}
+            size="lg"
+            className="w-full md:w-auto"
+          >
+            Quick meeting
+          </Button>
         )}
-        <Button>Book a meeting</Button>
-        <Button>View calender</Button>
+        <Button size="lg" className="w-full md:w-auto">
+          Book a meeting
+        </Button>
+        <Button size="lg" className="w-full md:w-auto">
+          View calender
+        </Button>
       </div>
     </>
   );
