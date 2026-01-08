@@ -6,6 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
 
 type Props = {
   title: string;
@@ -13,6 +14,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   children?: ReactNode;
+  className?: string;
 };
 
 export default function Modal({
@@ -21,6 +23,7 @@ export default function Modal({
   isOpen,
   onClose,
   children,
+  className,
 }: Props) {
   const onChange = (open: boolean) => {
     if (!open) {
@@ -29,7 +32,7 @@ export default function Modal({
   };
   return (
     <Dialog open={isOpen} onOpenChange={onChange}>
-      <DialogContent>
+      <DialogContent className={cn(className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
