@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
+import Providers from "@/components/providers";
+import Navbar from "@/components/navbar";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -24,7 +26,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} antialiased`}>
-        {children}
+        <Providers>
+          <div className="">
+            <Navbar />
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );

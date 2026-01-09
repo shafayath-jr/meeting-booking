@@ -1,14 +1,28 @@
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
+import PageContainer from "@/components/page-container";
+import PlaceCycle from "./components/place-cycle";
+import RoomsSection from "./components/rooms-section";
+import PageTitle from "@/components/page-title";
+import { getAllBuildings } from "@/actions/building";
+import { Building } from "@/types/building";
 
 async function HomePage() {
-  const supabase = await createClient();
-  const { data: bookings } = await supabase.from("booking").select();
+  const { buildings } = await getAllBuildings();
 
   return (
-    <div className="">
-      <Button>Submit</Button>;
-    </div>
+    <PageContainer>
+      {/* title */}
+
+      <PageTitle title="Booking System" />
+
+      {/* place cycle */}
+      <div className="max-w-4xl mx-auto">
+        <PlaceCycle buildings={buildings as Building[]} />
+
+        {/* rooms */}
+
+        <RoomsSection />
+      </div>
+    </PageContainer>
   );
 }
 
