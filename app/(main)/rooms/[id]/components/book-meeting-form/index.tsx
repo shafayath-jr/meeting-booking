@@ -36,6 +36,8 @@ import { addMinutes, format, parseISO, startOfToday } from "date-fns";
 import { bookMeeting } from "@/actions/meeting";
 import { useEffect, useMemo, useState } from "react";
 import { Room } from "@/types/room";
+import { getAllDomains } from "@/actions/domain";
+import { Domain } from "@/types/domain";
 import { toast } from "sonner";
 import { CalendarIcon, CirclePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,39 +47,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
-const FULL_MEETING_DURATION_OPTIONS = [
-  { value: "15", label: "15 Minutes" },
-  { value: "30", label: "30 Minutes" },
-  { value: "45", label: "45 Minutes" },
-  { value: "60", label: "60 Minutes" },
-];
-
-const TIME_SLOTS = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-];
-
-const EMAIL_DOMAINS = [
-  { value: "penglobal.com", label: "penglobal.com" },
-  { value: "pengroup.com", label: "pengroup.com" },
-];
+import { FULL_MEETING_DURATION_OPTIONS, TIME_SLOTS } from "@/lib/constants";
 
 type Props = {
   onClose: () => void;
@@ -87,6 +57,7 @@ export default function BookMeetingForm({ onClose }: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const [room, setRoom] = useState<Room | null>(null);
+  const [domains, setDomains] = useState<Domain[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [guestInput, setGuestInput] = useState("");
@@ -108,8 +79,12 @@ export default function BookMeetingForm({ onClose }: Props) {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const { room } = await getRoomById(roomId);
+      const [{ room }, { domains: fetchedDomains }] = await Promise.all([
+        getRoomById(roomId),
+        getAllDomains(),
+      ]);
       setRoom(room);
+      setDomains(fetchedDomains || []);
       setIsLoading(false);
     };
 
@@ -215,7 +190,7 @@ export default function BookMeetingForm({ onClose }: Props) {
 
         {/* Email */}
 
-        <FieldGroup className="grid grid-cols-2 gap-4">
+        <FieldGroup className="grid md:grid-cols-2 gap-4">
           {/* Email Username */}
 
           <Controller
@@ -260,9 +235,9 @@ export default function BookMeetingForm({ onClose }: Props) {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {EMAIL_DOMAINS.map((domain) => (
-                      <SelectItem key={domain.value} value={domain.value}>
-                        {domain.label}
+                    {domains.map((domain) => (
+                      <SelectItem key={domain.id} value={domain.name}>
+                        {domain.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -275,7 +250,7 @@ export default function BookMeetingForm({ onClose }: Props) {
           />
         </FieldGroup>
 
-        <FieldGroup className="grid grid-cols-2 gap-4">
+        <FieldGroup className="grid md:grid-cols-2 gap-4">
           {/* Date */}
 
           <Controller

@@ -6,16 +6,6 @@ import { Event } from "@/types/event";
 import { startOfDay, endOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 
-export const getAllMeetings = async () => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("booking").select();
-
-  return {
-    error: error?.message,
-    meetings: data,
-  };
-};
-
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
