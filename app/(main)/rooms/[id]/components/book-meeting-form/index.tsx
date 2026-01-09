@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   formSchema,
@@ -13,27 +13,38 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-  FieldSet,
-  FieldLegend,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useParams } from "next/navigation";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useParams, useSearchParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { addMinutes, format } from "date-fns";
+import { addMinutes, format, parseISO, startOfToday } from "date-fns";
 import { bookMeeting } from "@/actions/meeting";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Room } from "@/types/room";
 import { toast } from "sonner";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, CirclePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 
 const FULL_MEETING_DURATION_OPTIONS = [
   { value: "15", label: "15 Minutes" },
@@ -63,15 +74,36 @@ const TIME_SLOTS = [
   "17:30",
 ];
 
+const EMAIL_DOMAINS = [
+  { value: "penglobal.com", label: "penglobal.com" },
+  { value: "pengroup.com", label: "pengroup.com" },
+];
+
 type Props = {
   onClose: () => void;
 };
 
 export default function BookMeetingForm({ onClose }: Props) {
   const { id: roomId } = useParams<{ id: string }>();
+  const searchParams = useSearchParams();
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [guestInput, setGuestInput] = useState("");
+
+  const defaultDate = useMemo(() => {
+    const dateParam = searchParams.get("date");
+    if (dateParam) {
+      try {
+        const parsedDate = parseISO(dateParam);
+
+        if (!isNaN(parsedDate.getTime()) && parsedDate >= startOfToday()) {
+          return parsedDate;
+        }
+      } catch {}
+    }
+    return new Date();
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,8 +117,16 @@ export default function BookMeetingForm({ onClose }: Props) {
   }, [roomId]);
 
   const form = useForm<BookMeetingFormValues>({
-    defaultValues: bookMeetingFormDefaultValues,
+    defaultValues: {
+      ...bookMeetingFormDefaultValues,
+      date: defaultDate,
+    },
     resolver: zodResolver(formSchema),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "guests",
   });
 
   const onSubmit = async (data: BookMeetingFormValues) => {
@@ -95,7 +135,6 @@ export default function BookMeetingForm({ onClose }: Props) {
     setIsSubmitting(true);
 
     try {
-      // Combine date and time
       const [hours, minutes] = data.startTime.split(":");
       const startDate = new Date(data.date);
       startDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
@@ -104,15 +143,19 @@ export default function BookMeetingForm({ onClose }: Props) {
       const startTime = startDate.toISOString();
       const endTime = endDate.toISOString();
 
+      const email = `${data.emailUsername}@${data.emailDomain}`;
+
+      const guestEmails = data.guests?.map((g) => g.value) || [];
+
       const event = {
-        title: data.title,
+        title: data.name,
         start_time: startTime,
         end_time: endTime,
         date: startDate,
-        booked_by: data.bookedBy,
-        email: data.email,
+        booked_by: data.name,
+        email: email,
         duration: `${data.duration} Minutes`,
-        guests: data.guests,
+        guests: JSON.stringify(guestEmails),
         room_id: room.id,
         building_id: room.place_id,
       };
@@ -146,183 +189,265 @@ export default function BookMeetingForm({ onClose }: Props) {
   return (
     <form id="book-meeting-form" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
-        {/* Title */}
-        <Controller
-          name="title"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Meeting Title</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="e.g., Team Standup"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        <FieldGroup>
+          {/* Title */}
 
-        {/* Date */}
-        <Controller
-          name="date"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="date">Date</FieldLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? (
-                      format(field.value, "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date < new Date()}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        {/* Start Time */}
-        <Controller
-          name="startTime"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
-              <select
-                {...field}
-                id={field.name}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-              >
-                <option value="">Select time</option>
-                {TIME_SLOTS.map((time) => (
-                  <option key={time} value={time}>
-                    {time}
-                  </option>
-                ))}
-              </select>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        {/* Duration */}
-        {/* <Controller
-          name="duration"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <FieldSet>
-              <FieldLegend variant="label">Duration</FieldLegend>
-              <RadioGroup
-                name={field.name}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                {FULL_MEETING_DURATION_OPTIONS.map((option, index) => (
-                  <FieldLabel
-                    key={index}
-                    htmlFor={`duration-radiogroup-${index}`}
-                  >
-                    <Field
-                      orientation="horizontal"
-                      data-invalid={fieldState.invalid}
-                    >
-                      <FieldContent>{option.label}</FieldContent>
-                      <RadioGroupItem
-                        value={option.value}
-                        id={`duration-radiogroup-${index}`}
-                        aria-invalid={fieldState.invalid}
-                      />
-                    </Field>
-                  </FieldLabel>
-                ))}
-              </RadioGroup>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </FieldSet>
-          )}
-        /> */}
-
-        {/* Booked By */}
-        <Controller
-          name="bookedBy"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Your Name</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="name"
-                aria-invalid={fieldState.invalid}
-                placeholder="John Doe"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+          <Controller
+            name="name"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                <Input
+                  {...field}
+                  id={field.name}
+                  autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                  placeholder=""
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
 
         {/* Email */}
-        <Controller
-          name="email"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                type="email"
-                autoComplete="email"
-                aria-invalid={fieldState.invalid}
-                placeholder="john@example.com"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+
+        <FieldGroup className="grid grid-cols-2 gap-4">
+          {/* Email Username */}
+
+          <Controller
+            name="emailUsername"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldContent>
+                  <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                </FieldContent>
+                <Input
+                  {...field}
+                  id={field.name}
+                  autoComplete="off"
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Username"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+          {/* Email Domain */}
+
+          <Controller
+            name="emailDomain"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldContent>
+                  {/* <FieldLabel htmlFor={field.name}></FieldLabel> */}
+                </FieldContent>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className="w-full"
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-inherit">@</span>
+                      <SelectValue placeholder="Select domain" />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EMAIL_DOMAINS.map((domain) => (
+                      <SelectItem key={domain.value} value={domain.value}>
+                        {domain.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+
+        <FieldGroup className="grid grid-cols-2 gap-4">
+          {/* Date */}
+
+          <Controller
+            name="date"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="date">Date</FieldLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < startOfToday()}
+                    />
+                  </PopoverContent>
+                </Popover>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+
+          {/* Start Time */}
+
+          <Controller
+            name="startTime"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className="w-full"
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <SelectValue placeholder="Select time" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TIME_SLOTS.map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
+
+        {/* Duration */}
+
+        <FieldGroup>
+          <Controller
+            name="duration"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Duration</FieldLabel>
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    className="w-full"
+                    aria-invalid={fieldState.invalid}
+                  >
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {FULL_MEETING_DURATION_OPTIONS.map((duration, index) => (
+                      <SelectItem key={index} value={duration.value}>
+                        {duration.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
+        </FieldGroup>
 
         {/* Guests */}
-        <Controller
-          name="guests"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>
-                Guests <span>(optional)</span>
-              </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
+
+        <FieldGroup>
+          <Field>
+            <FieldLabel>
+              Guests <span>(optional)</span>
+            </FieldLabel>
+
+            <InputGroup>
+              <InputGroupInput
+                value={guestInput}
+                onChange={(e) => setGuestInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (guestInput.trim()) {
+                      append({ value: guestInput.trim() });
+                      setGuestInput("");
+                    }
+                  }
+                }}
                 autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="Comma-separated emails"
+                placeholder="Enter guest email"
               />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  aria-label="Add"
+                  title="Add"
+                  size="icon-xs"
+                  onClick={() => {
+                    if (guestInput.trim()) {
+                      append({ value: guestInput.trim() });
+                      setGuestInput("");
+                    }
+                  }}
+                  type="button"
+                >
+                  <CirclePlus />
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+
+            {fields.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-2">
+                {fields.map((field, index) => (
+                  <Badge
+                    key={field.id}
+                    variant="secondary"
+                    className="gap-1.5 pr-1"
+                  >
+                    <span>{field.value}</span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => remove(index)}
+                      className="h-4 w-4 rounded-sm hover:bg-secondary-foreground/20"
+                      aria-label={`Remove ${field.value}`}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </Field>
+        </FieldGroup>
 
         <Field>
           <Button type="submit" disabled={isSubmitting}>
