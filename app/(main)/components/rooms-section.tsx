@@ -1,31 +1,11 @@
-"use client";
-
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getRoomsByBuilding } from "@/actions/room";
 import { Room } from "@/types/room";
 import RoomCard from "./room-card";
 
-export default function RoomsSection() {
-  const searchParams = useSearchParams();
-  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+type Props = {
+  rooms: Room[];
+};
 
-  const buildingId = searchParams.get("building");
-
-  useEffect(() => {
-    if (!buildingId) return;
-
-    const fetchRooms = async () => {
-      const roomsResult = await getRoomsByBuilding(buildingId);
-
-      if (!roomsResult.error && roomsResult.rooms) {
-        setAvailableRooms(roomsResult.rooms);
-      }
-    };
-
-    fetchRooms();
-  }, [buildingId]);
-
+export default function RoomsSection({ rooms }: Props) {
   return (
     <div>
       {/* heading */}
@@ -37,9 +17,13 @@ export default function RoomsSection() {
       {/* rooms */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-10">
-        {availableRooms.map((room) => (
-          <RoomCard key={room.id} room={room} />
-        ))}
+        {rooms.length === 0 ? (
+          <p className="col-span-full text-center text-muted-foreground py-8">
+            No rooms available
+          </p>
+        ) : (
+          rooms.map((room) => <RoomCard key={room.id} room={room} />)
+        )}
       </div>
     </div>
   );

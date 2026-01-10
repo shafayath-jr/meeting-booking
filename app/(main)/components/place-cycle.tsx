@@ -3,41 +3,27 @@
 import { Button } from "@/components/ui/button";
 import { Building } from "@/types/building";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 type Props = {
   buildings: Building[];
+  currentBuildingId: string;
 };
 
-export default function PlaceCycle({ buildings }: Props) {
-  const searchParams = useSearchParams();
+export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
   const router = useRouter();
   const pathname = usePathname();
-
-  const buildingId = searchParams.get("building");
-  const currentBuildingId = buildingId || (buildings[0]?.id ?? "");
 
   const currentBuilding =
     buildings.find((building) => building.id === currentBuildingId) ||
     buildings[0];
-
-  useEffect(() => {
-    if (!buildingId && buildings.length > 0 && buildings[0]?.id) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("building", buildings[0].id);
-      router.replace(`${pathname}?${params.toString()}`);
-    }
-  }, [buildingId, buildings, pathname, router, searchParams]);
 
   const currentIndex = buildings.findIndex(
     (building) => building.id === currentBuilding?.id
   );
 
   const updateBuildingInUrl = (buildingId: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("building", buildingId);
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?building=${buildingId}`);
   };
 
   const handlePrevBuilding = () => {
@@ -51,19 +37,20 @@ export default function PlaceCycle({ buildings }: Props) {
       currentIndex === buildings.length - 1 ? 0 : currentIndex + 1;
     updateBuildingInUrl(buildings[nextIndex].id);
   };
+
   return (
     <div className="flex items-center justify-between gap-4 mb-8">
-      <Button onClick={handlePrevBuilding} size="icon-lg">
+      <Button onClick={handlePrevBuilding} size="icon-lg" disabled={buildings.length <= 1}>
         <ChevronsLeft />
       </Button>
 
       <div className="text-center">
         <h2 className="text-2xl md:text-4xl font-semibold">
-          {currentBuilding.name}
+          {currentBuilding?.name || "No Building"}
         </h2>
       </div>
 
-      <Button onClick={handleNextBuilding} size="icon-lg">
+      <Button onClick={handleNextBuilding} size="icon-lg" disabled={buildings.length <= 1}>
         <ChevronsRight />
       </Button>
     </div>
