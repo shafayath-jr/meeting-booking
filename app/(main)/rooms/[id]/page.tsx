@@ -5,6 +5,7 @@ import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";
 import { getRoomById } from "@/actions/room";
 import MeetingCard from "../../components/meeting-card";
+import { validateDateParam } from "@/lib/utils";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -14,8 +15,11 @@ type Props = {
 async function RoomPage({ params, searchParams }: Props) {
   const { id } = await params;
   const { date } = await searchParams;
+
+  const selectedDate = validateDateParam(date);
+
   const { room: currentRoom } = await getRoomById(id);
-  const { meetings } = await getMeetingsByRoom(id, date);
+  const { meetings } = await getMeetingsByRoom(id, selectedDate);
 
   return (
     <PageContainer>
@@ -32,7 +36,7 @@ async function RoomPage({ params, searchParams }: Props) {
         </div>
 
         {/* date cycle */}
-        <DateCycle />
+        <DateCycle selectedDate={selectedDate} />
 
         {/* actions */}
 
