@@ -32,12 +32,22 @@ import {
 } from "@/components/ui/select";
 import { useParams, useSearchParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { addMinutes, format, parseISO, startOfToday } from "date-fns";
-import { bookMeeting } from "@/actions/meeting";
+import {
+  addMinutes,
+  areIntervalsOverlapping,
+  format,
+  isBefore,
+  isToday,
+  parse,
+  parseISO,
+  startOfToday,
+} from "date-fns";
+import { bookMeeting, getMeetingsByRoom } from "@/actions/meeting";
 import { useEffect, useMemo, useState } from "react";
 import { Room } from "@/types/room";
 import { getAllDomains } from "@/actions/domain";
 import { Domain } from "@/types/domain";
+import { Meeting } from "@/types/meeting";
 import { toast } from "sonner";
 import { CalendarIcon, CirclePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -58,6 +68,7 @@ export default function BookMeetingForm({ onClose }: Props) {
   const searchParams = useSearchParams();
   const [room, setRoom] = useState<Room | null>(null);
   const [domains, setDomains] = useState<Domain[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [guestInput, setGuestInput] = useState("");
@@ -103,6 +114,57 @@ export default function BookMeetingForm({ onClose }: Props) {
     control: form.control,
     name: "guests",
   });
+
+  const selectedDate = form.watch("date");
+  const selectedDuration = form.watch("duration");
+
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      if (!selectedDate) return;
+
+      const { meetings: fetchedMeetings } = await getMeetingsByRoom(
+        roomId,
+        selectedDate.toISOString()
+      );
+      setMeetings(fetchedMeetings || []);
+    };
+
+    fetchMeetings();
+  }, [selectedDate, roomId]);
+
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) {
+      return TIME_SLOTS;
+    }
+
+    const now = new Date();
+    const isTodayDate = isToday(selectedDate);
+    const durationMinutes = selectedDuration ? Number(selectedDuration) : 15;
+
+    return TIME_SLOTS.filter((timeSlot) => {
+      // Parse the time slot into a Date object
+      const slotStartTime = parse(timeSlot, "HH:mm", selectedDate);
+
+      // Filter out past time slots for today
+      if (isTodayDate && isBefore(slotStartTime, now)) {
+        return false;
+      }
+
+      const slotEndTime = addMinutes(slotStartTime, durationMinutes);
+
+      const hasConflict = meetings.some((meeting) => {
+        return areIntervalsOverlapping(
+          { start: slotStartTime, end: slotEndTime },
+          {
+            start: new Date(meeting.start_time),
+            end: new Date(meeting.end_time),
+          }
+        );
+      });
+
+      return !hasConflict;
+    });
+  }, [selectedDate, meetings, selectedDuration]);
 
   const onSubmit = async (data: BookMeetingFormValues) => {
     if (!room) return;
@@ -307,12 +369,18 @@ export default function BookMeetingForm({ onClose }: Props) {
                   >
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {TIME_SLOTS.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
+                  <SelectContent position="popper">
+                    {availableTimeSlots.length > 0 ? (
+                      availableTimeSlots.map((time) => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-slots" disabled>
+                        No slots available
                       </SelectItem>
-                    ))}
+                    )}
                   </SelectContent>
                 </Select>
                 {fieldState.invalid && (
