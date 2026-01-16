@@ -21,7 +21,7 @@ async function HomePage({ searchParams }: Props) {
 
   return (
     <div>
-      <div className="container mx-auto py-10 px-6">
+      <div className="container mx-auto py-10 px-6 mt-10">
         {/* title */}
         <PageTitle title="Booking System" />
 
