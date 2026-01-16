@@ -1,4 +1,3 @@
-import PageContainer from "@/components/page-container";
 import PlaceCycle from "./components/place-cycle";
 import RoomsSection from "./components/rooms-section";
 import PageTitle from "@/components/page-title";
@@ -21,23 +20,23 @@ async function HomePage({ searchParams }: Props) {
     : { rooms: [] };
 
   return (
-    <PageContainer>
-      {/* title */}
+    <div>
+      <div className="container mx-auto py-10 px-6">
+        {/* title */}
+        <PageTitle title="Booking System" />
 
-      <PageTitle title="Booking System" />
+        {/* place cycle */}
+        <div className="max-w-4xl mx-auto">
+          <PlaceCycle
+            buildings={(buildings as Building[]) || []}
+            currentBuildingId={selectedBuildingId}
+          />
 
-      {/* place cycle */}
-      <div className="max-w-4xl mx-auto">
-        <PlaceCycle
-          buildings={(buildings as Building[]) || []}
-          currentBuildingId={selectedBuildingId}
-        />
-
-        {/* rooms */}
-
-        <RoomsSection rooms={rooms || []} />
+          {/* rooms */}
+          <RoomsSection rooms={rooms || []} />
+        </div>
       </div>
-    </PageContainer>
+    </div>
   );
 }
 

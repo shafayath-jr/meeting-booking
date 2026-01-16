@@ -36,8 +36,8 @@ export default function NavbarContent() {
   }, [roomId]);
 
   return (
-    <div className="bg-transparent">
-      <nav className="container mx-auto p-4 flex items-center justify-between">
+    <div className="sticky top-10 z-50 backdrop-blur-sm bg-transparent">
+      <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {isRoomDetailPage && (
             <>
@@ -45,12 +45,12 @@ export default function NavbarContent() {
                 variant="outline"
                 size="icon"
                 onClick={() => router.push("/")}
-                className="shrink-0"
+                className="shrink-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm border-white/40 dark:border-white/20 hover:bg-white/70 dark:hover:bg-white/20"
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               {isLoading ? (
-                <div className="h-6 w-32 bg-muted animate-pulse rounded" />
+                <div className="h-6 w-32 bg-white/30 dark:bg-white/10 animate-pulse rounded" />
               ) : roomName ? (
                 <h1 className="text-xl md:text-2xl lg:text-3xl text-primary font-bold">
                   {roomName}

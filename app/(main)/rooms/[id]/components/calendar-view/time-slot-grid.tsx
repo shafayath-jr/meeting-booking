@@ -116,9 +116,9 @@ export default function TimeSlotGrid({
           <div
             key={slot.time}
             className={cn(
-              "flex items-stretch min-h-[48px] rounded-md transition-colors",
+              "flex items-stretch min-h-[48px] rounded-lg transition-all duration-200 group",
               slot.isAvailable && !slot.meeting &&
-                "hover:bg-accent cursor-pointer border border-transparent hover:border-border",
+                "hover:bg-primary/5 cursor-pointer border border-transparent hover:border-primary/20 hover:shadow-sm",
               !slot.isAvailable && !slot.meeting && "opacity-50"
             )}
             onClick={() => slot.isAvailable && !slot.meeting && onSlotClick(slot.time)}
@@ -139,7 +139,7 @@ export default function TimeSlotGrid({
             }
           >
             {/* Time label */}
-            <div className="w-16 flex-shrink-0 py-2 pr-3 text-right text-sm text-muted-foreground">
+            <div className="w-16 flex-shrink-0 py-2 pr-3 text-right text-sm text-muted-foreground font-medium">
               {slot.time}
             </div>
 
@@ -148,9 +148,12 @@ export default function TimeSlotGrid({
               {slot.meeting ? (
                 <div
                   className={cn(
-                    "h-full px-3 py-2 bg-primary/10 border-l-4 border-primary cursor-pointer hover:bg-primary/20 transition-colors",
-                    isFirstOfMeeting && "rounded-t-md",
-                    isLastOfMeeting && "rounded-b-md"
+                    "h-full px-3 py-2 cursor-pointer transition-all duration-200",
+                    "bg-gradient-to-r from-primary/15 to-primary/5 backdrop-blur-sm",
+                    "border-l-4 border-primary",
+                    "hover:from-primary/25 hover:to-primary/10 hover:shadow-md",
+                    isFirstOfMeeting && "rounded-t-lg",
+                    isLastOfMeeting && "rounded-b-lg"
                   )}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -169,7 +172,7 @@ export default function TimeSlotGrid({
                 >
                   {isFirstOfMeeting && (
                     <>
-                      <p className="font-medium text-sm truncate">
+                      <p className="font-semibold text-sm truncate text-foreground">
                         {slot.meeting.title}
                       </p>
                       <p className="text-xs text-muted-foreground truncate">
@@ -182,7 +185,7 @@ export default function TimeSlotGrid({
                 </div>
               ) : (
                 <div className="h-full flex items-center px-3 text-sm text-muted-foreground">
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-primary/70">
                     Click to book
                   </span>
                 </div>

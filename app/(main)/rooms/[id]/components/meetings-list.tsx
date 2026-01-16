@@ -7,7 +7,6 @@ import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoomForDateRange, getMeetingsByRoom } from "@/actions/meeting";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Clock } from "lucide-react";
 
@@ -146,21 +145,23 @@ export default function MeetingsList({
 
     return (
       <div className={cn(
-        "flex-shrink-0 bg-background border rounded-lg p-3 min-w-[140px]",
-        isSoon && "border-destructive/50 bg-destructive/5"
+        "flex-shrink-0 rounded-lg px-3 py-2 min-w-[100px] transition-all",
+        isSoon 
+          ? "bg-destructive/10 dark:bg-destructive/20" 
+          : "bg-primary/10 dark:bg-primary/20"
       )}>
         <div className="text-center">
-          <div className="text-[10px] text-muted-foreground mb-1 uppercase tracking-wide">
-            {isSoon ? "Starting in" : "Time until"}
+          <div className="text-[9px] text-muted-foreground mb-0.5 uppercase tracking-wider font-medium">
+            {isSoon ? "Starting in" : "Starts in"}
           </div>
           <div className={cn(
-            "font-mono font-bold text-lg leading-none",
+            "font-mono font-bold text-base leading-none",
             isSoon ? "text-destructive" : "text-primary"
           )}>
             {hasDays ? (
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div>{countdown.days}d</div>
-                <div className="text-sm">
+                <div className="text-xs">
                   {countdown.hours}:{countdown.minutes}:{countdown.seconds}
                 </div>
               </div>
@@ -225,58 +226,61 @@ export default function MeetingsList({
               const isToday = isSameDay(date, new Date());
               
               return (
-                <div key={dateKey} className="space-y-2">
-                  <div className="sticky top-0 bg-card py-2 border-b">
-                    <h3 className="font-semibold text-sm text-muted-foreground">
+                <div key={dateKey} className="space-y-3">
+                  <div className="flex items-center gap-2 pt-1">
+                    <div className="h-px flex-1 bg-gradient-to-r from-border/60 to-transparent" />
+                    <h3 className="font-medium text-xs text-muted-foreground uppercase tracking-wider px-2">
                       {isToday ? "Today" : format(date, "EEEE, MMMM d")}
                     </h3>
+                    <div className="h-px flex-1 bg-gradient-to-l from-border/60 to-transparent" />
                   </div>
-                  <div className="space-y-3 pl-2">
+                  <div className="space-y-3">
                     {dateMeetings.map((meeting) => {
                       const meetingStart = new Date(meeting.start_time);
                       const countdown = formatDigitalCountdown(meetingStart);
                       const isSoon = countdown ? countdown.totalMinutes < 60 : false;
                       
                       return (
-                        <Card
+                        <div
                           key={meeting.id}
                           onClick={() => onMeetingClick?.(meeting)}
                           className={cn(
-                            "cursor-pointer transition-all hover:shadow-md",
-                            onMeetingClick && "hover:ring-2 hover:ring-primary",
-                            isSoon && "border-destructive/50"
+                            "cursor-pointer transition-all duration-300 rounded-xl p-4",
+                            "bg-white/50 dark:bg-white/5 backdrop-blur-sm",
+                            "border border-white/60 dark:border-white/10",
+                            "shadow-sm hover:shadow-lg hover:scale-[1.01]",
+                            "hover:bg-white/70 dark:hover:bg-white/10",
+                            onMeetingClick && "hover:border-primary/40",
+                            isSoon && "border-destructive/40 bg-gradient-to-br from-destructive/10 to-destructive/5"
                           )}
                         >
-                          <CardContent className="p-4">
-                            <div className="flex items-center gap-4">
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <h4 className="font-semibold text-base truncate">
-                                    {meeting.title}
-                                  </h4>
-                                  {isSoon && (
-                                    <Badge variant="destructive" className="text-xs">
-                                      Soon
-                                    </Badge>
-                                  )}
-                                </div>
-                                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1">
-                                  <Clock className="h-3.5 w-3.5" />
-                                  <span>
-                                    {format(meetingStart, "hh:mm a")} -{" "}
-                                    {format(new Date(meeting.end_time), "hh:mm a")}
-                                  </span>
-                                </div>
-                                <p className="text-sm text-muted-foreground">
-                                  {meeting.booked_by}
-                                </p>
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1.5">
+                                <h4 className="font-semibold text-sm truncate">
+                                  {meeting.title}
+                                </h4>
+                                {isSoon && (
+                                  <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4 animate-pulse">
+                                    Soon
+                                  </Badge>
+                                )}
                               </div>
-                              {countdown && (
-                                <DigitalClockCountdown meetingStart={meetingStart} />
-                              )}
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                <span>
+                                  {format(meetingStart, "h:mm a")} - {format(new Date(meeting.end_time), "h:mm a")}
+                                </span>
+                              </div>
+                              <p className="text-xs text-muted-foreground/80 mt-0.5">
+                                {meeting.booked_by}
+                              </p>
                             </div>
-                          </CardContent>
-                        </Card>
+                            {countdown && (
+                              <DigitalClockCountdown meetingStart={meetingStart} />
+                            )}
+                          </div>
+                        </div>
                       );
                     })}
                   </div>

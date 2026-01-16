@@ -1,4 +1,3 @@
-import PageContainer from "@/components/page-container";
 import ActionButtons from "./components/action-buttons";
 import CalendarWrapper from "./components/calendar-wrapper";
 
@@ -11,15 +10,17 @@ async function RoomPage({ params, searchParams }: Props) {
   await params;
 
   return (
-    <PageContainer>
-      <div className="space-y-6">
-        {/* Action buttons */}
-        <ActionButtons />
+    <div>
+      <div className="container mx-auto py-10 px-6">
+        <div className="space-y-6">
+          {/* Action buttons */}
+          <ActionButtons />
 
-        {/* Calendar */}
-        <CalendarWrapper />
+          {/* Calendar */}
+          <CalendarWrapper />
+        </div>
       </div>
-    </PageContainer>
+    </div>
   );
 }
 
