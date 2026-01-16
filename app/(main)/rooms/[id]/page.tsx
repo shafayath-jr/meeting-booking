@@ -1,11 +1,6 @@
 import PageContainer from "@/components/page-container";
-import PageTitle from "@/components/page-title";
-import { getMeetingsByRoom } from "@/actions/meeting";
-import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";
-import { getRoomById } from "@/actions/room";
-import MeetingCard from "../../components/meeting-card";
-import { validateDateParam } from "@/lib/utils";
+import CalendarWrapper from "./components/calendar-wrapper";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -13,42 +8,16 @@ type Props = {
 };
 
 async function RoomPage({ params, searchParams }: Props) {
-  const { id } = await params;
-  const { date } = await searchParams;
-
-  const selectedDate = validateDateParam(date);
-
-  const { room: currentRoom } = await getRoomById(id);
-  const { meetings } = await getMeetingsByRoom(id, selectedDate);
+  await params;
 
   return (
     <PageContainer>
-      <div className="space-y-4">
-        {/* title */}
-        <PageTitle title="Meeting Room" />
-
-        {/* room name */}
-
-        <div className="flex items-center justify-center mb-10">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl text-primary font-bold mb-4">
-            {currentRoom?.name}
-          </h1>
-        </div>
-
-        {/* date cycle */}
-        <DateCycle selectedDate={selectedDate} />
-
-        {/* actions */}
-
+      <div className="space-y-6">
+        {/* Action buttons */}
         <ActionButtons />
 
-        {/* list */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {meetings?.map((meeting) => (
-            <MeetingCard key={meeting.id} meeting={meeting} />
-          ))}
-        </div>
+        {/* Calendar */}
+        <CalendarWrapper />
       </div>
     </PageContainer>
   );

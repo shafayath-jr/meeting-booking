@@ -93,3 +93,24 @@ export const deleteMeeting = async (meetingId: string) => {
     error: error?.message,
   };
 };
+
+export const getMeetingsByRoomForDateRange = async (
+  roomId: string,
+  startDate: string,
+  endDate: string
+) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("room_id", roomId)
+    .gte("start_time", startDate)
+    .lte("start_time", endDate)
+    .order("start_time", { ascending: true });
+
+  return {
+    error: error?.message,
+    meetings: data as Meeting[],
+  };
+};

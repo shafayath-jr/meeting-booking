@@ -4,9 +4,16 @@ import BookMeetingForm from "./book-meeting-form";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  prefillDate?: Date;
+  prefillStartTime?: string;
 };
 
-export default function BookMeetingModal({ isOpen, onClose }: Props) {
+export default function BookMeetingModal({
+  isOpen,
+  onClose,
+  prefillDate,
+  prefillStartTime,
+}: Props) {
   return (
     <Modal
       title="Book a Meeting"
@@ -15,7 +22,11 @@ export default function BookMeetingModal({ isOpen, onClose }: Props) {
       onClose={onClose}
       className="max-w-2xl!"
     >
-      <BookMeetingForm onClose={onClose} />
+      <BookMeetingForm
+        onClose={onClose}
+        prefillDate={prefillDate}
+        prefillStartTime={prefillStartTime}
+      />
     </Modal>
   );
 }

@@ -61,9 +61,15 @@ import { FULL_MEETING_DURATION_OPTIONS, TIME_SLOTS } from "@/lib/constants";
 
 type Props = {
   onClose: () => void;
+  prefillDate?: Date;
+  prefillStartTime?: string;
 };
 
-export default function BookMeetingForm({ onClose }: Props) {
+export default function BookMeetingForm({
+  onClose,
+  prefillDate,
+  prefillStartTime,
+}: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
   const [room, setRoom] = useState<Room | null>(null);
@@ -74,6 +80,11 @@ export default function BookMeetingForm({ onClose }: Props) {
   const [guestInput, setGuestInput] = useState("");
 
   const defaultDate = useMemo(() => {
+    // Prioritize prefillDate from calendar
+    if (prefillDate && prefillDate >= startOfToday()) {
+      return prefillDate;
+    }
+
     const dateParam = searchParams.get("date");
     if (dateParam) {
       try {
@@ -85,7 +96,7 @@ export default function BookMeetingForm({ onClose }: Props) {
       } catch {}
     }
     return new Date();
-  }, [searchParams]);
+  }, [searchParams, prefillDate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,6 +117,7 @@ export default function BookMeetingForm({ onClose }: Props) {
     defaultValues: {
       ...bookMeetingFormDefaultValues,
       date: defaultDate,
+      startTime: prefillStartTime || "",
     },
     resolver: zodResolver(formSchema),
   });

@@ -41,9 +41,6 @@ export default function ActionButtons() {
         >
           Book a meeting
         </Button>
-        <Button size="lg" className="w-full md:w-auto">
-          View calender
-        </Button>
       </div>
     </>
   );
