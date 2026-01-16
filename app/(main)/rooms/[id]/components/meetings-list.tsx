@@ -226,7 +226,7 @@ export default function MeetingsList({
               
               return (
                 <div key={dateKey} className="space-y-2">
-                  <div className="sticky top-0 bg-background py-2 border-b">
+                  <div className="sticky top-0 bg-card py-2 border-b">
                     <h3 className="font-semibold text-sm text-muted-foreground">
                       {isToday ? "Today" : format(date, "EEEE, MMMM d")}
                     </h3>

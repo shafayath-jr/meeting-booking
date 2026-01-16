@@ -132,14 +132,14 @@ export default function CalendarView({
 
   return (
     <>
-      <div className={cn("flex flex-col lg:flex-row gap-6 h-full", className)}>
+      <div className={cn("flex flex-col lg:flex-row gap-4 h-full", className)}>
         {/* Meetings List - Left Side */}
-        <div className="w-full lg:w-80 xl:w-96 flex-shrink-0 flex flex-col h-full">
+        <div className="w-full lg:w-80 xl:w-96 flex-shrink-0 flex flex-col h-full bg-card rounded-xl border shadow-sm p-5">
           <MeetingsList onMeetingClick={handleMeetingClick} />
         </div>
 
         {/* Calendar - Middle */}
-        <div className="flex-1 min-w-[300px] lg:border-l lg:pl-6 pt-6 lg:pt-0 border-t lg:border-t-0 flex flex-col h-full">
+        <div className="flex-1 min-w-[300px] flex flex-col h-full bg-card rounded-xl border shadow-sm p-5">
           <div className="w-full flex-shrink-0">
             {isLoadingMonth ? (
               <MonthCalendarSkeleton />
@@ -156,7 +156,7 @@ export default function CalendarView({
         </div>
 
         {/* Day Schedule - Right Side */}
-        <div className="flex-1 min-w-[300px] lg:border-l lg:pl-6 pt-6 lg:pt-0 border-t lg:border-t-0 flex flex-col h-full">
+        <div className="flex-1 min-w-[300px] flex flex-col h-full bg-card rounded-xl border shadow-sm p-5">
           <DayScheduleView
             selectedDate={selectedDate}
             meetings={dayMeetings}

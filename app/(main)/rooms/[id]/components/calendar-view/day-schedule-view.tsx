@@ -41,16 +41,14 @@ export default function DayScheduleView({
   return (
     <div className={cn("flex flex-col h-full", className)}>
       {/* Header */}
-      <div className="flex-shrink-0 pb-4 border-b mb-4">
-        <div>
-          <h3 className="font-semibold text-lg">
-            {format(selectedDate, "EEEE, MMMM d, yyyy")}
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}{" "}
-            scheduled
-          </p>
-        </div>
+      <div className="flex-shrink-0 mb-4">
+        <h2 className="font-semibold text-lg">
+          {format(selectedDate, "EEEE, MMMM d, yyyy")}
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}{" "}
+          scheduled
+        </p>
       </div>
 
       {/* Time slots */}

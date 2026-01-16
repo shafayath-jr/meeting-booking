@@ -57,7 +57,7 @@ export default function MonthCalendar({
       onSelect={(date) => date && onDaySelect(date)}
       showOutsideDays={true}
       className={cn(
-        "bg-background group/calendar p-3 [--cell-size:--spacing(10)]",
+        "group/calendar [--cell-size:--spacing(10)]",
         className
       )}
       classNames={{
