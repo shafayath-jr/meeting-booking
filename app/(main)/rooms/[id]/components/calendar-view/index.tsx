@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BookingSlot } from "./types";
 import MeetingDetailsModal from "../meeting-details-modal";
 import MeetingsList from "../meetings-list";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 interface CalendarViewProps {
   onSlotSelect: (slot: BookingSlot) => void;
@@ -26,6 +27,7 @@ export default function CalendarView({
   className,
 }: CalendarViewProps) {
   const { id: roomId } = useParams<{ id: string }>();
+  const { refreshKey } = useMeetingsContext();
 
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -79,15 +81,15 @@ export default function CalendarView({
     }
   }, [roomId, selectedDate]);
 
-  // Fetch month meetings when month changes
+  // Fetch month meetings when month changes or refreshKey updates (real-time)
   useEffect(() => {
     fetchMonthMeetings();
-  }, [fetchMonthMeetings]);
+  }, [fetchMonthMeetings, refreshKey]);
 
-  // Fetch day meetings when selected date changes
+  // Fetch day meetings when selected date changes or refreshKey updates (real-time)
   useEffect(() => {
     fetchDayMeetings();
-  }, [fetchDayMeetings]);
+  }, [fetchDayMeetings, refreshKey]);
 
   const handleMonthChange = (month: Date) => {
     setCurrentMonth(month);

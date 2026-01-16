@@ -1,5 +1,6 @@
 import ActionButtons from "./components/action-buttons";
 import CalendarWrapper from "./components/calendar-wrapper";
+import { MeetingsProvider } from "@/components/providers/meetings-provider";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -10,17 +11,19 @@ async function RoomPage({ params, searchParams }: Props) {
   await params;
 
   return (
-    <div>
-      <div className="container mx-auto py-10 px-6">
-        <div className="space-y-6">
-          {/* Action buttons */}
-          <ActionButtons />
+    <MeetingsProvider>
+      <div>
+        <div className="container mx-auto py-10 px-6">
+          <div className="space-y-6">
+            {/* Action buttons */}
+            <ActionButtons />
 
-          {/* Calendar */}
-          <CalendarWrapper />
+            {/* Calendar */}
+            <CalendarWrapper />
+          </div>
         </div>
       </div>
-    </div>
+    </MeetingsProvider>
   );
 }
 

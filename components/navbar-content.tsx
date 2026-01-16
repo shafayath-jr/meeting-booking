@@ -36,7 +36,7 @@ export default function NavbarContent() {
   }, [roomId]);
 
   return (
-    <div className="sticky top-10 z-50 backdrop-blur-sm bg-transparent">
+    <div className="sticky z-50 backdrop-blur-sm bg-transparent">
       <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
           {isRoomDetailPage && (

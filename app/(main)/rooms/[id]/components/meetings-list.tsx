@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Clock, Radio } from "lucide-react";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 interface MeetingsListProps {
   onMeetingClick?: (meeting: Meeting) => void;
@@ -21,9 +22,21 @@ export default function MeetingsList({
 }: MeetingsListProps) {
   const { id: roomId } = useParams<{ id: string }>();
   const router = useRouter();
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
-  const [ongoingMeeting, setOngoingMeeting] = useState<Meeting | null>(null);
+  const { refreshKey } = useMeetingsContext();
+  // Store all fetched meetings (raw data, not categorized)
+  const [allFetchedMeetings, setAllFetchedMeetings] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Update time every second for real-time status changes
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000); // Update every second for smooth countdown and status changes
+
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchMeetings = useCallback(async () => {
     setIsLoading(true);
@@ -44,59 +57,52 @@ export default function MeetingsList({
         futureDate.toISOString()
       );
 
-      // Combine and filter to show only upcoming meetings
+      // Combine and deduplicate meetings
       const allMeetings = [...(todayMeetings || []), ...(futureMeetings || [])];
       const uniqueMeetings = Array.from(
         new Map(allMeetings.map((m) => [m.id, m])).values()
       );
       
-      const now = new Date();
-      
-      // Find the currently ongoing meeting (started but not ended)
-      const currentMeeting = uniqueMeetings.find((meeting) => {
-        const meetingStart = new Date(meeting.start_time);
-        const meetingEnd = new Date(meeting.end_time);
-        return isBefore(meetingStart, now) && isAfter(meetingEnd, now);
-      });
-      
-      setOngoingMeeting(currentMeeting || null);
-      
-      // Filter to show only upcoming meetings (not started yet)
-      const upcomingMeetings = uniqueMeetings.filter((meeting) => {
-        const meetingStart = new Date(meeting.start_time);
-        return isAfter(meetingStart, now);
-      });
-
       // Sort by start time
-      upcomingMeetings.sort(
+      uniqueMeetings.sort(
         (a, b) =>
           new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
       );
 
-      setMeetings(upcomingMeetings);
+      // Store all meetings - categorization happens in useMemo based on currentTime
+      setAllFetchedMeetings(uniqueMeetings);
     } catch (error) {
       console.error("Failed to fetch meetings:", error);
-      setMeetings([]);
-      setOngoingMeeting(null);
+      setAllFetchedMeetings([]);
     } finally {
       setIsLoading(false);
     }
   }, [roomId]);
 
+  // Fetch meetings on mount and when refreshKey changes (real-time updates)
   useEffect(() => {
     fetchMeetings();
-  }, [fetchMeetings]);
+  }, [fetchMeetings, refreshKey]);
 
-  // Update countdown every second for smooth updates
-  const [currentTime, setCurrentTime] = useState(new Date());
+  // Derive ongoing meeting based on current time (recalculated every second)
+  const ongoingMeeting = useMemo(() => {
+    return allFetchedMeetings.find((meeting) => {
+      const meetingStart = new Date(meeting.start_time);
+      const meetingEnd = new Date(meeting.end_time);
+      return isBefore(meetingStart, currentTime) && isAfter(meetingEnd, currentTime);
+    }) || null;
+  }, [allFetchedMeetings, currentTime]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000); // Update every second for smooth countdown
-
-    return () => clearInterval(interval);
-  }, []);
+  // Derive upcoming meetings based on current time (recalculated every second)
+  const meetings = useMemo(() => {
+    return allFetchedMeetings.filter((meeting) => {
+      const meetingStart = new Date(meeting.start_time);
+      const meetingEnd = new Date(meeting.end_time);
+      // Meeting is upcoming if it hasn't started yet
+      // Also exclude meetings that have ended
+      return isAfter(meetingStart, currentTime) && isAfter(meetingEnd, currentTime);
+    });
+  }, [allFetchedMeetings, currentTime]);
 
   // Format countdown time as digital clock (HH:MM:SS or MM:SS)
   const formatDigitalCountdown = useCallback((meetingStart: Date) => {

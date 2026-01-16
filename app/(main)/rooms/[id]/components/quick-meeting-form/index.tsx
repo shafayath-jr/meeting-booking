@@ -32,6 +32,7 @@ import {
   MeetingAvailability,
 } from "@/lib/duration-helper";
 import { toast } from "sonner";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 type Props = {
   onClose: () => void;
@@ -39,6 +40,7 @@ type Props = {
 
 export default function QuickMeetingForm({ onClose }: Props) {
   const { id: roomId } = useParams<{ id: string }>();
+  const { triggerRefresh, refreshKey } = useMeetingsContext();
   const [room, setRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [availability, setAvailability] = useState<MeetingAvailability>({
@@ -47,6 +49,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
     enabledDurations: ["5", "10", "15"],
   });
 
+  // Fetch data on mount and when refreshKey changes (real-time updates)
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -61,7 +64,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
     };
 
     fetchData();
-  }, [roomId]);
+  }, [roomId, refreshKey]);
 
   const form = useForm<QuickMeetingFormValues>({
     defaultValues: quickMeetingFormDefaultValues,
@@ -92,6 +95,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
 
     if (!res.error) {
       form.reset();
+      triggerRefresh(); // Trigger real-time refresh across all components
       onClose();
       toast.success("Quick meeting booked successfully");
     } else {

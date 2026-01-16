@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { deleteMeeting } from "@/actions/meeting";
 import { toast } from "sonner";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 interface MeetingDetailsModalProps {
   isOpen: boolean;
@@ -21,6 +22,8 @@ export default function MeetingDetailsModal({
   meeting,
   onDelete,
 }: MeetingDetailsModalProps) {
+  const { triggerRefresh } = useMeetingsContext();
+  
   if (!meeting) return null;
 
   const handleDelete = async () => {
@@ -28,6 +31,7 @@ export default function MeetingDetailsModal({
 
     if (!res.error) {
       toast.success("Meeting deleted");
+      triggerRefresh(); // Trigger real-time refresh across all components
       onDelete?.();
       onClose();
     } else {

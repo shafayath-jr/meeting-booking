@@ -58,6 +58,7 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { FULL_MEETING_DURATION_OPTIONS, TIME_SLOTS } from "@/lib/constants";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 type Props = {
   onClose: () => void;
@@ -72,6 +73,7 @@ export default function BookMeetingForm({
 }: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
+  const { triggerRefresh, refreshKey } = useMeetingsContext();
   const [room, setRoom] = useState<Room | null>(null);
   const [domains, setDomains] = useState<Domain[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -130,6 +132,7 @@ export default function BookMeetingForm({
   const selectedDate = form.watch("date");
   const selectedDuration = form.watch("duration");
 
+  // Fetch meetings for selected date (also refreshes when real-time updates occur)
   useEffect(() => {
     const fetchMeetings = async () => {
       if (!selectedDate) return;
@@ -142,7 +145,7 @@ export default function BookMeetingForm({
     };
 
     fetchMeetings();
-  }, [selectedDate, roomId]);
+  }, [selectedDate, roomId, refreshKey]);
 
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) {
@@ -213,6 +216,7 @@ export default function BookMeetingForm({
 
       if (!res.error) {
         form.reset();
+        triggerRefresh(); // Trigger real-time refresh across all components
         onClose();
         toast.success("Meeting booked successfully");
       } else {
