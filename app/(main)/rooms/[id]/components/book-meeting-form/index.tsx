@@ -58,14 +58,22 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { FULL_MEETING_DURATION_OPTIONS, TIME_SLOTS } from "@/lib/constants";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 type Props = {
   onClose: () => void;
+  prefillDate?: Date;
+  prefillStartTime?: string;
 };
 
-export default function BookMeetingForm({ onClose }: Props) {
+export default function BookMeetingForm({
+  onClose,
+  prefillDate,
+  prefillStartTime,
+}: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
+  const { triggerRefresh, refreshKey } = useMeetingsContext();
   const [room, setRoom] = useState<Room | null>(null);
   const [domains, setDomains] = useState<Domain[]>([]);
   const [meetings, setMeetings] = useState<Meeting[]>([]);
@@ -74,6 +82,11 @@ export default function BookMeetingForm({ onClose }: Props) {
   const [guestInput, setGuestInput] = useState("");
 
   const defaultDate = useMemo(() => {
+    // Prioritize prefillDate from calendar
+    if (prefillDate && prefillDate >= startOfToday()) {
+      return prefillDate;
+    }
+
     const dateParam = searchParams.get("date");
     if (dateParam) {
       try {
@@ -85,7 +98,7 @@ export default function BookMeetingForm({ onClose }: Props) {
       } catch {}
     }
     return new Date();
-  }, [searchParams]);
+  }, [searchParams, prefillDate]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -106,6 +119,7 @@ export default function BookMeetingForm({ onClose }: Props) {
     defaultValues: {
       ...bookMeetingFormDefaultValues,
       date: defaultDate,
+      startTime: prefillStartTime || "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -118,6 +132,7 @@ export default function BookMeetingForm({ onClose }: Props) {
   const selectedDate = form.watch("date");
   const selectedDuration = form.watch("duration");
 
+  // Fetch meetings for selected date (also refreshes when real-time updates occur)
   useEffect(() => {
     const fetchMeetings = async () => {
       if (!selectedDate) return;
@@ -130,7 +145,7 @@ export default function BookMeetingForm({ onClose }: Props) {
     };
 
     fetchMeetings();
-  }, [selectedDate, roomId]);
+  }, [selectedDate, roomId, refreshKey]);
 
   const availableTimeSlots = useMemo(() => {
     if (!selectedDate) {
@@ -201,6 +216,7 @@ export default function BookMeetingForm({ onClose }: Props) {
 
       if (!res.error) {
         form.reset();
+        triggerRefresh(); // Trigger real-time refresh across all components
         onClose();
         toast.success("Meeting booked successfully");
       } else {
