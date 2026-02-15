@@ -91,7 +91,7 @@ export const bookMeeting = async (event: Event) => {
 
   // Upsert into Supabase with calendar_event_id already set
   // Use upsert to handle race condition where webhook might insert first
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("bookings")
     .upsert([bookingData], { onConflict: "calendar_event_id" })
     .select()
@@ -113,7 +113,7 @@ export const deleteMeeting = async (meetingId: string) => {
   const supabase = await createClient();
 
   // Fetch booking first to get calendar_event_id for Teams sync
-  const { data: booking, error: fetchError } = await supabase
+  const { data: booking } = await supabase
     .from("bookings")
     .select()
     .eq("id", meetingId)

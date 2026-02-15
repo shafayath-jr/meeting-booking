@@ -52,46 +52,6 @@ export default function TimeSlotGrid({
     });
   }, [selectedDate, meetings]);
 
-  // Group consecutive slots with the same meeting
-  const groupedSlots = useMemo(() => {
-    const groups: {
-      slots: TimeSlotInfo[];
-      meeting?: Meeting;
-      startIndex: number;
-    }[] = [];
-
-    let currentGroup: TimeSlotInfo[] = [];
-    let currentMeeting: Meeting | undefined;
-    let startIndex = 0;
-
-    timeSlots.forEach((slot, index) => {
-      if (slot.meeting?.id !== currentMeeting?.id) {
-        if (currentGroup.length > 0) {
-          groups.push({
-            slots: currentGroup,
-            meeting: currentMeeting,
-            startIndex,
-          });
-        }
-        currentGroup = [slot];
-        currentMeeting = slot.meeting;
-        startIndex = index;
-      } else {
-        currentGroup.push(slot);
-      }
-    });
-
-    if (currentGroup.length > 0) {
-      groups.push({
-        slots: currentGroup,
-        meeting: currentMeeting,
-        startIndex,
-      });
-    }
-
-    return groups;
-  }, [timeSlots]);
-
   if (timeSlots.length === 0) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>

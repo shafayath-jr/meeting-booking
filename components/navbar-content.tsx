@@ -18,21 +18,40 @@ export default function NavbarContent() {
   const roomId = isRoomDetailPage ? pathname.split("/")[2] : null;
 
   useEffect(() => {
-    if (roomId) {
-      setIsLoading(true);
-      getRoomById(roomId)
-        .then(({ room }) => {
-          setRoomName(room?.name || null);
-        })
-        .catch(() => {
-          setRoomName(null);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setRoomName(null);
+    let cancelled = false;
+
+    if (!roomId) {
+      // Defer setState to avoid synchronous call in effect
+      queueMicrotask(() => {
+        if (!cancelled) setRoomName(null);
+      });
+      return () => {
+        cancelled = true;
+      };
     }
+
+    // Use queueMicrotask to defer setState
+    queueMicrotask(() => {
+      if (!cancelled) setIsLoading(true);
+    });
+
+    getRoomById(roomId)
+      .then(({ room }) => {
+        if (!cancelled) {
+          setRoomName(room?.name || null);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setRoomName(null);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [roomId]);
 
   return (

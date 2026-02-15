@@ -5,7 +5,6 @@ import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import {
   DayPicker,
   getDefaultClassNames,
-  type DayButton,
 } from "react-day-picker";
 import { format, isSameDay, startOfToday } from "date-fns";
 

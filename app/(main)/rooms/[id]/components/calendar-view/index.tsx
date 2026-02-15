@@ -126,12 +126,6 @@ export default function CalendarView({
     setSelectedDate((prev) => (prev ? new Date(prev) : null));
   }, [fetchMonthMeetings, fetchDayMeetings]);
 
-  // Refresh calendar data (called after successful booking)
-  const refreshCalendar = useCallback(() => {
-    fetchMonthMeetings();
-    fetchDayMeetings();
-  }, [fetchMonthMeetings, fetchDayMeetings]);
-
   return (
     <>
       <div className={cn("flex flex-col lg:flex-row gap-4 h-full", className)}>

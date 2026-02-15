@@ -4,10 +4,9 @@ import { MeetingsProvider } from "@/components/providers/meetings-provider";
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ date?: string }>;
 };
 
-async function RoomPage({ params, searchParams }: Props) {
+async function RoomPage({ params }: Props) {
   await params;
 
   return (

@@ -12,7 +12,6 @@ interface DayScheduleViewProps {
   isLoading: boolean;
   onSlotClick: (time: string) => void;
   onMeetingClick?: (meeting: Meeting) => void;
-  onBackToCalendar?: () => void;
   className?: string;
 }
 
@@ -22,7 +21,6 @@ export default function DayScheduleView({
   isLoading,
   onSlotClick,
   onMeetingClick,
-  onBackToCalendar,
   className,
 }: DayScheduleViewProps) {
   if (!selectedDate) {

@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { format, isAfter, isBefore, startOfToday, isSameDay, differenceInMinutes, differenceInHours, differenceInDays, differenceInSeconds } from "date-fns";
+import { useParams } from "next/navigation";
+import { format, isAfter, isBefore, isSameDay, differenceInMinutes, differenceInHours, differenceInDays, differenceInSeconds } from "date-fns";
 import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoomForDateRange, getMeetingsByRoom } from "@/actions/meeting";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,7 +21,6 @@ export default function MeetingsList({
   className,
 }: MeetingsListProps) {
   const { id: roomId } = useParams<{ id: string }>();
-  const router = useRouter();
   const { refreshKey } = useMeetingsContext();
   // Store all fetched meetings (raw data, not categorized)
   const [allFetchedMeetings, setAllFetchedMeetings] = useState<Meeting[]>([]);
