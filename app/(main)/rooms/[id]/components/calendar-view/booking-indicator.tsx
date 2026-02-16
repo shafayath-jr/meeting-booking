@@ -7,16 +7,13 @@ interface BookingIndicatorProps {
   className?: string;
 }
 
-export default function BookingIndicator({
-  count,
-  className,
-}: BookingIndicatorProps) {
+export default function BookingIndicator({ count, className }: BookingIndicatorProps) {
   if (count === 0) return null;
 
   return (
     <div
       className={cn(
-        "absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5",
+        "absolute bottom-1 left-1/2 flex -translate-x-1/2 gap-0.5",
         className
       )}
       aria-label={`${count} booking${count > 1 ? "s" : ""}`}
@@ -25,24 +22,15 @@ export default function BookingIndicator({
         Array.from({ length: count }).map((_, i) => (
           <span
             key={i}
-            className="w-1.5 h-1.5 rounded-full bg-primary"
+            className="bg-primary h-1.5 w-1.5 rounded-full"
             aria-hidden="true"
           />
         ))
       ) : (
         <>
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
+          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
+          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
+          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
         </>
       )}
     </div>

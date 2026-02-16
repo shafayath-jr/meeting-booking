@@ -27,7 +27,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${sourceSerif.variable} antialiased`}>
         <Providers>
-          <div className="min-h-screen gradient-mesh">
+          <div className="gradient-mesh min-h-screen">
             <Navbar />
             {children}
           </div>

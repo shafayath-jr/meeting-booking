@@ -2,10 +2,7 @@
 
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import {
-  DayPicker,
-  getDefaultClassNames,
-} from "react-day-picker";
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { format, isSameDay, startOfToday } from "date-fns";
 
 import { cn } from "@/lib/utils";
@@ -55,10 +52,7 @@ export default function MonthCalendar({
       selected={selectedDate || undefined}
       onSelect={(date) => date && onDaySelect(date)}
       showOutsideDays={true}
-      className={cn(
-        "group/calendar [--cell-size:--spacing(10)]",
-        className
-      )}
+      className={cn("group/calendar [--cell-size:--spacing(10)]", className)}
       classNames={{
         root: cn("w-full", defaultClassNames.root),
         months: cn("flex flex-col", defaultClassNames.months),
@@ -96,18 +90,9 @@ export default function MonthCalendar({
           "relative w-full h-full p-0 text-center group/day aspect-square select-none",
           defaultClassNames.day
         ),
-        today: cn(
-          "bg-accent text-accent-foreground rounded-md",
-          defaultClassNames.today
-        ),
-        outside: cn(
-          "text-muted-foreground opacity-50",
-          defaultClassNames.outside
-        ),
-        disabled: cn(
-          "text-muted-foreground opacity-50",
-          defaultClassNames.disabled
-        ),
+        today: cn("bg-accent text-accent-foreground rounded-md", defaultClassNames.today),
+        outside: cn("text-muted-foreground opacity-50", defaultClassNames.outside),
+        disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
         hidden: cn("invisible", defaultClassNames.hidden),
       }}
       components={{
@@ -123,13 +108,9 @@ export default function MonthCalendar({
         },
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
-            return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
-            );
+            return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
           }
-          return (
-            <ChevronRightIcon className={cn("size-4", className)} {...props} />
-          );
+          return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
         },
         DayButton: ({ day, modifiers, className, ...props }) => {
           const meetingCount = getMeetingCount(day.date);

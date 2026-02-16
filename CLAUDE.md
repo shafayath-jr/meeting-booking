@@ -1,11 +1,13 @@
 # Meeting Room Booking System
 
 ## Project Overview
+
 A Next.js-based meeting room booking system for Planet Education Networks. Users can browse buildings, view available rooms, book meetings with calendar integration, and receive real-time updates on room availability.
 
 ## Tech Stack
 
 ### Core
+
 - **Framework**: Next.js 16 (App Router)
 - **Runtime**: React 19.2
 - **Language**: TypeScript 5
@@ -13,6 +15,7 @@ A Next.js-based meeting room booking system for Planet Education Networks. Users
 - **Styling**: Tailwind CSS 4
 
 ### Key Libraries
+
 - **UI Components**: Radix UI primitives
 - **Forms**: React Hook Form + Zod validation
 - **Date Handling**: date-fns
@@ -60,6 +63,7 @@ npm run lint           # Run ESLint
 ## Environment Setup
 
 Required environment variables (see [.env.example:1-75](.env.example#L1-L75)):
+
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_KEY` - Supabase anonymous key
 - Azure AD credentials (for calendar sync, optional)
@@ -83,6 +87,7 @@ Required environment variables (see [.env.example:1-75](.env.example#L1-L75)):
 ## Database Schema
 
 Main tables (via Supabase):
+
 - `buildings` - Building/location information
 - `rooms` - Meeting rooms with capacity and amenities
 - `bookings` - Meeting bookings with time slots
@@ -106,4 +111,5 @@ Main tables (via Supabase):
 ## Additional Documentation
 
 For implementation details and patterns, see:
+
 - [Architectural Patterns](.claude/docs/architectural_patterns.md) - Design patterns and conventions used throughout the codebase

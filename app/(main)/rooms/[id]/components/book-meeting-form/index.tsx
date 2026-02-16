@@ -18,11 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -258,9 +254,7 @@ export default function BookMeetingForm({
                   aria-invalid={fieldState.invalid}
                   placeholder=""
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -268,7 +262,7 @@ export default function BookMeetingForm({
 
         {/* Email */}
 
-        <FieldGroup className="grid md:grid-cols-2 gap-4">
+        <FieldGroup className="grid gap-4 md:grid-cols-2">
           {/* Email Username */}
 
           <Controller
@@ -286,9 +280,7 @@ export default function BookMeetingForm({
                   aria-invalid={fieldState.invalid}
                   placeholder="Username"
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -303,10 +295,7 @@ export default function BookMeetingForm({
                   {/* <FieldLabel htmlFor={field.name}></FieldLabel> */}
                 </FieldContent>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <div className="flex items-center gap-2">
                       <span className="text-inherit">@</span>
                       <SelectValue placeholder="Select domain" />
@@ -320,15 +309,13 @@ export default function BookMeetingForm({
                     ))}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
         </FieldGroup>
 
-        <FieldGroup className="grid md:grid-cols-2 gap-4">
+        <FieldGroup className="grid gap-4 md:grid-cols-2">
           {/* Date */}
 
           <Controller
@@ -363,9 +350,7 @@ export default function BookMeetingForm({
                     />
                   </PopoverContent>
                 </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -379,10 +364,7 @@ export default function BookMeetingForm({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
                   <SelectContent position="popper">
@@ -399,9 +381,7 @@ export default function BookMeetingForm({
                     )}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -417,10 +397,7 @@ export default function BookMeetingForm({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Duration</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <SelectValue placeholder="Select duration" />
                   </SelectTrigger>
                   <SelectContent>
@@ -431,9 +408,7 @@ export default function BookMeetingForm({
                     ))}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -485,18 +460,14 @@ export default function BookMeetingForm({
             {fields.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {fields.map((field, index) => (
-                  <Badge
-                    key={field.id}
-                    variant="secondary"
-                    className="gap-1.5 pr-1"
-                  >
+                  <Badge key={field.id} variant="secondary" className="gap-1.5 pr-1">
                     <span>{field.value}</span>
                     <Button
                       type="button"
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => remove(index)}
-                      className="h-4 w-4 rounded-sm hover:bg-secondary-foreground/20"
+                      className="hover:bg-secondary-foreground/20 h-4 w-4 rounded-sm"
                       aria-label={`Remove ${field.value}`}
                     >
                       <X className="h-3 w-3" />

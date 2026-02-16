@@ -14,7 +14,8 @@ export default function NavbarContent() {
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if we're on a room detail page
-  const isRoomDetailPage = pathname?.startsWith("/rooms/") && pathname.split("/").length === 3;
+  const isRoomDetailPage =
+    pathname?.startsWith("/rooms/") && pathname.split("/").length === 3;
   const roomId = isRoomDetailPage ? pathname.split("/")[2] : null;
 
   useEffect(() => {
@@ -55,8 +56,8 @@ export default function NavbarContent() {
   }, [roomId]);
 
   return (
-    <div className="sticky z-50 backdrop-blur-sm bg-transparent">
-      <nav className="container mx-auto px-6 py-4 flex items-center justify-between">
+    <div className="sticky z-50 bg-transparent backdrop-blur-sm">
+      <nav className="container mx-auto flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
           {isRoomDetailPage && (
             <>
@@ -64,14 +65,14 @@ export default function NavbarContent() {
                 variant="outline"
                 size="icon"
                 onClick={() => router.push("/")}
-                className="shrink-0 bg-white/50 dark:bg-white/10 backdrop-blur-sm border-white/40 dark:border-white/20 hover:bg-white/70 dark:hover:bg-white/20"
+                className="shrink-0 border-white/40 bg-white/50 backdrop-blur-sm hover:bg-white/70 dark:border-white/20 dark:bg-white/10 dark:hover:bg-white/20"
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               {isLoading ? (
-                <div className="h-6 w-32 bg-white/30 dark:bg-white/10 animate-pulse rounded" />
+                <div className="h-6 w-32 animate-pulse rounded bg-white/30 dark:bg-white/10" />
               ) : roomName ? (
-                <h1 className="text-xl md:text-2xl lg:text-3xl text-primary font-bold">
+                <h1 className="text-primary text-xl font-bold md:text-2xl lg:text-3xl">
                   {roomName}
                 </h1>
               ) : null}

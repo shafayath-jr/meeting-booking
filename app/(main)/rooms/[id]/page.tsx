@@ -12,7 +12,7 @@ async function RoomPage({ params }: Props) {
   return (
     <MeetingsProvider>
       <div>
-        <div className="container mx-auto py-10 px-6">
+        <div className="container mx-auto px-6 py-10">
           <div className="space-y-6">
             {/* Action buttons */}
             <ActionButtons />

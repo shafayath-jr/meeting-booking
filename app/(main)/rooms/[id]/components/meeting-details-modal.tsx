@@ -23,7 +23,7 @@ export default function MeetingDetailsModal({
   onDelete,
 }: MeetingDetailsModalProps) {
   const { triggerRefresh } = useMeetingsContext();
-  
+
   if (!meeting) return null;
 
   const handleDelete = async () => {
@@ -50,7 +50,7 @@ export default function MeetingDetailsModal({
     >
       <div className="space-y-4 py-4">
         <div>
-          <h3 className="font-semibold text-lg mb-2">{meeting.title}</h3>
+          <h3 className="mb-2 text-lg font-semibold">{meeting.title}</h3>
         </div>
 
         <div className="space-y-3 text-sm">
@@ -100,13 +100,9 @@ export default function MeetingDetailsModal({
           )}
         </div>
 
-        <div className="pt-4 border-t">
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            className="w-full"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
+        <div className="border-t pt-4">
+          <Button variant="destructive" onClick={handleDelete} className="w-full">
+            <Trash2 className="mr-2 h-4 w-4" />
             Delete Meeting
           </Button>
         </div>

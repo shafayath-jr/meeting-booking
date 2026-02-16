@@ -79,8 +79,10 @@ export const bookMeeting = async (event: Event) => {
   };
 
   // Sync to Microsoft Teams calendar FIRST to get calendar_event_id
-  const { data: calendarEventId, error: syncError } =
-    await syncBookingToTeams(tempBooking, "create");
+  const { data: calendarEventId, error: syncError } = await syncBookingToTeams(
+    tempBooking,
+    "create"
+  );
 
   // Prepare booking data with calendar_event_id already set
   const bookingData = {
@@ -127,10 +129,7 @@ export const deleteMeeting = async (meetingId: string) => {
     console.log("Delete: Syncing to Teams...");
     const { error: syncError } = await syncBookingToTeams(booking, "delete");
     if (syncError) {
-      console.warn(
-        "Teams sync failed but continuing with delete:",
-        syncError
-      );
+      console.warn("Teams sync failed but continuing with delete:", syncError);
       // Don't fail the delete if Teams sync fails
     } else {
       console.log("Delete: Teams sync successful");
@@ -140,10 +139,7 @@ export const deleteMeeting = async (meetingId: string) => {
   }
 
   // Delete from Supabase
-  const { error } = await supabase
-    .from("bookings")
-    .delete()
-    .eq("id", meetingId);
+  const { error } = await supabase.from("bookings").delete().eq("id", meetingId);
 
   if (error) {
     return { error: error.message };

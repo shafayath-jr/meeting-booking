@@ -4,14 +4,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import {
-  format,
-  isAfter,
-  startOfDay,
-  addDays,
-  subDays,
-  parseISO,
-} from "date-fns";
+import { format, isAfter, startOfDay, addDays, subDays, parseISO } from "date-fns";
 
 type Props = {
   selectedDate: string; // Format: "yyyy-MM-dd"
@@ -49,11 +42,11 @@ export default function DateCycle({ selectedDate }: Props) {
   };
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <Card className="mx-auto w-full max-w-lg">
       <CardContent className="space-y-6">
         {/* date display */}
 
-        <p className="text-center text-lg md:text-xl lg:text-3xl font-semibold">
+        <p className="text-center text-lg font-semibold md:text-xl lg:text-3xl">
           {currentDate.toLocaleDateString("en-GB", {
             weekday: "short",
             month: "short",

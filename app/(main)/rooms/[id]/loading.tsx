@@ -11,14 +11,14 @@ export default function RoomLoading() {
         <PageTitle title="Meeting Room" />
 
         {/* room name skeleton */}
-        <div className="flex items-center justify-center mb-10">
-          <Skeleton className="h-12 md:h-16 lg:h-20 w-64 md:w-96" />
+        <div className="mb-10 flex items-center justify-center">
+          <Skeleton className="h-12 w-64 md:h-16 md:w-96 lg:h-20" />
         </div>
 
         {/* date cycle skeleton */}
-        <Card className="w-full max-w-lg mx-auto">
+        <Card className="mx-auto w-full max-w-lg">
           <CardContent className="space-y-6">
-            <Skeleton className="h-8 md:h-10 w-48 mx-auto" />
+            <Skeleton className="mx-auto h-8 w-48 md:h-10" />
             <div className="flex items-center justify-center gap-4">
               <Skeleton className="h-12 w-12 rounded-md" />
               <Skeleton className="h-12 w-12 rounded-md" />
@@ -27,14 +27,14 @@ export default function RoomLoading() {
         </Card>
 
         {/* action buttons skeleton */}
-        <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
           <Skeleton className="h-12 w-full md:w-40" />
           <Skeleton className="h-12 w-full md:w-40" />
           <Skeleton className="h-12 w-full md:w-40" />
         </div>
 
         {/* meeting cards skeleton */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, index) => (
             <Card key={index}>
               <CardHeader>

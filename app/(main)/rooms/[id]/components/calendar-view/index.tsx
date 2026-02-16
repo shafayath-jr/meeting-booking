@@ -5,10 +5,7 @@ import { useParams } from "next/navigation";
 import { startOfMonth, endOfMonth } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Meeting } from "@/types/meeting";
-import {
-  getMeetingsByRoomForDateRange,
-  getMeetingsByRoom,
-} from "@/actions/meeting";
+import { getMeetingsByRoomForDateRange, getMeetingsByRoom } from "@/actions/meeting";
 import MonthCalendar from "./month-calendar";
 import DayScheduleView from "./day-schedule-view";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -22,10 +19,7 @@ interface CalendarViewProps {
   className?: string;
 }
 
-export default function CalendarView({
-  onSlotSelect,
-  className,
-}: CalendarViewProps) {
+export default function CalendarView({ onSlotSelect, className }: CalendarViewProps) {
   const { id: roomId } = useParams<{ id: string }>();
   const { refreshKey } = useMeetingsContext();
 
@@ -68,10 +62,7 @@ export default function CalendarView({
 
     setIsLoadingDay(true);
     try {
-      const { meetings } = await getMeetingsByRoom(
-        roomId,
-        selectedDate.toISOString()
-      );
+      const { meetings } = await getMeetingsByRoom(roomId, selectedDate.toISOString());
       setDayMeetings(meetings || []);
     } catch (error) {
       console.error("Failed to fetch day meetings:", error);
@@ -128,15 +119,15 @@ export default function CalendarView({
 
   return (
     <>
-      <div className={cn("flex flex-col lg:flex-row gap-4 h-full", className)}>
+      <div className={cn("flex h-full flex-col gap-4 lg:flex-row", className)}>
         {/* Meetings List - Left Side */}
-        <div className="w-full lg:w-80 xl:w-96 flex-shrink-0 flex flex-col h-full glass glass-shadow rounded-2xl p-5">
+        <div className="glass glass-shadow flex h-full w-full shrink-0 flex-col rounded-2xl p-5 lg:w-80 xl:w-96">
           <MeetingsList onMeetingClick={handleMeetingClick} />
         </div>
 
         {/* Calendar - Middle */}
-        <div className="flex-1 min-w-[300px] flex flex-col h-full glass glass-shadow rounded-2xl p-5">
-          <div className="w-full flex-shrink-0">
+        <div className="glass glass-shadow flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
+          <div className="w-full shrink-0">
             {isLoadingMonth ? (
               <MonthCalendarSkeleton />
             ) : (
@@ -152,7 +143,7 @@ export default function CalendarView({
         </div>
 
         {/* Day Schedule - Right Side */}
-        <div className="flex-1 min-w-[300px] flex flex-col h-full glass glass-shadow rounded-2xl p-5">
+        <div className="glass glass-shadow flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
           <DayScheduleView
             selectedDate={selectedDate}
             meetings={dayMeetings}
@@ -176,18 +167,18 @@ export default function CalendarView({
 
 function MonthCalendarSkeleton() {
   return (
-    <div className="p-3 space-y-4">
+    <div className="space-y-4 p-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <Skeleton className="w-8 h-8" />
-        <Skeleton className="w-32 h-6" />
-        <Skeleton className="w-8 h-8" />
+        <Skeleton className="h-8 w-8" />
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-8 w-8" />
       </div>
 
       {/* Weekdays */}
       <div className="flex gap-1">
         {Array.from({ length: 7 }).map((_, i) => (
-          <Skeleton key={i} className="flex-1 h-6" />
+          <Skeleton key={i} className="h-6 flex-1" />
         ))}
       </div>
 
@@ -195,7 +186,7 @@ function MonthCalendarSkeleton() {
       {Array.from({ length: 5 }).map((_, weekIndex) => (
         <div key={weekIndex} className="flex gap-1">
           {Array.from({ length: 7 }).map((_, dayIndex) => (
-            <Skeleton key={dayIndex} className="flex-1 aspect-square" />
+            <Skeleton key={dayIndex} className="aspect-square flex-1" />
           ))}
         </div>
       ))}

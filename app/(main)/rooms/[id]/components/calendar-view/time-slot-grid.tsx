@@ -55,7 +55,9 @@ export default function TimeSlotGrid({
   if (timeSlots.length === 0) {
     return (
       <div className={cn("flex items-center justify-center py-12", className)}>
-        <p className="text-sm text-muted-foreground">No time slots are available for today</p>
+        <p className="text-muted-foreground text-sm">
+          No time slots are available for today
+        </p>
       </div>
     );
   }
@@ -65,8 +67,7 @@ export default function TimeSlotGrid({
       {timeSlots.map((slot, index) => {
         const isFirstOfMeeting =
           slot.meeting &&
-          (index === 0 ||
-            timeSlots[index - 1]?.meeting?.id !== slot.meeting.id);
+          (index === 0 || timeSlots[index - 1]?.meeting?.id !== slot.meeting.id);
         const isLastOfMeeting =
           slot.meeting &&
           (index === timeSlots.length - 1 ||
@@ -76,16 +77,21 @@ export default function TimeSlotGrid({
           <div
             key={slot.time}
             className={cn(
-              "flex items-stretch min-h-[48px] rounded-lg transition-all duration-200 group",
-              slot.isAvailable && !slot.meeting &&
-                "hover:bg-primary/5 cursor-pointer border border-transparent hover:border-primary/20 hover:shadow-sm",
+              "group flex min-h-[48px] items-stretch rounded-lg transition-all duration-200",
+              slot.isAvailable &&
+                !slot.meeting &&
+                "hover:bg-primary/5 hover:border-primary/20 cursor-pointer border border-transparent hover:shadow-sm",
               !slot.isAvailable && !slot.meeting && "opacity-50"
             )}
             onClick={() => slot.isAvailable && !slot.meeting && onSlotClick(slot.time)}
             role={slot.isAvailable && !slot.meeting ? "button" : undefined}
             tabIndex={slot.isAvailable && !slot.meeting ? 0 : undefined}
             onKeyDown={(e) => {
-              if (slot.isAvailable && !slot.meeting && (e.key === "Enter" || e.key === " ")) {
+              if (
+                slot.isAvailable &&
+                !slot.meeting &&
+                (e.key === "Enter" || e.key === " ")
+              ) {
                 e.preventDefault();
                 onSlotClick(slot.time);
               }
@@ -94,12 +100,12 @@ export default function TimeSlotGrid({
               slot.isAvailable && !slot.meeting
                 ? `Book meeting at ${slot.time}`
                 : slot.meeting
-                ? `${slot.meeting.title} at ${slot.time}`
-                : `${slot.time} - unavailable`
+                  ? `${slot.meeting.title} at ${slot.time}`
+                  : `${slot.time} - unavailable`
             }
           >
             {/* Time label */}
-            <div className="w-16 flex-shrink-0 py-2 pr-3 text-right text-sm text-muted-foreground font-medium">
+            <div className="text-muted-foreground w-16 shrink-0 py-2 pr-3 text-right text-sm font-medium">
               {slot.time}
             </div>
 
@@ -108,9 +114,9 @@ export default function TimeSlotGrid({
               {slot.meeting ? (
                 <div
                   className={cn(
-                    "h-full px-3 py-2 cursor-pointer transition-all duration-200",
-                    "bg-gradient-to-r from-primary/15 to-primary/5 backdrop-blur-sm",
-                    "border-l-4 border-primary",
+                    "h-full cursor-pointer px-3 py-2 transition-all duration-200",
+                    "from-primary/15 to-primary/5 bg-linear-to-r backdrop-blur-sm",
+                    "border-primary border-l-4",
                     "hover:from-primary/25 hover:to-primary/10 hover:shadow-md",
                     isFirstOfMeeting && "rounded-t-lg",
                     isLastOfMeeting && "rounded-b-lg"
@@ -132,10 +138,10 @@ export default function TimeSlotGrid({
                 >
                   {isFirstOfMeeting && (
                     <>
-                      <p className="font-semibold text-sm truncate text-foreground">
+                      <p className="text-foreground truncate text-sm font-semibold">
                         {slot.meeting.title}
                       </p>
-                      <p className="text-xs text-muted-foreground truncate">
+                      <p className="text-muted-foreground truncate text-xs">
                         {format(new Date(slot.meeting.start_time), "HH:mm")} -{" "}
                         {format(new Date(slot.meeting.end_time), "HH:mm")} •{" "}
                         {slot.meeting.booked_by}
@@ -144,8 +150,8 @@ export default function TimeSlotGrid({
                   )}
                 </div>
               ) : (
-                <div className="h-full flex items-center px-3 text-sm text-muted-foreground">
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity text-primary/70">
+                <div className="text-muted-foreground flex h-full items-center px-3 text-sm">
+                  <span className="text-primary/70 opacity-0 transition-opacity group-hover:opacity-100">
                     Click to book
                   </span>
                 </div>

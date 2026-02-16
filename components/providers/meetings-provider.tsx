@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
+import { createContext, useContext, useState, useCallback, ReactNode } from "react";
 import { useParams } from "next/navigation";
 import { useRealtimeMeetings } from "@/hooks/use-realtime-meetings";
 

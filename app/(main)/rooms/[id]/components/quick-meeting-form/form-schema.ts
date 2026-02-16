@@ -8,8 +8,7 @@ export const formSchema = z.object({
 
 export type QuickMeetingFormValues = z.infer<typeof formSchema>;
 
-export const quickMeetingFormDefaultValues: DefaultValues<QuickMeetingFormValues> =
-  {
-    name: "",
-    duration: "",
-  };
+export const quickMeetingFormDefaultValues: DefaultValues<QuickMeetingFormValues> = {
+  name: "",
+  duration: "",
+};
