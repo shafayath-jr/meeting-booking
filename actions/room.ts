@@ -26,6 +26,6 @@ export const getRoomsByBuilding = async (buildingId: string) => {
 
   return {
     error: error?.message,
-    rooms: data,
+    rooms: data as Room[],
   };
 };

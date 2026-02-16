@@ -32,10 +32,22 @@ import {
 } from "@/components/ui/select";
 import { useParams, useSearchParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { addMinutes, format, parseISO, startOfToday } from "date-fns";
-import { bookMeeting } from "@/actions/meeting";
+import {
+  addMinutes,
+  areIntervalsOverlapping,
+  format,
+  isBefore,
+  isToday,
+  parse,
+  parseISO,
+  startOfToday,
+} from "date-fns";
+import { bookMeeting, getMeetingsByRoom } from "@/actions/meeting";
 import { useEffect, useMemo, useState } from "react";
 import { Room } from "@/types/room";
+import { getAllDomains } from "@/actions/domain";
+import { Domain } from "@/types/domain";
+import { Meeting } from "@/types/meeting";
 import { toast } from "sonner";
 import { CalendarIcon, CirclePlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -45,53 +57,36 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from "@/components/ui/input-group";
-
-const FULL_MEETING_DURATION_OPTIONS = [
-  { value: "15", label: "15 Minutes" },
-  { value: "30", label: "30 Minutes" },
-  { value: "45", label: "45 Minutes" },
-  { value: "60", label: "60 Minutes" },
-];
-
-const TIME_SLOTS = [
-  "09:00",
-  "09:30",
-  "10:00",
-  "10:30",
-  "11:00",
-  "11:30",
-  "12:00",
-  "12:30",
-  "13:00",
-  "13:30",
-  "14:00",
-  "14:30",
-  "15:00",
-  "15:30",
-  "16:00",
-  "16:30",
-  "17:00",
-  "17:30",
-];
-
-const EMAIL_DOMAINS = [
-  { value: "penglobal.com", label: "penglobal.com" },
-  { value: "pengroup.com", label: "pengroup.com" },
-];
+import { FULL_MEETING_DURATION_OPTIONS, TIME_SLOTS } from "@/lib/constants";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
 type Props = {
   onClose: () => void;
+  prefillDate?: Date;
+  prefillStartTime?: string;
 };
 
-export default function BookMeetingForm({ onClose }: Props) {
+export default function BookMeetingForm({
+  onClose,
+  prefillDate,
+  prefillStartTime,
+}: Props) {
   const { id: roomId } = useParams<{ id: string }>();
   const searchParams = useSearchParams();
+  const { triggerRefresh, refreshKey } = useMeetingsContext();
   const [room, setRoom] = useState<Room | null>(null);
+  const [domains, setDomains] = useState<Domain[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [guestInput, setGuestInput] = useState("");
 
   const defaultDate = useMemo(() => {
+    // Prioritize prefillDate from calendar
+    if (prefillDate && prefillDate >= startOfToday()) {
+      return prefillDate;
+    }
+
     const dateParam = searchParams.get("date");
     if (dateParam) {
       try {
@@ -103,13 +98,17 @@ export default function BookMeetingForm({ onClose }: Props) {
       } catch {}
     }
     return new Date();
-  }, [searchParams]);
+  }, [searchParams, prefillDate]);
 
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
-      const { room } = await getRoomById(roomId);
+      const [{ room }, { domains: fetchedDomains }] = await Promise.all([
+        getRoomById(roomId),
+        getAllDomains(),
+      ]);
       setRoom(room);
+      setDomains(fetchedDomains || []);
       setIsLoading(false);
     };
 
@@ -120,6 +119,7 @@ export default function BookMeetingForm({ onClose }: Props) {
     defaultValues: {
       ...bookMeetingFormDefaultValues,
       date: defaultDate,
+      startTime: prefillStartTime || "",
     },
     resolver: zodResolver(formSchema),
   });
@@ -128,6 +128,58 @@ export default function BookMeetingForm({ onClose }: Props) {
     control: form.control,
     name: "guests",
   });
+
+  const selectedDate = form.watch("date");
+  const selectedDuration = form.watch("duration");
+
+  // Fetch meetings for selected date (also refreshes when real-time updates occur)
+  useEffect(() => {
+    const fetchMeetings = async () => {
+      if (!selectedDate) return;
+
+      const { meetings: fetchedMeetings } = await getMeetingsByRoom(
+        roomId,
+        selectedDate.toISOString()
+      );
+      setMeetings(fetchedMeetings || []);
+    };
+
+    fetchMeetings();
+  }, [selectedDate, roomId, refreshKey]);
+
+  const availableTimeSlots = useMemo(() => {
+    if (!selectedDate) {
+      return TIME_SLOTS;
+    }
+
+    const now = new Date();
+    const isTodayDate = isToday(selectedDate);
+    const durationMinutes = selectedDuration ? Number(selectedDuration) : 15;
+
+    return TIME_SLOTS.filter((timeSlot) => {
+      // Parse the time slot into a Date object
+      const slotStartTime = parse(timeSlot, "HH:mm", selectedDate);
+
+      // Filter out past time slots for today
+      if (isTodayDate && isBefore(slotStartTime, now)) {
+        return false;
+      }
+
+      const slotEndTime = addMinutes(slotStartTime, durationMinutes);
+
+      const hasConflict = meetings.some((meeting) => {
+        return areIntervalsOverlapping(
+          { start: slotStartTime, end: slotEndTime },
+          {
+            start: new Date(meeting.start_time),
+            end: new Date(meeting.end_time),
+          }
+        );
+      });
+
+      return !hasConflict;
+    });
+  }, [selectedDate, meetings, selectedDuration]);
 
   const onSubmit = async (data: BookMeetingFormValues) => {
     if (!room) return;
@@ -164,6 +216,7 @@ export default function BookMeetingForm({ onClose }: Props) {
 
       if (!res.error) {
         form.reset();
+        triggerRefresh(); // Trigger real-time refresh across all components
         onClose();
         toast.success("Meeting booked successfully");
       } else {
@@ -215,7 +268,7 @@ export default function BookMeetingForm({ onClose }: Props) {
 
         {/* Email */}
 
-        <FieldGroup className="grid grid-cols-2 gap-4">
+        <FieldGroup className="grid md:grid-cols-2 gap-4">
           {/* Email Username */}
 
           <Controller
@@ -260,9 +313,9 @@ export default function BookMeetingForm({ onClose }: Props) {
                     </div>
                   </SelectTrigger>
                   <SelectContent>
-                    {EMAIL_DOMAINS.map((domain) => (
-                      <SelectItem key={domain.value} value={domain.value}>
-                        {domain.label}
+                    {domains.map((domain) => (
+                      <SelectItem key={domain.id} value={domain.name}>
+                        {domain.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -275,7 +328,7 @@ export default function BookMeetingForm({ onClose }: Props) {
           />
         </FieldGroup>
 
-        <FieldGroup className="grid grid-cols-2 gap-4">
+        <FieldGroup className="grid md:grid-cols-2 gap-4">
           {/* Date */}
 
           <Controller
@@ -332,12 +385,18 @@ export default function BookMeetingForm({ onClose }: Props) {
                   >
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {TIME_SLOTS.map((time) => (
-                      <SelectItem key={time} value={time}>
-                        {time}
+                  <SelectContent position="popper">
+                    {availableTimeSlots.length > 0 ? (
+                      availableTimeSlots.map((time) => (
+                        <SelectItem key={time} value={time}>
+                          {time}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-slots" disabled>
+                        No slots available
                       </SelectItem>
-                    ))}
+                    )}
                   </SelectContent>
                 </Select>
                 {fieldState.invalid && (

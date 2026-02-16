@@ -1,52 +1,28 @@
-import PageContainer from "@/components/page-container";
-import PageTitle from "@/components/page-title";
-import { getMeetingsByRoom } from "@/actions/meeting";
-import DateCycle from "@/components/date-cycle";
 import ActionButtons from "./components/action-buttons";
-import { getRoomById } from "@/actions/room";
-import MeetingCard from "../../components/meeting-card";
+import CalendarWrapper from "./components/calendar-wrapper";
+import { MeetingsProvider } from "@/components/providers/meetings-provider";
 
 type Props = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ date?: string }>;
 };
 
-async function RoomPage({ params, searchParams }: Props) {
-  const { id } = await params;
-  const { date } = await searchParams;
-  const { room: currentRoom } = await getRoomById(id);
-  const { meetings } = await getMeetingsByRoom(id, date);
+async function RoomPage({ params }: Props) {
+  await params;
 
   return (
-    <PageContainer>
-      <div className="space-y-4">
-        {/* title */}
-        <PageTitle title="Meeting Room" />
+    <MeetingsProvider>
+      <div>
+        <div className="container mx-auto py-10 px-6">
+          <div className="space-y-6">
+            {/* Action buttons */}
+            <ActionButtons />
 
-        {/* room name */}
-
-        <div className="flex items-center justify-center mb-10">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl text-primary font-bold mb-4">
-            {currentRoom?.name}
-          </h1>
-        </div>
-
-        {/* date cycle */}
-        <DateCycle />
-
-        {/* actions */}
-
-        <ActionButtons />
-
-        {/* list */}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {meetings?.map((meeting) => (
-            <MeetingCard key={meeting.id} meeting={meeting} />
-          ))}
+            {/* Calendar */}
+            <CalendarWrapper />
+          </div>
         </div>
       </div>
-    </PageContainer>
+    </MeetingsProvider>
   );
 }
 

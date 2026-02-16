@@ -9,4 +9,5 @@ export interface Event {
   guests?: string;
   room_id: string;
   building_id: string;
+  calendar_event_id?: string | null; // Microsoft Teams event ID for sync tracking
 }

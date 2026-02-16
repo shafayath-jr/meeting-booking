@@ -5,16 +5,7 @@ import { Meeting } from "@/types/meeting";
 import { Event } from "@/types/event";
 import { startOfDay, endOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
-
-export const getAllMeetings = async () => {
-  const supabase = await createClient();
-  const { data, error } = await supabase.from("booking").select();
-
-  return {
-    error: error?.message,
-    meetings: data,
-  };
-};
+import { syncBookingToTeams } from "./teams-sync";
 
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
@@ -77,29 +68,108 @@ export const getNextMeetingByRoom = async (roomId: string) => {
 
 export const bookMeeting = async (event: Event) => {
   const supabase = await createClient();
-  const { error } = await supabase.from("bookings").insert([event]);
 
-  if (!error) {
-    revalidatePath(`/rooms/${event.room_id}`);
+  // Generate UUID upfront to avoid race condition with webhook
+  const bookingId = crypto.randomUUID();
+
+  // Create Meeting object for Teams sync
+  const tempBooking: Meeting = {
+    ...event,
+    id: bookingId,
+  };
+
+  // Sync to Microsoft Teams calendar FIRST to get calendar_event_id
+  const { data: calendarEventId, error: syncError } =
+    await syncBookingToTeams(tempBooking, "create");
+
+  // Prepare booking data with calendar_event_id already set
+  const bookingData = {
+    id: bookingId,
+    ...event,
+    calendar_event_id: syncError ? null : calendarEventId,
+  };
+
+  // Upsert into Supabase with calendar_event_id already set
+  // Use upsert to handle race condition where webhook might insert first
+  const { error } = await supabase
+    .from("bookings")
+    .upsert([bookingData], { onConflict: "calendar_event_id" })
+    .select()
+    .single();
+
+  if (error) {
+    return { error: error.message };
   }
 
-  return {
-    error: error?.message,
-  };
+  if (syncError) {
+    console.warn("Teams sync failed but booking was created:", syncError);
+  }
+
+  revalidatePath(`/rooms/${event.room_id}`);
+  return { error: null };
 };
 
 export const deleteMeeting = async (meetingId: string) => {
   const supabase = await createClient();
+
+  // Fetch booking first to get calendar_event_id for Teams sync
+  const { data: booking } = await supabase
+    .from("bookings")
+    .select()
+    .eq("id", meetingId)
+    .single();
+
+  console.log("Delete: Fetched booking:", booking);
+  console.log("Delete: calendar_event_id:", booking?.calendar_event_id);
+
+  // Sync deletion to Microsoft Teams BEFORE deleting from Supabase
+  if (booking?.calendar_event_id) {
+    console.log("Delete: Syncing to Teams...");
+    const { error: syncError } = await syncBookingToTeams(booking, "delete");
+    if (syncError) {
+      console.warn(
+        "Teams sync failed but continuing with delete:",
+        syncError
+      );
+      // Don't fail the delete if Teams sync fails
+    } else {
+      console.log("Delete: Teams sync successful");
+    }
+  } else {
+    console.log("Delete: No calendar_event_id, skipping Teams sync");
+  }
+
+  // Delete from Supabase
   const { error } = await supabase
     .from("bookings")
     .delete()
     .eq("id", meetingId);
 
-  if (!error) {
-    revalidatePath("/");
+  if (error) {
+    return { error: error.message };
   }
+
+  revalidatePath("/");
+  return { error: null };
+};
+
+export const getMeetingsByRoomForDateRange = async (
+  roomId: string,
+  startDate: string,
+  endDate: string
+) => {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*")
+    .eq("room_id", roomId)
+    .gte("start_time", startDate)
+    .lte("start_time", endDate)
+    .order("start_time", { ascending: true });
 
   return {
     error: error?.message,
+    meetings: data as Meeting[],
   };
 };

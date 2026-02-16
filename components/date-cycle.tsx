@@ -1,20 +1,28 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
-import { format, isAfter, startOfDay, addDays, subDays } from "date-fns";
+import {
+  format,
+  isAfter,
+  startOfDay,
+  addDays,
+  subDays,
+  parseISO,
+} from "date-fns";
 
-export default function DateCycle() {
+type Props = {
+  selectedDate: string; // Format: "yyyy-MM-dd"
+};
+
+export default function DateCycle({ selectedDate }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const getTodayDate = () => startOfDay(new Date());
-
-  const [selectedDate, setSelectedDate] = useState<Date>(getTodayDate);
+  const currentDate = parseISO(selectedDate);
 
   const updateURL = (date: Date) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -23,23 +31,21 @@ export default function DateCycle() {
   };
 
   const handlePreviousDate = () => {
-    const newDate = subDays(selectedDate, 1);
-    const today = getTodayDate();
+    const newDate = subDays(currentDate, 1);
+    const today = startOfDay(new Date());
 
     if (newDate >= today) {
-      setSelectedDate(newDate);
       updateURL(newDate);
     }
   };
 
   const handleNextDate = () => {
-    const newDate = addDays(selectedDate, 1);
-    setSelectedDate(newDate);
+    const newDate = addDays(currentDate, 1);
     updateURL(newDate);
   };
 
   const isPreviousDisabled = () => {
-    return !isAfter(selectedDate, startOfDay(new Date()));
+    return !isAfter(currentDate, startOfDay(new Date()));
   };
 
   return (
@@ -48,7 +54,7 @@ export default function DateCycle() {
         {/* date display */}
 
         <p className="text-center text-lg md:text-xl lg:text-3xl font-semibold">
-          {selectedDate.toLocaleDateString("en-GB", {
+          {currentDate.toLocaleDateString("en-GB", {
             weekday: "short",
             month: "short",
             day: "2-digit",
