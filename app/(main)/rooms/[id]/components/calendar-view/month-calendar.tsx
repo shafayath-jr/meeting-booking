@@ -52,6 +52,7 @@ export default function MonthCalendar({
       selected={selectedDate || undefined}
       onSelect={(date) => date && onDaySelect(date)}
       showOutsideDays={true}
+      disabled={{ before: startOfToday() }}
       className={cn("group/calendar [--cell-size:--spacing(10)]", className)}
       classNames={{
         root: cn("w-full", defaultClassNames.root),
