@@ -140,7 +140,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
               <FieldLegend variant="label">Duration</FieldLegend>
 
               {availability.isOngoingMeeting && (
-                <p className="text-destructive mb-2 text-sm">
+                <p className="mb-2 text-sm text-destructive">
                   There is an ongoing meeting. Please wait until it ends.
                 </p>
               )}

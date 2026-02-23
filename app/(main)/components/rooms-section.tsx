@@ -69,19 +69,19 @@ export default function RoomsSection({ rooms }: Props) {
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight">Available Rooms</h2>
-            <p className="text-muted-foreground text-sm">No rooms available</p>
+            <p className="text-sm text-muted-foreground">No rooms available</p>
           </div>
         </div>
 
         {/* Empty State */}
         <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-gradient-to-br from-white/60 via-white/40 to-white/20 p-16 text-center backdrop-blur-xl dark:border-white/10 dark:from-white/5 dark:via-white/2 dark:to-transparent">
-          <div className="from-muted/20 pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] via-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-muted/20 via-transparent to-transparent" />
           <div className="relative">
-            <div className="from-muted/30 to-muted/10 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br">
-              <DoorOpen className="text-muted-foreground/40 h-10 w-10" />
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-muted/30 to-muted/10">
+              <DoorOpen className="h-10 w-10 text-muted-foreground/40" />
             </div>
             <h3 className="mb-2 text-xl font-semibold">No rooms available</h3>
-            <p className="text-muted-foreground mx-auto max-w-md">
+            <p className="mx-auto max-w-md text-muted-foreground">
               There are no meeting rooms configured for this building. Please select
               another building or contact your administrator.
             </p>
@@ -101,7 +101,7 @@ export default function RoomsSection({ rooms }: Props) {
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight">Available Rooms</h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               {rooms.length} room{rooms.length !== 1 ? "s" : ""} ready for booking
             </p>
           </div>
@@ -118,8 +118,8 @@ export default function RoomsSection({ rooms }: Props) {
                 className={cn(
                   "rounded-full transition-all duration-300",
                   index === activeIndex
-                    ? "bg-primary h-2 w-6"
-                    : "bg-muted-foreground/30 hover:bg-muted-foreground/50 h-2 w-2"
+                    ? "h-2 w-6 bg-primary"
+                    : "h-2 w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
                 )}
                 aria-label={`Go to room ${index + 1}`}
               />
@@ -180,7 +180,7 @@ export default function RoomsSection({ rooms }: Props) {
             <div
               key={room.id}
               className={cn(
-                "flex-shrink-0 snap-start transition-all duration-500",
+                "shrink-0 snap-start transition-all duration-500",
                 index === activeIndex
                   ? "scale-100 opacity-100"
                   : "scale-[0.97] opacity-80"
@@ -195,13 +195,13 @@ export default function RoomsSection({ rooms }: Props) {
         {/* Edge fade gradients */}
         <div
           className={cn(
-            "from-background pointer-events-none absolute top-0 bottom-4 left-0 w-20 bg-gradient-to-r to-transparent transition-opacity duration-300",
+            "pointer-events-none absolute top-0 bottom-4 left-0 w-20 bg-gradient-to-r from-background to-transparent transition-opacity duration-300",
             canScrollLeft ? "opacity-100" : "opacity-0"
           )}
         />
         <div
           className={cn(
-            "from-background pointer-events-none absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l to-transparent transition-opacity duration-300",
+            "pointer-events-none absolute top-0 right-0 bottom-4 w-20 bg-gradient-to-l from-background to-transparent transition-opacity duration-300",
             canScrollRight ? "opacity-100" : "opacity-0"
           )}
         />
@@ -216,8 +216,8 @@ export default function RoomsSection({ rooms }: Props) {
             className={cn(
               "rounded-full transition-all duration-300",
               index === activeIndex
-                ? "bg-primary h-2 w-6"
-                : "bg-muted-foreground/30 hover:bg-muted-foreground/50 h-2 w-2"
+                ? "h-2 w-6 bg-primary"
+                : "h-2 w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
             )}
             aria-label={`Go to room ${index + 1}`}
           />

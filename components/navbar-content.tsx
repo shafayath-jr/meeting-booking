@@ -72,7 +72,7 @@ export default function NavbarContent() {
               {isLoading ? (
                 <div className="h-6 w-32 animate-pulse rounded bg-white/30 dark:bg-white/10" />
               ) : roomName ? (
-                <h1 className="text-primary text-xl font-bold md:text-2xl lg:text-3xl">
+                <h1 className="text-xl font-bold text-primary md:text-2xl lg:text-3xl">
                   {roomName}
                 </h1>
               ) : null}

@@ -470,7 +470,7 @@ export default function BookMeetingForm({
                       variant="ghost"
                       size="icon-sm"
                       onClick={() => remove(index)}
-                      className="hover:bg-secondary-foreground/20 h-4 w-4 rounded-sm"
+                      className="h-4 w-4 rounded-sm hover:bg-secondary-foreground/20"
                       aria-label={`Remove ${field.value}`}
                     >
                       <X className="h-3 w-3" />

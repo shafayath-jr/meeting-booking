@@ -32,7 +32,7 @@ function DialogOverlay({
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50 backdrop-blur-md",
+        "fixed inset-0 z-50 bg-black/50 backdrop-blur-md data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
         className
       )}
       {...props}
@@ -55,7 +55,7 @@ function DialogContent({
         data-slot="dialog-content"
         className={cn(
           "fixed top-1/2 left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 -translate-y-1/2 gap-4 p-6 duration-200 outline-none sm:max-w-lg",
-          "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95",
+          "data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
           // Glassmorphism styling
           "rounded-2xl border border-white/30 dark:border-white/10",
           "bg-white/70 dark:bg-zinc-900/80",
@@ -74,7 +74,7 @@ function DialogContent({
               "absolute top-4 right-4 rounded-full p-2 transition-all",
               "opacity-70 hover:opacity-100",
               "bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10",
-              "focus:ring-primary/50 focus:ring-2 focus:outline-none",
+              "focus:ring-2 focus:ring-primary/50 focus:outline-none",
               "disabled:pointer-events-none",
               "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
             )}
@@ -128,7 +128,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );

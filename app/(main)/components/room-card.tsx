@@ -86,11 +86,11 @@ export default function RoomCard({ room, index = 0 }: Props) {
             asChild
             className={cn(
               "h-12 w-full rounded-xl font-semibold",
-              "from-primary to-primary/90 bg-gradient-to-r",
+              "bg-gradient-to-r from-primary to-primary/90",
               "hover:from-primary/90 hover:to-primary/80",
-              "shadow-primary/20 shadow-lg",
+              "shadow-lg shadow-primary/20",
               "transition-all duration-300",
-              "group-hover:shadow-primary/30 group-hover:shadow-xl"
+              "group-hover:shadow-xl group-hover:shadow-primary/30"
             )}
           >
             <Link

@@ -27,7 +27,7 @@ export default function DayScheduleView({
     return (
       <div
         className={cn(
-          "text-muted-foreground flex h-full flex-col items-center justify-center gap-4 p-8",
+          "flex h-full flex-col items-center justify-center gap-4 p-8 text-muted-foreground",
           className
         )}
       >
@@ -39,11 +39,11 @@ export default function DayScheduleView({
   return (
     <div className={cn("flex h-full flex-col", className)}>
       {/* Header */}
-      <div className="mb-4 flex-shrink-0">
+      <div className="mb-4 shrink-0">
         <h2 className="text-lg font-semibold">
           {format(selectedDate, "EEEE, MMMM d, yyyy")}
         </h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {meetings.length} meeting{meetings.length !== 1 ? "s" : ""} scheduled
         </p>
       </div>

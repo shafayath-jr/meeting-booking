@@ -41,7 +41,7 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
       {/* Main Card */}
       <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-gradient-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent dark:shadow-black/20">
         {/* Decorative gradient */}
-        <div className="from-primary/5 pointer-events-none absolute inset-0 bg-gradient-to-r via-transparent to-violet-500/5" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-violet-500/5" />
 
         <div className="relative p-6 md:p-8">
           <div className="flex items-center justify-between gap-4">
@@ -74,8 +74,8 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
                       className={cn(
                         "h-1.5 rounded-full transition-all duration-300",
                         idx === currentIndex
-                          ? "bg-primary w-6"
-                          : "bg-muted-foreground/30 w-1.5"
+                          ? "w-6 bg-primary"
+                          : "w-1.5 bg-muted-foreground/30"
                       )}
                     />
                   ))}
@@ -83,18 +83,18 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               )}
 
               {/* Location badge */}
-              <div className="bg-primary/10 dark:bg-primary/20 text-primary mb-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium">
+              <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20">
                 <MapPin className="h-3 w-3" />
                 <span>Current Location</span>
               </div>
 
               {/* Building name */}
-              <h2 className="from-foreground to-foreground/70 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-4xl lg:text-5xl">
+              <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-4xl lg:text-5xl">
                 {currentBuilding?.name || "No Building"}
               </h2>
 
               {/* Building count */}
-              <p className="text-muted-foreground mt-2 text-sm">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {currentIndex + 1} of {buildings.length} building
                 {buildings.length !== 1 ? "s" : ""}
               </p>

@@ -173,14 +173,14 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
     return (
       <div
         className={cn(
-          "min-w-[100px] flex-shrink-0 rounded-lg px-3 py-2 transition-all",
+          "min-w-[100px] shrink-0 rounded-lg px-3 py-2 transition-all",
           isSoon
             ? "bg-destructive/10 dark:bg-destructive/20"
             : "bg-primary/10 dark:bg-primary/20"
         )}
       >
         <div className="text-center">
-          <div className="text-muted-foreground mb-0.5 text-[9px] font-medium tracking-wider uppercase">
+          <div className="mb-0.5 text-[9px] font-medium tracking-wider text-muted-foreground uppercase">
             {isSoon ? "Starting in" : "Starts in"}
           </div>
           <div
@@ -261,7 +261,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
         onClick={() => onMeetingClick?.(meeting)}
         className={cn(
           "relative cursor-pointer overflow-hidden rounded-xl transition-all duration-300",
-          "bg-gradient-to-br from-emerald-500/20 via-emerald-500/10 to-teal-500/20",
+          "bg-linear-to-br from-emerald-500/20 via-emerald-500/10 to-teal-500/20",
           "dark:from-emerald-500/30 dark:via-emerald-500/15 dark:to-teal-500/30",
           "border-2 border-emerald-500/50 dark:border-emerald-400/50",
           "shadow-lg shadow-emerald-500/20 dark:shadow-emerald-500/10",
@@ -274,7 +274,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
         <div className="animate-pulse-slow absolute inset-0 opacity-30">
           <div
             className={cn(
-              "absolute inset-0 bg-gradient-to-r",
+              "absolute inset-0 bg-linear-to-r",
               isEndingSoon
                 ? "from-amber-400/40 via-transparent to-amber-400/40"
                 : "from-emerald-400/40 via-transparent to-emerald-400/40"
@@ -288,8 +288,8 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
             className={cn(
               "h-full transition-all duration-1000 ease-linear",
               isEndingSoon
-                ? "bg-gradient-to-r from-amber-500 to-orange-500"
-                : "bg-gradient-to-r from-emerald-500 to-teal-500"
+                ? "bg-linear-to-r from-amber-500 to-orange-500"
+                : "bg-linear-to-r from-emerald-500 to-teal-500"
             )}
             style={{ width: `${progress}%` }}
           />
@@ -298,7 +298,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
         <div className="relative p-4">
           <div className="flex items-start gap-4">
             {/* Live indicator */}
-            <div className="mt-1 flex-shrink-0">
+            <div className="mt-1 shrink-0">
               <div className="relative">
                 <div
                   className={cn(
@@ -341,14 +341,14 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
                 )}
               </div>
               <h4 className="mb-1 truncate text-base font-bold">{meeting.title}</h4>
-              <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
                 <span>
                   {format(new Date(meeting.start_time), "h:mm a")} -{" "}
                   {format(new Date(meeting.end_time), "h:mm a")}
                 </span>
               </div>
-              <p className="text-muted-foreground/80 mt-0.5 text-xs">
+              <p className="mt-0.5 text-xs text-muted-foreground/80">
                 {meeting.booked_by}
               </p>
             </div>
@@ -356,7 +356,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
             {/* Remaining time countdown */}
             <div
               className={cn(
-                "min-w-[120px] flex-shrink-0 rounded-lg px-4 py-3",
+                "min-w-[120px] shrink-0 rounded-lg px-4 py-3",
                 "bg-white/60 backdrop-blur-sm dark:bg-black/30",
                 "border",
                 isEndingSoon ? "border-amber-500/40" : "border-emerald-500/40"
@@ -428,9 +428,9 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
 
   return (
     <div className={cn("flex h-full flex-col", className)}>
-      <div className="mb-4 flex-shrink-0">
+      <div className="mb-4 shrink-0">
         <h2 className="text-lg font-semibold">Upcoming Meetings</h2>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {ongoingMeeting ? "1 meeting in progress • " : ""}
           {meetings.length} upcoming meeting{meetings.length !== 1 ? "s" : ""}
         </p>
@@ -441,22 +441,22 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
         {ongoingMeeting && (
           <div className="mb-6">
             <div className="mb-3 flex items-center gap-2">
-              <div className="h-px flex-1 bg-gradient-to-r from-emerald-500/60 to-transparent" />
+              <div className="h-px flex-1 bg-linear-to-r from-emerald-500/60 to-transparent" />
               <h3 className="px-2 text-xs font-semibold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
                 Now
               </h3>
-              <div className="h-px flex-1 bg-gradient-to-l from-emerald-500/60 to-transparent" />
+              <div className="h-px flex-1 bg-linear-to-l from-emerald-500/60 to-transparent" />
             </div>
             <OngoingMeetingIndicator meeting={ongoingMeeting} />
           </div>
         )}
 
         {meetings.length === 0 && !ongoingMeeting ? (
-          <div className="text-muted-foreground py-8 text-center">
+          <div className="py-8 text-center text-muted-foreground">
             <p>No upcoming meetings</p>
           </div>
         ) : meetings.length === 0 ? (
-          <div className="text-muted-foreground py-4 text-center">
+          <div className="py-4 text-center text-muted-foreground">
             <p className="text-sm">No more meetings scheduled</p>
           </div>
         ) : (
@@ -468,11 +468,11 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
               return (
                 <div key={dateKey} className="space-y-3">
                   <div className="flex items-center gap-2 pt-1">
-                    <div className="from-border/60 h-px flex-1 bg-gradient-to-r to-transparent" />
-                    <h3 className="text-muted-foreground px-2 text-xs font-medium tracking-wider uppercase">
+                    <div className="h-px flex-1 bg-linear-to-r from-border/60 to-transparent" />
+                    <h3 className="px-2 text-xs font-medium tracking-wider text-muted-foreground uppercase">
                       {isToday ? "Today" : format(date, "EEEE, MMMM d")}
                     </h3>
-                    <div className="from-border/60 h-px flex-1 bg-gradient-to-l to-transparent" />
+                    <div className="h-px flex-1 bg-linear-to-l from-border/60 to-transparent" />
                   </div>
                   <div className="space-y-3">
                     {dateMeetings.map((meeting) => {
@@ -492,7 +492,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
                             "hover:bg-white/70 dark:hover:bg-white/10",
                             onMeetingClick && "hover:border-primary/40",
                             isSoon &&
-                              "border-destructive/40 from-destructive/10 to-destructive/5 bg-gradient-to-br"
+                              "border-destructive/40 bg-linear-to-br from-destructive/10 to-destructive/5"
                           )}
                         >
                           <div className="flex items-center gap-3">
@@ -510,14 +510,14 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
                                   </Badge>
                                 )}
                               </div>
-                              <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
                                 <Clock className="h-3 w-3" />
                                 <span>
                                   {format(meetingStart, "h:mm a")} -{" "}
                                   {format(new Date(meeting.end_time), "h:mm a")}
                                 </span>
                               </div>
-                              <p className="text-muted-foreground/80 mt-0.5 text-xs">
+                              <p className="mt-0.5 text-xs text-muted-foreground/80">
                                 {meeting.booked_by}
                               </p>
                             </div>

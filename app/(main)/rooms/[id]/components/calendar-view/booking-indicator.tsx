@@ -22,15 +22,15 @@ export default function BookingIndicator({ count, className }: BookingIndicatorP
         Array.from({ length: count }).map((_, i) => (
           <span
             key={i}
-            className="bg-primary h-1.5 w-1.5 rounded-full"
+            className="h-1.5 w-1.5 rounded-full bg-primary"
             aria-hidden="true"
           />
         ))
       ) : (
         <>
-          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
-          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
-          <span className="bg-primary h-1.5 w-1.5 rounded-full" aria-hidden="true" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
         </>
       )}
     </div>

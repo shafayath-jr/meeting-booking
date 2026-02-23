@@ -6,7 +6,7 @@ export default function HomeLoading() {
     <div className="relative min-h-screen overflow-hidden">
       {/* Animated background elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="from-primary/20 via-primary/10 absolute -top-40 -right-40 h-96 w-96 animate-pulse rounded-full bg-gradient-to-br to-transparent blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-96 w-96 animate-pulse rounded-full bg-gradient-to-br from-primary/20 via-primary/10 to-transparent blur-3xl" />
         <div className="absolute top-1/3 -left-32 h-80 w-80 animate-pulse rounded-full bg-gradient-to-tr from-violet-500/15 via-fuchsia-500/10 to-transparent blur-3xl [animation-delay:1s]" />
         <div className="absolute right-1/4 bottom-20 h-72 w-72 animate-pulse rounded-full bg-gradient-to-tl from-cyan-500/15 via-blue-500/10 to-transparent blur-3xl [animation-delay:2s]" />
       </div>
@@ -18,8 +18,8 @@ export default function HomeLoading() {
           <div className="mx-auto max-w-5xl">
             {/* Section Header */}
             <div className="mb-6 flex items-center gap-3">
-              <div className="bg-primary/10 dark:bg-primary/20 rounded-xl p-2">
-                <Building2 className="text-primary h-5 w-5 animate-pulse" />
+              <div className="rounded-xl bg-primary/10 p-2 dark:bg-primary/20">
+                <Building2 className="h-5 w-5 animate-pulse text-primary" />
               </div>
               <div>
                 <Skeleton className="mb-1 h-5 w-32" />
@@ -88,7 +88,7 @@ export default function HomeLoading() {
               {/* Room Cards Skeleton */}
               <div className="scrollbar-hide -mx-4 flex gap-5 overflow-x-auto px-4 pb-4">
                 {[...Array(4)].map((_, index) => (
-                  <div key={index} className="flex-shrink-0" style={{ width: "320px" }}>
+                  <div key={index} className="shrink-0" style={{ width: "320px" }}>
                     <div className="h-full rounded-2xl border border-white/50 bg-white/70 p-6 shadow-lg shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
                       {/* Name skeleton */}
                       <Skeleton className="mb-3 h-7 w-3/4" />
