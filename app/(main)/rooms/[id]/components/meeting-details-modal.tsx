@@ -94,8 +94,13 @@ export default function MeetingDetailsModal({
 
           {meeting.guests && (
             <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground">Guests:</span>
-              <span className="font-medium">{meeting.guests}</span>
+              <span className="text-muted-foreground">Attendees:</span>
+              {meeting.guests.map((attendee, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <span className="font-medium">{attendee.name}</span>
+                  <span className="text-xs">({attendee.email})</span>
+                </div>
+              ))}
             </div>
           )}
         </div>

@@ -7,8 +7,13 @@ export interface Meeting {
   booked_by: string;
   email: string;
   duration: string;
-  guests?: string;
+  guests?: Attendee[];
   room_id: string;
   building_id: string;
   calendar_event_id?: string | null; // Microsoft Teams event ID for sync tracking
+}
+
+interface Attendee {
+  name: string;
+  email: string;
 }

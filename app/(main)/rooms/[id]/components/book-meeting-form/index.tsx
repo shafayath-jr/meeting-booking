@@ -46,7 +46,7 @@ import { Domain } from "@/types/domain";
 import { Meeting } from "@/types/meeting";
 import { toast } from "sonner";
 import { CalendarIcon, CirclePlus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, nameFromEmail } from "@/lib/utils";
 import {
   InputGroup,
   InputGroupAddon,
@@ -193,7 +193,10 @@ export default function BookMeetingForm({
 
       const email = `${data.emailUsername}@${data.emailDomain}`;
 
-      const guestEmails = data.guests?.map((g) => g.value) || [];
+      const guestObjects = (data.guests ?? []).map((g) => ({
+        email: g.value,
+        name: nameFromEmail(g.value),
+      }));
 
       const event = {
         title: data.name,
@@ -203,7 +206,7 @@ export default function BookMeetingForm({
         booked_by: data.name,
         email: email,
         duration: `${data.duration} Minutes`,
-        guests: JSON.stringify(guestEmails),
+        guests: JSON.stringify(guestObjects),
         room_id: room.id,
         building_id: room.place_id,
       };
