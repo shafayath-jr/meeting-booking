@@ -8,6 +8,7 @@ import { Trash2 } from "lucide-react";
 import { deleteMeeting } from "@/actions/meeting";
 import { toast } from "sonner";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
+import { useState } from "react";
 
 interface MeetingDetailsModalProps {
   isOpen: boolean;
@@ -23,20 +24,29 @@ export default function MeetingDetailsModal({
   onDelete,
 }: MeetingDetailsModalProps) {
   const { triggerRefresh } = useMeetingsContext();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   if (!meeting) return null;
 
   const handleDelete = async () => {
-    const res = await deleteMeeting(meeting.id);
+    setIsDeleting(true);
+    try {
+      const res = await deleteMeeting(meeting.id);
 
-    if (!res.error) {
-      toast.success("Meeting deleted");
-      triggerRefresh(); // Trigger real-time refresh across all components
-      onDelete?.();
-      onClose();
-    } else {
-      console.error(res.error);
+      if (!res.error) {
+        toast.success("Meeting deleted");
+        triggerRefresh(); // Trigger real-time refresh across all components
+        onDelete?.();
+        onClose();
+      } else {
+        console.error(res.error);
+        toast.error("Something went wrong!");
+      }
+    } catch (error) {
+      console.error(error);
       toast.error("Something went wrong!");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -106,7 +116,12 @@ export default function MeetingDetailsModal({
         </div>
 
         <div className="border-t pt-4">
-          <Button variant="destructive" onClick={handleDelete} className="w-full">
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            className="w-full"
+            disabled={isDeleting}
+          >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Meeting
           </Button>
