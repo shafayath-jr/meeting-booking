@@ -1,6 +1,14 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { format, parseISO, startOfToday } from "date-fns";
+import {
+  format,
+  parseISO,
+  startOfToday,
+  differenceInSeconds,
+  differenceInMinutes,
+  differenceInDays,
+} from "date-fns";
+import { Meeting } from "@/types/meeting";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -48,6 +56,48 @@ export function validateDateParam(dateParam?: string): string {
   }
 
   return today;
+}
+
+export function getCountdown(meetingStart: Date, currentTime: Date) {
+  const diffSeconds = differenceInSeconds(meetingStart, currentTime);
+  if (diffSeconds < 0) return null;
+
+  const days = differenceInDays(meetingStart, currentTime);
+  const hours = Math.floor((diffSeconds % 86400) / 3600);
+  const mins = Math.floor((diffSeconds % 3600) / 60);
+  const secs = diffSeconds % 60;
+
+  return {
+    days,
+    hours: String(hours).padStart(2, "0"),
+    minutes: String(mins).padStart(2, "0"),
+    seconds: String(secs).padStart(2, "0"),
+    totalMinutes: differenceInMinutes(meetingStart, currentTime),
+    totalSeconds: diffSeconds,
+  };
+}
+
+export function getRemainingTime(meetingEnd: Date, currentTime: Date) {
+  const diffSeconds = differenceInSeconds(meetingEnd, currentTime);
+  if (diffSeconds <= 0) return null;
+
+  const hours = Math.floor(diffSeconds / 3600);
+  const mins = Math.floor((diffSeconds % 3600) / 60);
+  const secs = diffSeconds % 60;
+
+  return {
+    hours: String(hours).padStart(2, "0"),
+    minutes: String(mins).padStart(2, "0"),
+    seconds: String(secs).padStart(2, "0"),
+    totalSeconds: diffSeconds,
+  };
+}
+
+export function getProgress(meeting: Meeting, currentTime: Date) {
+  const start = new Date(meeting.start_time).getTime();
+  const end = new Date(meeting.end_time).getTime();
+  const now = currentTime.getTime();
+  return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
 }
 
 export function nameFromEmail(email: string): string {
