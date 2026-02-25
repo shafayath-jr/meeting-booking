@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   ReactNode,
 } from "react";
 import { useParams } from "next/navigation";
@@ -29,6 +30,13 @@ export function MeetingsProvider({ children }: MeetingsProviderProps) {
   const triggerRefresh = useCallback(() => {
     setRefreshKey((prev) => prev + 1);
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      triggerRefresh();
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, [triggerRefresh]);
 
   // Subscribe to real-time changes for this room
   useRealtimeMeetings({

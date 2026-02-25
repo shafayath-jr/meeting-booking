@@ -7,6 +7,13 @@ import { startOfDay, endOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { syncBookingToTeams } from "./teams-sync";
 
+function parseMeeting(raw: Record<string, unknown>): Meeting {
+  return {
+    ...raw,
+    guests: typeof raw.guests === "string" ? JSON.parse(raw.guests) : (raw.guests ?? []),
+  } as Meeting;
+}
+
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
@@ -26,7 +33,7 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 
   return {
     error: error?.message,
-    meetings: data as Meeting[],
+    meetings: (data ?? []).map((m) => parseMeeting(m as Record<string, unknown>)),
   };
 };
 
@@ -47,7 +54,7 @@ export const getNextMeetingByRoom = async (roomId: string) => {
   if (data) {
     return {
       error: error?.message,
-      meeting: data,
+      meeting: parseMeeting(data as Record<string, unknown>),
     };
   }
 
@@ -62,7 +69,7 @@ export const getNextMeetingByRoom = async (roomId: string) => {
 
   return {
     error: nextError?.message,
-    meeting: nextData,
+    meeting: nextData ? parseMeeting(nextData as Record<string, unknown>) : null,
   };
 };
 
@@ -76,11 +83,15 @@ export const bookMeeting = async (event: Event) => {
   const tempBooking: Meeting = {
     ...event,
     id: bookingId,
+    guests:
+      typeof event.guests === "string" ? JSON.parse(event.guests) : (event.guests ?? []),
   };
 
   // Sync to Microsoft Teams calendar FIRST to get calendar_event_id
-  const { data: calendarEventId, error: syncError } =
-    await syncBookingToTeams(tempBooking, "create");
+  const { data: calendarEventId, error: syncError } = await syncBookingToTeams(
+    tempBooking,
+    "create"
+  );
 
   // Prepare booking data with calendar_event_id already set
   const bookingData = {
@@ -119,7 +130,7 @@ export const deleteMeeting = async (meetingId: string) => {
     .eq("id", meetingId)
     .single();
 
-  console.log("Delete: Fetched booking:", booking);
+  console.log("Delete: Fetched booking:", booking?.id);
   console.log("Delete: calendar_event_id:", booking?.calendar_event_id);
 
   // Sync deletion to Microsoft Teams BEFORE deleting from Supabase
@@ -127,10 +138,7 @@ export const deleteMeeting = async (meetingId: string) => {
     console.log("Delete: Syncing to Teams...");
     const { error: syncError } = await syncBookingToTeams(booking, "delete");
     if (syncError) {
-      console.warn(
-        "Teams sync failed but continuing with delete:",
-        syncError
-      );
+      console.warn("Teams sync failed but continuing with delete:", syncError);
       // Don't fail the delete if Teams sync fails
     } else {
       console.log("Delete: Teams sync successful");
@@ -140,10 +148,7 @@ export const deleteMeeting = async (meetingId: string) => {
   }
 
   // Delete from Supabase
-  const { error } = await supabase
-    .from("bookings")
-    .delete()
-    .eq("id", meetingId);
+  const { error } = await supabase.from("bookings").delete().eq("id", meetingId);
 
   if (error) {
     return { error: error.message };
@@ -170,6 +175,6 @@ export const getMeetingsByRoomForDateRange = async (
 
   return {
     error: error?.message,
-    meetings: data as Meeting[],
+    meetings: (data ?? []).map((m) => parseMeeting(m as Record<string, unknown>)),
   };
 };

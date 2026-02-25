@@ -40,9 +40,7 @@ export function useRealtimeMeetings({
     }
 
     // Create unique channel name
-    const channelName = roomId
-      ? `bookings-room-${roomId}`
-      : `bookings-all-${Date.now()}`;
+    const channelName = roomId ? `bookings-room-${roomId}` : `bookings-all-${Date.now()}`;
 
     // Build the channel subscription
     let channel = supabase.channel(channelName);
@@ -115,7 +113,9 @@ export function useRealtimeMeetings({
     // Subscribe to the channel
     channel.subscribe((status) => {
       if (status === "SUBSCRIBED") {
-        console.log(`Realtime subscription active for bookings${roomId ? ` (room: ${roomId})` : ""}`);
+        console.log(
+          `Realtime subscription active for bookings${roomId ? ` (room: ${roomId})` : ""}`
+        );
       }
     });
 

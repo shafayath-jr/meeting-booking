@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+.pnp
+.pnp.*
+
+# Build outputs
+.next
+out
+build
+dist
+
+# Misc
+.DS_Store
+*.pem
+
+# Lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment files
+.env*
+!.env.example
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Coverage
+coverage
+
+# Vercel
+.vercel
+
+# Generated files
+.claude

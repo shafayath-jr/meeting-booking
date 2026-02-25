@@ -15,13 +15,12 @@ export const formSchema = z.object({
 
 export type BookMeetingFormValues = z.infer<typeof formSchema>;
 
-export const bookMeetingFormDefaultValues: DefaultValues<BookMeetingFormValues> =
-  {
-    name: "",
-    date: undefined,
-    startTime: "",
-    duration: "",
-    emailUsername: "",
-    emailDomain: "",
-    guests: [],
-  };
+export const bookMeetingFormDefaultValues: DefaultValues<BookMeetingFormValues> = {
+  name: "",
+  date: undefined,
+  startTime: "",
+  duration: "",
+  emailUsername: "",
+  emailDomain: "",
+  guests: [],
+};

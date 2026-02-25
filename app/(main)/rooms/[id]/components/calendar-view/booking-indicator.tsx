@@ -3,48 +3,22 @@
 import { cn } from "@/lib/utils";
 
 interface BookingIndicatorProps {
-  count: number;
+  hasBookings: boolean;
   className?: string;
 }
 
 export default function BookingIndicator({
-  count,
+  hasBookings,
   className,
 }: BookingIndicatorProps) {
-  if (count === 0) return null;
+  if (!hasBookings) return null;
 
   return (
     <div
-      className={cn(
-        "absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-0.5",
-        className
-      )}
-      aria-label={`${count} booking${count > 1 ? "s" : ""}`}
+      className={cn("absolute bottom-1 left-1/2 -translate-x-1/2", className)}
+      aria-label="Has bookings"
     >
-      {count <= 3 ? (
-        Array.from({ length: count }).map((_, i) => (
-          <span
-            key={i}
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-        ))
-      ) : (
-        <>
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-          <span
-            className="w-1.5 h-1.5 rounded-full bg-primary"
-            aria-hidden="true"
-          />
-        </>
-      )}
+      <span className="block h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 ## Context
 
 The teams-daemon currently implements **one-way sync** from Microsoft Teams calendars to Supabase:
+
 - Webhook subscriptions receive calendar change notifications from Microsoft Graph
 - Events are fetched and upserted to the `bookings` table with `calendar_event_id` as the unique key
 - Room matching via fuzzy string matching on location names
@@ -12,6 +13,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 **The Solution:** Add reverse synchronization so bookings created/updated/deleted in the web app are reflected in the organizer's Microsoft Teams calendar.
 
 **User Requirements:**
+
 - Create events in the **organizer's calendar** (using the `email` field from booking)
 - Trigger sync via **HTTP endpoint** called by the web app after booking operations
 - Sync all operations: **INSERT, UPDATE, DELETE**
@@ -24,6 +26,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### Architecture: HTTP Endpoint + Server Action Pattern
 
 **Flow:**
+
 1. Web app creates/updates/deletes booking in Supabase (existing behavior)
 2. Web app calls daemon endpoint: `POST /api/sync-to-teams`
 3. Daemon validates request, acquires Graph API token
@@ -32,6 +35,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 6. Web app updates booking record with returned `calendar_event_id`
 
 **Benefits:**
+
 - Web app has full control over sync timing
 - Synchronous feedback for error handling
 - No polling or websocket overhead
@@ -44,11 +48,13 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### In teams-daemon:
 
 **1. `bin/webhook.js`** (modify)
+
 - Add new route: `POST /api/sync-to-teams`
 - Handle create, update, delete operations based on request payload
 - Return `calendar_event_id` for tracking
 
 **2. `bin/teams-sync.js`** (create new)
+
 - `createTeamsEvent(booking)` - POST to Graph API `/users/{email}/events`
 - `updateTeamsEvent(booking)` - PATCH to Graph API `/users/{email}/events/{eventId}`
 - `deleteTeamsEvent(booking)` - DELETE from Graph API
@@ -56,6 +62,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 - Error handling with retries
 
 **3. `bin/transform.js`** (create new)
+
 - `supabaseToGraphEvent(booking)` - Map booking fields to Graph event schema
 - `graphEventToSupabase(event)` - Reverse mapping (already partially in supabase.js)
 - Handle timezone conversions, guest list parsing, duration calculations
@@ -63,16 +70,19 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### In web app (PEN-MEETING-ROOM-BOOKING):
 
 **4. `actions/teams-sync.ts`** (create new)
+
 - Server action to call daemon endpoint
 - `syncBookingToTeams(booking, operation)` where operation = 'create' | 'update' | 'delete'
 - Error handling and retry logic
 
 **5. `actions/meeting.ts`** (modify)
+
 - Update `bookMeeting()` to call `syncBookingToTeams()` after successful insert
 - Add `updateMeeting()` function (currently missing) that syncs to Teams
 - Update `deleteMeeting()` to call `syncBookingToTeams(booking, 'delete')`
 
 **6. `.env.local`** (modify)
+
 - Add `TEAMS_DAEMON_URL=http://localhost:3000` (or production URL)
 - Add `TEAMS_DAEMON_SECRET` for request authentication
 
@@ -83,21 +93,23 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### Supabase Booking → Microsoft Graph Event
 
 **Supabase `bookings` table:**
+
 ```typescript
 {
-  id: string
-  title: string
-  start_time: string  // ISO datetime
-  end_time: string    // ISO datetime
-  booked_by: string
-  email: string       // Organizer email - THIS is the calendar owner
-  guests: string      // JSON array of guest objects
-  room_id: string
-  calendar_event_id: string | null  // Teams event ID for tracking
+  id: string;
+  title: string;
+  start_time: string; // ISO datetime
+  end_time: string; // ISO datetime
+  booked_by: string;
+  email: string; // Organizer email - THIS is the calendar owner
+  guests: string; // JSON array of guest objects
+  room_id: string;
+  calendar_event_id: string | null; // Teams event ID for tracking
 }
 ```
 
 **Microsoft Graph Event Schema:**
+
 ```typescript
 {
   subject: booking.title,
@@ -131,6 +143,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ```
 
 **Key Mapping Notes:**
+
 - `booking.email` → Graph API endpoint: `/users/${booking.email}/events`
 - Need to query `rooms` table to get room name for location field
 - Parse `guests` JSON string to attendees array
@@ -143,6 +156,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### Daemon Endpoint: `POST /api/sync-to-teams`
 
 **Request Body:**
+
 ```json
 {
   "operation": "create" | "update" | "delete",
@@ -162,6 +176,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ```
 
 **Response (Success):**
+
 ```json
 {
   "success": true,
@@ -171,6 +186,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ```
 
 **Response (Error):**
+
 ```json
 {
   "success": false,
@@ -220,6 +236,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ### Phase 2: Web App Integration (PEN-MEETING-ROOM-BOOKING)
 
 6. **Create `actions/teams-sync.ts`:**
+
    ```typescript
    "use server";
 
@@ -230,18 +247,15 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
      operation: "create" | "update" | "delete"
    ) => {
      try {
-       const response = await fetch(
-         `${process.env.TEAMS_DAEMON_URL}/api/sync-to-teams`,
-         {
-           method: "POST",
-           headers: { "Content-Type": "application/json" },
-           body: JSON.stringify({
-             operation,
-             booking,
-             secret: process.env.TEAMS_DAEMON_SECRET,
-           }),
-         }
-       );
+       const response = await fetch(`${process.env.TEAMS_DAEMON_URL}/api/sync-to-teams`, {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+           operation,
+           booking,
+           secret: process.env.TEAMS_DAEMON_SECRET,
+         }),
+       });
 
        const data = await response.json();
        if (!data.success) {
@@ -257,6 +271,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 
 7. **Modify `actions/meeting.ts`:**
    - Update `bookMeeting()`:
+
      ```typescript
      export const bookMeeting = async (event: Event) => {
        const supabase = await createClient();
@@ -269,8 +284,10 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
        if (error) return { error: error.message };
 
        // Sync to Teams
-       const { data: calendarEventId, error: syncError } =
-         await syncBookingToTeams(data, "create");
+       const { data: calendarEventId, error: syncError } = await syncBookingToTeams(
+         data,
+         "create"
+       );
 
        if (!syncError && calendarEventId) {
          // Update booking with calendar_event_id
@@ -286,11 +303,9 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
      ```
 
    - Create `updateMeeting()` (currently missing):
+
      ```typescript
-     export const updateMeeting = async (
-       meetingId: string,
-       updates: Partial<Event>
-     ) => {
+     export const updateMeeting = async (meetingId: string, updates: Partial<Event>) => {
        const supabase = await createClient();
 
        // Update in Supabase
@@ -314,6 +329,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
      ```
 
    - Update `deleteMeeting()`:
+
      ```typescript
      export const deleteMeeting = async (meetingId: string) => {
        const supabase = await createClient();
@@ -326,10 +342,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
          .single();
 
        // Delete from Supabase
-       const { error } = await supabase
-         .from("bookings")
-         .delete()
-         .eq("id", meetingId);
+       const { error } = await supabase.from("bookings").delete().eq("id", meetingId);
 
        if (error) return { error: error.message };
 
@@ -354,17 +367,20 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ## Error Handling Strategy
 
 ### Daemon Side:
+
 - **404 User Not Found**: Return error, web app shows toast warning
 - **401/403 Auth Issues**: Log error, return generic "sync failed" message
 - **Network Errors**: Implement retry with exponential backoff (3 attempts)
 - **Invalid Payload**: Validate required fields, return 400 with details
 
 ### Web App Side:
+
 - **Sync Failure**: Booking still succeeds in Supabase, show warning toast
 - **Partial Sync**: If create succeeds but calendar_event_id update fails, log warning
 - **Timeout**: Set 10-second timeout on daemon request to avoid blocking UI
 
 ### Bidirectional Conflict Handling:
+
 - **Scenario**: Event created in web app, synced to Teams, then user modifies in Teams
 - **Current Behavior**: Teams → Supabase webhook will upsert based on `calendar_event_id`
 - **Result**: Last write wins (Teams changes overwrite web app changes)
@@ -409,6 +425,7 @@ The teams-daemon currently implements **one-way sync** from Microsoft Teams cale
 ## Configuration Summary
 
 ### Daemon `.env`:
+
 ```bash
 # Existing
 TENANT_ID=...
@@ -425,6 +442,7 @@ SYNC_SECRET=generate-with-openssl-rand-hex-32
 ```
 
 ### Web App `.env.local`:
+
 ```bash
 # Existing Supabase config
 NEXT_PUBLIC_SUPABASE_URL=...

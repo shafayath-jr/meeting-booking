@@ -2,10 +2,7 @@
 
 import * as React from "react";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import {
-  DayPicker,
-  getDefaultClassNames,
-} from "react-day-picker";
+import { DayPicker, getDefaultClassNames } from "react-day-picker";
 import { format, isSameDay, startOfToday } from "date-fns";
 
 import { cn } from "@/lib/utils";
@@ -32,20 +29,13 @@ export default function MonthCalendar({
 }: MonthCalendarProps) {
   const defaultClassNames = getDefaultClassNames();
 
-  // Count meetings per day
-  const meetingsByDay = React.useMemo(() => {
-    const counts = new Map<string, number>();
-    meetings.forEach((meeting) => {
-      const dateKey = format(new Date(meeting.start_time), "yyyy-MM-dd");
-      counts.set(dateKey, (counts.get(dateKey) || 0) + 1);
-    });
-    return counts;
+  const daysWithMeetings = React.useMemo(() => {
+    return new Set(
+      meetings.map((meeting) => format(new Date(meeting.start_time), "yyyy-MM-dd"))
+    );
   }, [meetings]);
 
-  const getMeetingCount = (date: Date) => {
-    const dateKey = format(date, "yyyy-MM-dd");
-    return meetingsByDay.get(dateKey) || 0;
-  };
+  const hasMeetings = (date: Date) => daysWithMeetings.has(format(date, "yyyy-MM-dd"));
 
   return (
     <DayPicker
@@ -55,10 +45,8 @@ export default function MonthCalendar({
       selected={selectedDate || undefined}
       onSelect={(date) => date && onDaySelect(date)}
       showOutsideDays={true}
-      className={cn(
-        "group/calendar [--cell-size:--spacing(10)]",
-        className
-      )}
+      disabled={{ before: startOfToday() }}
+      className={cn("group/calendar [--cell-size:--spacing(10)]", className)}
       classNames={{
         root: cn("w-full", defaultClassNames.root),
         months: cn("flex flex-col", defaultClassNames.months),
@@ -96,18 +84,9 @@ export default function MonthCalendar({
           "relative w-full h-full p-0 text-center group/day aspect-square select-none",
           defaultClassNames.day
         ),
-        today: cn(
-          "bg-accent text-accent-foreground rounded-md",
-          defaultClassNames.today
-        ),
-        outside: cn(
-          "text-muted-foreground opacity-50",
-          defaultClassNames.outside
-        ),
-        disabled: cn(
-          "text-muted-foreground opacity-50",
-          defaultClassNames.disabled
-        ),
+        today: cn("bg-accent text-accent-foreground rounded-md", defaultClassNames.today),
+        outside: cn("text-muted-foreground opacity-50", defaultClassNames.outside),
+        disabled: cn("text-muted-foreground opacity-50", defaultClassNames.disabled),
         hidden: cn("invisible", defaultClassNames.hidden),
       }}
       components={{
@@ -123,16 +102,12 @@ export default function MonthCalendar({
         },
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === "left") {
-            return (
-              <ChevronLeftIcon className={cn("size-4", className)} {...props} />
-            );
+            return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
           }
-          return (
-            <ChevronRightIcon className={cn("size-4", className)} {...props} />
-          );
+          return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
         },
         DayButton: ({ day, modifiers, className, ...props }) => {
-          const meetingCount = getMeetingCount(day.date);
+          const hasDayMeetings = hasMeetings(day.date);
           const isSelected = selectedDate && isSameDay(day.date, selectedDate);
           const isToday = isSameDay(day.date, startOfToday());
 
@@ -154,7 +129,7 @@ export default function MonthCalendar({
             >
               <span>{day.date.getDate()}</span>
               <BookingIndicator
-                count={meetingCount}
+                hasBookings={hasDayMeetings}
                 className={cn(isSelected && "[&_span]:bg-primary-foreground")}
               />
             </Button>

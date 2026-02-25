@@ -5,11 +5,7 @@ import { Room } from "@/types/room";
 
 export const getRoomById = async (roomId: string) => {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("rooms")
-    .select()
-    .eq("id", roomId)
-    .single();
+  const { data, error } = await supabase.from("rooms").select().eq("id", roomId).single();
 
   return {
     error: error?.message,

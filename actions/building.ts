@@ -14,11 +14,7 @@ export const getAllBuildings = async () => {
 
 export const getBuildingById = async (id: string) => {
   const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("buildings")
-    .select()
-    .eq("id", id)
-    .single();
+  const { data, error } = await supabase.from("buildings").select().eq("id", id).single();
 
   return {
     error: error?.message,

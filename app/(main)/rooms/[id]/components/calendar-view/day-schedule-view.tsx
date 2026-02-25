@@ -27,7 +27,7 @@ export default function DayScheduleView({
     return (
       <div
         className={cn(
-          "flex flex-col items-center justify-center h-full text-muted-foreground gap-4 p-8",
+          "flex h-full flex-col items-center justify-center gap-4 p-8 text-muted-foreground",
           className
         )}
       >
@@ -37,20 +37,19 @@ export default function DayScheduleView({
   }
 
   return (
-    <div className={cn("flex flex-col h-full", className)}>
+    <div className={cn("flex h-full flex-col", className)}>
       {/* Header */}
-      <div className="flex-shrink-0 mb-4">
-        <h2 className="font-semibold text-lg">
+      <div className="mb-4 shrink-0">
+        <h2 className="text-lg font-semibold">
           {format(selectedDate, "EEEE, MMMM d, yyyy")}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {meetings.length} meeting{meetings.length !== 1 ? "s" : ""}{" "}
-          scheduled
+          {meetings.length} meeting{meetings.length !== 1 ? "s" : ""} scheduled
         </p>
       </div>
 
       {/* Time slots */}
-      <div className="flex-1 min-h-0 overflow-auto">
+      <div className="min-h-0 flex-1 overflow-auto">
         {isLoading ? (
           <DayScheduleSkeleton />
         ) : (
@@ -71,8 +70,8 @@ function DayScheduleSkeleton() {
     <div className="space-y-2">
       {Array.from({ length: 10 }).map((_, i) => (
         <div key={i} className="flex items-center gap-3">
-          <Skeleton className="w-16 h-4" />
-          <Skeleton className="flex-1 h-12" />
+          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-12 flex-1" />
         </div>
       ))}
     </div>

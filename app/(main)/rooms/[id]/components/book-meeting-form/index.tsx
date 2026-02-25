@@ -18,11 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -50,7 +46,7 @@ import { Domain } from "@/types/domain";
 import { Meeting } from "@/types/meeting";
 import { toast } from "sonner";
 import { CalendarIcon, CirclePlus, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, nameFromEmail } from "@/lib/utils";
 import {
   InputGroup,
   InputGroupAddon,
@@ -197,7 +193,10 @@ export default function BookMeetingForm({
 
       const email = `${data.emailUsername}@${data.emailDomain}`;
 
-      const guestEmails = data.guests?.map((g) => g.value) || [];
+      const guestObjects = (data.guests ?? []).map((g) => ({
+        email: g.value,
+        name: nameFromEmail(g.value),
+      }));
 
       const event = {
         title: data.name,
@@ -207,7 +206,7 @@ export default function BookMeetingForm({
         booked_by: data.name,
         email: email,
         duration: `${data.duration} Minutes`,
-        guests: JSON.stringify(guestEmails),
+        guests: JSON.stringify(guestObjects),
         room_id: room.id,
         building_id: room.place_id,
       };
@@ -258,9 +257,7 @@ export default function BookMeetingForm({
                   aria-invalid={fieldState.invalid}
                   placeholder=""
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -268,7 +265,7 @@ export default function BookMeetingForm({
 
         {/* Email */}
 
-        <FieldGroup className="grid md:grid-cols-2 gap-4">
+        <FieldGroup className="grid gap-4 md:grid-cols-2">
           {/* Email Username */}
 
           <Controller
@@ -286,9 +283,7 @@ export default function BookMeetingForm({
                   aria-invalid={fieldState.invalid}
                   placeholder="Username"
                 />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -303,10 +298,7 @@ export default function BookMeetingForm({
                   {/* <FieldLabel htmlFor={field.name}></FieldLabel> */}
                 </FieldContent>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <div className="flex items-center gap-2">
                       <span className="text-inherit">@</span>
                       <SelectValue placeholder="Select domain" />
@@ -320,15 +312,13 @@ export default function BookMeetingForm({
                     ))}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
         </FieldGroup>
 
-        <FieldGroup className="grid md:grid-cols-2 gap-4">
+        <FieldGroup className="grid gap-4 md:grid-cols-2">
           {/* Date */}
 
           <Controller
@@ -363,9 +353,7 @@ export default function BookMeetingForm({
                     />
                   </PopoverContent>
                 </Popover>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -379,10 +367,7 @@ export default function BookMeetingForm({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Start Time</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <SelectValue placeholder="Select time" />
                   </SelectTrigger>
                   <SelectContent position="popper">
@@ -399,9 +384,7 @@ export default function BookMeetingForm({
                     )}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -417,10 +400,7 @@ export default function BookMeetingForm({
               <Field data-invalid={fieldState.invalid}>
                 <FieldLabel htmlFor={field.name}>Duration</FieldLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger
-                    className="w-full"
-                    aria-invalid={fieldState.invalid}
-                  >
+                  <SelectTrigger className="w-full" aria-invalid={fieldState.invalid}>
                     <SelectValue placeholder="Select duration" />
                   </SelectTrigger>
                   <SelectContent>
@@ -431,9 +411,7 @@ export default function BookMeetingForm({
                     ))}
                   </SelectContent>
                 </Select>
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
+                {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
               </Field>
             )}
           />
@@ -485,11 +463,7 @@ export default function BookMeetingForm({
             {fields.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {fields.map((field, index) => (
-                  <Badge
-                    key={field.id}
-                    variant="secondary"
-                    className="gap-1.5 pr-1"
-                  >
+                  <Badge key={field.id} variant="secondary" className="gap-1.5 pr-1">
                     <span>{field.value}</span>
                     <Button
                       type="button"

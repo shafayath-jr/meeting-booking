@@ -26,11 +26,7 @@ interface CalendarModalProps {
   roomName?: string;
 }
 
-export default function CalendarModal({
-  isOpen,
-  onClose,
-  roomName,
-}: CalendarModalProps) {
+export default function CalendarModal({ isOpen, onClose, roomName }: CalendarModalProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [bookingSlot, setBookingSlot] = useState<BookingSlot | null>(null);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -52,7 +48,7 @@ export default function CalendarModal({
     return (
       <>
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-          <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogContent className="flex max-h-[90vh] max-w-5xl flex-col overflow-hidden">
             <DialogHeader>
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>{description}</DialogDescription>

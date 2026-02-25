@@ -8,6 +8,7 @@ import { Trash2 } from "lucide-react";
 import { deleteMeeting } from "@/actions/meeting";
 import { toast } from "sonner";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
+import { useState } from "react";
 
 interface MeetingDetailsModalProps {
   isOpen: boolean;
@@ -23,20 +24,29 @@ export default function MeetingDetailsModal({
   onDelete,
 }: MeetingDetailsModalProps) {
   const { triggerRefresh } = useMeetingsContext();
-  
+  const [isDeleting, setIsDeleting] = useState(false);
+
   if (!meeting) return null;
 
   const handleDelete = async () => {
-    const res = await deleteMeeting(meeting.id);
+    setIsDeleting(true);
+    try {
+      const res = await deleteMeeting(meeting.id);
 
-    if (!res.error) {
-      toast.success("Meeting deleted");
-      triggerRefresh(); // Trigger real-time refresh across all components
-      onDelete?.();
-      onClose();
-    } else {
-      console.error(res.error);
+      if (!res.error) {
+        toast.success("Meeting deleted");
+        triggerRefresh(); // Trigger real-time refresh across all components
+        onDelete?.();
+        onClose();
+      } else {
+        console.error(res.error);
+        toast.error("Something went wrong!");
+      }
+    } catch (error) {
+      console.error(error);
       toast.error("Something went wrong!");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -50,7 +60,7 @@ export default function MeetingDetailsModal({
     >
       <div className="space-y-4 py-4">
         <div>
-          <h3 className="font-semibold text-lg mb-2">{meeting.title}</h3>
+          <h3 className="mb-2 text-lg font-semibold">{meeting.title}</h3>
         </div>
 
         <div className="space-y-3 text-sm">
@@ -94,19 +104,25 @@ export default function MeetingDetailsModal({
 
           {meeting.guests && (
             <div className="flex flex-col gap-1">
-              <span className="text-muted-foreground">Guests:</span>
-              <span className="font-medium">{meeting.guests}</span>
+              <span className="text-muted-foreground">Attendees:</span>
+              {meeting.guests.map((attendee, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <span className="font-medium">{attendee.name}</span>
+                  <span className="text-xs">({attendee.email})</span>
+                </div>
+              ))}
             </div>
           )}
         </div>
 
-        <div className="pt-4 border-t">
+        <div className="border-t pt-4">
           <Button
             variant="destructive"
             onClick={handleDelete}
             className="w-full"
+            disabled={isDeleting}
           >
-            <Trash2 className="h-4 w-4 mr-2" />
+            <Trash2 className="mr-2 h-4 w-4" />
             Delete Meeting
           </Button>
         </div>

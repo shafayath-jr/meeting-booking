@@ -27,10 +27,7 @@ import { addMinutes } from "date-fns";
 import { bookMeeting, getNextMeetingByRoom } from "@/actions/meeting";
 import { useEffect, useState } from "react";
 import { Room } from "@/types/room";
-import {
-  calculateAvailableDurations,
-  MeetingAvailability,
-} from "@/lib/duration-helper";
+import { calculateAvailableDurations, MeetingAvailability } from "@/lib/duration-helper";
 import { toast } from "sonner";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 
@@ -143,7 +140,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
               <FieldLegend variant="label">Duration</FieldLegend>
 
               {availability.isOngoingMeeting && (
-                <p className="text-sm text-destructive mb-2">
+                <p className="mb-2 text-sm text-destructive">
                   There is an ongoing meeting. Please wait until it ends.
                 </p>
               )}
@@ -151,9 +148,9 @@ export default function QuickMeetingForm({ onClose }: Props) {
               {!availability.isOngoingMeeting &&
                 availability.availableMinutes !== Infinity &&
                 availability.availableMinutes < 15 && (
-                  <p className="text-sm text-yellow-600 mb-2">
-                    Only {availability.availableMinutes} minutes available until
-                    the next meeting.
+                  <p className="mb-2 text-sm text-yellow-600">
+                    Only {availability.availableMinutes} minutes available until the next
+                    meeting.
                   </p>
                 )}
 
@@ -171,14 +168,9 @@ export default function QuickMeetingForm({ onClose }: Props) {
                     <FieldLabel
                       key={index}
                       htmlFor={`duration-radiogroup-${index}`}
-                      className={
-                        isDisabled ? "opacity-50 cursor-not-allowed" : ""
-                      }
+                      className={isDisabled ? "cursor-not-allowed opacity-50" : ""}
                     >
-                      <Field
-                        orientation="horizontal"
-                        data-invalid={fieldState.invalid}
-                      >
+                      <Field orientation="horizontal" data-invalid={fieldState.invalid}>
                         <FieldContent>
                           <FieldTitle>{option.label}</FieldTitle>
                         </FieldContent>
@@ -203,8 +195,7 @@ export default function QuickMeetingForm({ onClose }: Props) {
           <Button
             type="submit"
             disabled={
-              availability.isOngoingMeeting ||
-              availability.enabledDurations.length === 0
+              availability.isOngoingMeeting || availability.enabledDurations.length === 0
             }
           >
             Submit

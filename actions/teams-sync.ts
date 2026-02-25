@@ -12,10 +12,7 @@ type SyncOperation = "create" | "update" | "delete";
  * @param operation - The type of operation (create, update, or delete)
  * @returns {Promise<{data?: string, error?: string}>} - Returns calendar_event_id on success
  */
-export const syncBookingToTeams = async (
-  booking: Meeting,
-  operation: SyncOperation
-) => {
+export const syncBookingToTeams = async (booking: Meeting, operation: SyncOperation) => {
   const daemonUrl = process.env.TEAMS_DAEMON_URL;
   const daemonSecret = process.env.TEAMS_DAEMON_SECRET;
 
@@ -44,10 +41,7 @@ export const syncBookingToTeams = async (
       const errorData = await response.json().catch(() => ({
         error: `HTTP ${response.status}: ${response.statusText}`,
       }));
-      console.error(
-        `Teams sync failed (${operation}):`,
-        errorData.error
-      );
+      console.error(`Teams sync failed (${operation}):`, errorData.error);
       return { error: errorData.error || "Failed to sync to Teams" };
     }
 
@@ -58,10 +52,7 @@ export const syncBookingToTeams = async (
       return { error: data.error || "Unknown error syncing to Teams" };
     }
 
-    console.log(
-      `Teams sync successful (${operation}):`,
-      data.calendar_event_id
-    );
+    console.log(`Teams sync successful (${operation}):`, data.calendar_event_id);
     return {
       data: data.calendar_event_id,
       error: null,
