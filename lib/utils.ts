@@ -100,6 +100,30 @@ export function getProgress(meeting: Meeting, currentTime: Date) {
   return Math.min(100, Math.max(0, ((now - start) / (end - start)) * 100));
 }
 
+/**
+ * Returns the next moment a meeting changes status:
+ * the earliest of any ongoing meeting's end time or any upcoming meeting's start time.
+ * Returns null if there are no relevant boundaries.
+ */
+export function getNextBoundary(meetings: Meeting[], now: Date): Date | null {
+  let earliest: Date | null = null;
+
+  for (const meeting of meetings) {
+    const start = new Date(meeting.start_time);
+    const end = new Date(meeting.end_time);
+
+    const isOngoing = start <= now && end > now;
+    const isUpcoming = start > now;
+
+    const candidate = isOngoing ? end : isUpcoming ? start : null;
+    if (candidate && (!earliest || candidate < earliest)) {
+      earliest = candidate;
+    }
+  }
+
+  return earliest;
+}
+
 export function nameFromEmail(email: string): string {
   const local = email.split("@")[0];
   return local

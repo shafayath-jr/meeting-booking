@@ -5,18 +5,18 @@ import { Clock, Radio } from "lucide-react";
 import { Meeting } from "@/types/meeting";
 import { Badge } from "@/components/ui/badge";
 import { cn, getRemainingTime, getProgress } from "@/lib/utils";
+import { useCurrentTime } from "@/hooks/use-current-time";
 
 interface OngoingMeetingIndicatorProps {
   meeting: Meeting;
-  currentTime: Date;
   onMeetingClick?: (meeting: Meeting) => void;
 }
 
 export default function OngoingMeetingIndicator({
   meeting,
-  currentTime,
   onMeetingClick,
 }: OngoingMeetingIndicatorProps) {
+  const currentTime = useCurrentTime();
   const remaining = getRemainingTime(new Date(meeting.end_time), currentTime);
   const progress = getProgress(meeting, currentTime);
   const isEndingSoon = remaining && remaining.totalSeconds < 300;

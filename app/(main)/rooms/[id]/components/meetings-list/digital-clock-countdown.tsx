@@ -1,16 +1,16 @@
 "use client";
 
 import { cn, getCountdown } from "@/lib/utils";
+import { useCurrentTime } from "@/hooks/use-current-time";
 
 interface DigitalClockCountdownProps {
   meetingStart: Date;
-  currentTime: Date;
 }
 
 export default function DigitalClockCountdown({
   meetingStart,
-  currentTime,
 }: DigitalClockCountdownProps) {
+  const currentTime = useCurrentTime();
   const countdown = getCountdown(meetingStart, currentTime);
   if (!countdown) return null;
 

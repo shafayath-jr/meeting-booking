@@ -39,9 +39,9 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
   return (
     <div className="relative">
       {/* Main Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-gradient-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent dark:shadow-black/20">
+      <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent dark:shadow-black/20">
         {/* Decorative gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-violet-500/5" />
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-violet-500/5" />
 
         <div className="relative p-6 md:p-8">
           <div className="flex items-center justify-between gap-4">
@@ -89,7 +89,7 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               </div>
 
               {/* Building name */}
-              <h2 className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-4xl lg:text-5xl">
+              <h2 className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-4xl lg:text-5xl">
                 {currentBuilding?.name || "No Building"}
               </h2>
 

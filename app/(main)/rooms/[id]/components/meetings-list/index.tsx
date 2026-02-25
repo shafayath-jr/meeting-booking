@@ -6,11 +6,9 @@ import { format, isAfter, isBefore, isSameDay, startOfToday } from "date-fns";
 import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoomForDateRange } from "@/actions/meeting";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn, getCountdown } from "@/lib/utils";
-import { Clock } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+import { cn, getNextBoundary } from "@/lib/utils";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
-import DigitalClockCountdown from "./digital-clock-countdown";
+import MeetingCard from "./meeting-card";
 import OngoingMeetingIndicator from "./ongoing-meeting-indicator";
 
 interface MeetingsListProps {
@@ -25,10 +23,14 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
   const [isLoading, setIsLoading] = useState(true);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  // Re-render only at meeting boundaries (start/end), not every second
   useEffect(() => {
-    const interval = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(interval);
-  }, []);
+    const nextBoundary = getNextBoundary(allFetchedMeetings, currentTime);
+    if (!nextBoundary) return;
+    const delay = nextBoundary.getTime() - Date.now();
+    const id = setTimeout(() => setCurrentTime(new Date()), delay + 50);
+    return () => clearTimeout(id);
+  }, [allFetchedMeetings, currentTime]);
 
   useEffect(() => {
     const fetchMeetings = async () => {
@@ -118,7 +120,6 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
             </div>
             <OngoingMeetingIndicator
               meeting={ongoingMeeting}
-              currentTime={currentTime}
               onMeetingClick={onMeetingClick}
             />
           </div>
@@ -148,62 +149,13 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
                     <div className="h-px flex-1 bg-linear-to-l from-border/60 to-transparent" />
                   </div>
                   <div className="space-y-3">
-                    {dateMeetings.map((meeting) => {
-                      const meetingStart = new Date(meeting.start_time);
-                      const countdown = getCountdown(meetingStart, currentTime);
-                      const isSoon = countdown ? countdown.totalMinutes < 60 : false;
-
-                      return (
-                        <div
-                          key={meeting.id}
-                          onClick={() => onMeetingClick?.(meeting)}
-                          className={cn(
-                            "cursor-pointer rounded-xl p-4 transition-all duration-300",
-                            "bg-white/50 backdrop-blur-sm dark:bg-white/5",
-                            "border border-white/60 dark:border-white/10",
-                            "shadow-sm hover:scale-[1.01] hover:shadow-lg",
-                            "hover:bg-white/70 dark:hover:bg-white/10",
-                            onMeetingClick && "hover:border-primary/40",
-                            isSoon &&
-                              "border-destructive/40 bg-linear-to-br from-destructive/10 to-destructive/5"
-                          )}
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="min-w-0 flex-1">
-                              <div className="mb-1.5 flex items-center gap-2">
-                                <h4 className="truncate text-sm font-semibold">
-                                  {meeting.title}
-                                </h4>
-                                {isSoon && (
-                                  <Badge
-                                    variant="destructive"
-                                    className="h-4 animate-pulse px-1.5 py-0 text-[10px]"
-                                  >
-                                    Soon
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                <Clock className="h-3 w-3" />
-                                <span>
-                                  {format(meetingStart, "h:mm a")} -{" "}
-                                  {format(new Date(meeting.end_time), "h:mm a")}
-                                </span>
-                              </div>
-                              <p className="mt-0.5 text-xs text-muted-foreground/80">
-                                {meeting.booked_by}
-                              </p>
-                            </div>
-                            {countdown && (
-                              <DigitalClockCountdown
-                                meetingStart={meetingStart}
-                                currentTime={currentTime}
-                              />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                    {dateMeetings.map((meeting) => (
+                      <MeetingCard
+                        key={meeting.id}
+                        meeting={meeting}
+                        onMeetingClick={onMeetingClick}
+                      />
+                    ))}
                   </div>
                 </div>
               );
