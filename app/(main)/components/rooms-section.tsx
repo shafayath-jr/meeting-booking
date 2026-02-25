@@ -4,11 +4,14 @@ import { Room } from "@/types/room";
 import RoomCard from "./room-card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, DoorOpen } from "lucide-react";
-import { useRef, useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-
-const CARD_WIDTH = 320;
-const CARD_GAP = 20;
+import {
+  type CarouselApi,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
 
 const NAV_BUTTON_CLASS = cn(
   "h-10 w-10 rounded-xl",
@@ -67,43 +70,34 @@ function DotIndicators({
 }
 
 export default function RoomsSection({ rooms }: Props) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(rooms.length > 1);
 
-  const updateScrollState = useCallback(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const { scrollLeft, scrollWidth, clientWidth } = container;
-    setCanScrollLeft(scrollLeft > 10);
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10);
-    setActiveIndex(
-      Math.min(Math.round(scrollLeft / (CARD_WIDTH + CARD_GAP)), rooms.length - 1)
-    );
-  }, [rooms.length]);
-
   useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    container.addEventListener("scroll", updateScrollState);
-    updateScrollState();
-    return () => container.removeEventListener("scroll", updateScrollState);
-  }, [updateScrollState]);
+    if (!api) return;
+    const update = () => {
+      setActiveIndex(api.selectedScrollSnap());
+      setCanScrollLeft(api.canScrollPrev());
+      setCanScrollRight(api.canScrollNext());
+    };
+    update();
+    api.on("select", update);
+    api.on("reInit", update);
+    return () => {
+      api.off("select", update);
+      api.off("reInit", update);
+    };
+  }, [api]);
 
-  const scrollToIndex = (index: number) => {
-    scrollContainerRef.current?.scrollTo({
-      left: index * (CARD_WIDTH + CARD_GAP),
-      behavior: "smooth",
-    });
-  };
-
+  const scrollToIndex = (index: number) => api?.scrollTo(index);
   const scroll = (direction: "left" | "right") => {
-    const newIndex =
-      direction === "left"
-        ? Math.max(0, activeIndex - 1)
-        : Math.min(rooms.length - 1, activeIndex + 1);
-    scrollToIndex(newIndex);
+    if (direction === "left") {
+      api?.scrollPrev();
+    } else {
+      api?.scrollNext();
+    }
   };
 
   if (rooms.length === 0) {
@@ -169,28 +163,22 @@ export default function RoomsSection({ rooms }: Props) {
         </div>
       </div>
 
-      <div className="relative">
-        <div
-          ref={scrollContainerRef}
-          className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth px-4 pb-4"
-          style={{ scrollPaddingLeft: "16px" }}
-        >
+      <Carousel
+        setApi={setApi}
+        opts={{ align: "start", dragFree: false }}
+        className="-mx-4"
+      >
+        <CarouselContent className="px-4 pb-4">
           {rooms.map((room, index) => (
-            <div
+            <CarouselItem
               key={room.id}
-              className={cn(
-                "shrink-0 snap-start transition-all duration-500",
-                index === activeIndex
-                  ? "scale-100 opacity-100"
-                  : "scale-[0.97] opacity-80"
-              )}
-              style={{ width: `${CARD_WIDTH}px` }}
+              className={cn("basis-xs transition-all duration-500")}
             >
               <RoomCard room={room} index={index} />
-            </div>
+            </CarouselItem>
           ))}
-        </div>
-      </div>
+        </CarouselContent>
+      </Carousel>
 
       <div className="mt-4 flex items-center justify-center gap-1.5 sm:hidden">
         <DotIndicators

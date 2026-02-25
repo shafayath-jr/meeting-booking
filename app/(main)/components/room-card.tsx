@@ -21,9 +21,20 @@ const gradients = [
   "from-indigo-500/20 via-purple-500/10 to-violet-500/20",
 ];
 
+// Accent versions (higher opacity) — must be static for Tailwind to include them
+const accentGradients = [
+  "from-violet-500/60 via-fuchsia-500/40 to-pink-500/60",
+  "from-cyan-500/60 via-blue-500/40 to-indigo-500/60",
+  "from-emerald-500/60 via-teal-500/40 to-cyan-500/60",
+  "from-orange-500/60 via-amber-500/40 to-yellow-500/60",
+  "from-rose-500/60 via-pink-500/40 to-fuchsia-500/60",
+  "from-indigo-500/60 via-purple-500/40 to-violet-500/60",
+];
+
 export default function RoomCard({ room, index = 0 }: Props) {
   const gradientIndex = index % gradients.length;
   const gradient = gradients[gradientIndex];
+  const accentGradient = accentGradients[gradientIndex];
 
   return (
     <div className="group relative h-full">
@@ -44,14 +55,14 @@ export default function RoomCard({ room, index = 0 }: Props) {
           "shadow-lg shadow-black/5 dark:shadow-black/20",
           "transition-all duration-300",
           "group-hover:border-white/80 dark:group-hover:border-white/20",
-          "group-hover:scale-[1.02] group-hover:shadow-xl"
+          "group-hover:shadow-xl"
         )}
       >
         {/* Top gradient accent */}
         <div
           className={cn(
             "absolute top-0 right-0 left-0 h-1 bg-linear-to-r",
-            gradient.replace(/\/20/g, "/60").replace(/\/10/g, "/40")
+            accentGradient
           )}
         />
 
