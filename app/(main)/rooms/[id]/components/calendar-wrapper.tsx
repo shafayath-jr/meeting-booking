@@ -24,6 +24,7 @@ export default function CalendarWrapper() {
       <div className="mx-auto h-[80vh] max-w-7xl overflow-hidden md:h-[60vh]">
         <CalendarView onSlotSelect={handleSlotSelect} />
       </div>
+
       <BookMeetingModal
         isOpen={isBookingModalOpen}
         onClose={handleBookingModalClose}

@@ -30,7 +30,7 @@ export default function ActionButtons() {
           <Button
             onClick={quickMeetingModal.handleOpen}
             size="lg"
-            className="glass-shadow w-full gap-2 bg-gradient-to-r from-primary to-primary/80 transition-all duration-300 hover:scale-[1.02] hover:from-primary/90 hover:to-primary/70 active:scale-[0.98] md:w-auto"
+            className="glass-shadow w-full gap-2 bg-linear-to-r from-primary to-primary/80 transition-all duration-300 hover:scale-[1.02] hover:from-primary/90 hover:to-primary/70 active:scale-[0.98] md:w-auto"
           >
             <Zap className="h-4 w-4" />
             Quick meeting
@@ -39,7 +39,7 @@ export default function ActionButtons() {
         <Button
           onClick={bookMeetingModal.handleOpen}
           size="lg"
-          className="glass-shadow w-full gap-2 bg-gradient-to-r from-primary to-primary/80 transition-all duration-300 hover:scale-[1.02] hover:from-primary/90 hover:to-primary/70 active:scale-[0.98] md:w-auto"
+          className="glass-shadow w-full gap-2 bg-linear-to-r from-primary to-primary/80 transition-all duration-300 hover:scale-[1.02] hover:from-primary/90 hover:to-primary/70 active:scale-[0.98] md:w-auto"
         >
           <CalendarPlus className="h-4 w-4" />
           Book a meeting

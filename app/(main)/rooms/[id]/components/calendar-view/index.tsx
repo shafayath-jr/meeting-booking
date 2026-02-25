@@ -8,8 +8,8 @@ import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoomForDateRange, getMeetingsByRoom } from "@/actions/meeting";
 import MonthCalendar from "./month-calendar";
 import DayScheduleView from "./day-schedule-view";
-import { Skeleton } from "@/components/ui/skeleton";
 import { BookingSlot } from "./types";
+import { MonthCalendarSkeleton } from "@/app/(main)/components/skeletons/month-calendar-skeleton";
 import MeetingDetailsModal from "../meeting-details-modal";
 import MeetingsList from "../meetings-list";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
@@ -21,7 +21,7 @@ interface CalendarViewProps {
 
 export default function CalendarView({ onSlotSelect, className }: CalendarViewProps) {
   const { id: roomId } = useParams<{ id: string }>();
-  const { refreshKey } = useMeetingsContext();
+  const { refreshKey, triggerRefresh } = useMeetingsContext();
 
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
@@ -82,14 +82,6 @@ export default function CalendarView({ onSlotSelect, className }: CalendarViewPr
     fetchDayMeetings();
   }, [fetchDayMeetings, refreshKey]);
 
-  const handleMonthChange = (month: Date) => {
-    setCurrentMonth(month);
-  };
-
-  const handleDaySelect = (date: Date) => {
-    setSelectedDate(date);
-  };
-
   const handleSlotClick = (time: string) => {
     if (selectedDate) {
       onSlotSelect({
@@ -110,24 +102,28 @@ export default function CalendarView({ onSlotSelect, className }: CalendarViewPr
   };
 
   const handleMeetingDelete = useCallback(() => {
-    // Refresh meetings after deletion
-    fetchMonthMeetings();
-    fetchDayMeetings();
-    // Trigger a refresh by updating a state that meetings list can watch
-    setSelectedDate((prev) => (prev ? new Date(prev) : null));
-  }, [fetchMonthMeetings, fetchDayMeetings]);
+    triggerRefresh();
+  }, [triggerRefresh]);
 
   return (
     <>
+      {/* Meeting Details Modal */}
+      <MeetingDetailsModal
+        isOpen={isMeetingModalOpen}
+        onClose={handleMeetingModalClose}
+        meeting={selectedMeeting}
+        onDelete={handleMeetingDelete}
+      />
+
       <div className={cn("flex h-full flex-col gap-4 lg:flex-row", className)}>
         {/* Meetings List - Left Side */}
 
-        <div className="glass glass-shadow flex h-full w-full shrink-0 flex-col rounded-2xl p-5 lg:w-80 xl:w-96">
+        <div className="glass flex h-full w-full shrink-0 flex-col rounded-2xl p-5 lg:w-80 xl:w-96">
           <MeetingsList onMeetingClick={handleMeetingClick} />
         </div>
 
         {/* Calendar - Middle */}
-        <div className="glass glass-shadow flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
+        <div className="glass flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
           <div className="w-full shrink-0">
             {isLoadingMonth ? (
               <MonthCalendarSkeleton />
@@ -136,15 +132,15 @@ export default function CalendarView({ onSlotSelect, className }: CalendarViewPr
                 currentMonth={currentMonth}
                 selectedDate={selectedDate}
                 meetings={monthMeetings}
-                onMonthChange={handleMonthChange}
-                onDaySelect={handleDaySelect}
+                onMonthChange={setCurrentMonth}
+                onDaySelect={setSelectedDate}
               />
             )}
           </div>
         </div>
 
         {/* Day Schedule - Right Side */}
-        <div className="glass glass-shadow flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
+        <div className="glass flex h-full min-w-[300px] flex-1 flex-col rounded-2xl p-5">
           <DayScheduleView
             selectedDate={selectedDate}
             meetings={dayMeetings}
@@ -154,46 +150,6 @@ export default function CalendarView({ onSlotSelect, className }: CalendarViewPr
           />
         </div>
       </div>
-
-      {/* Meeting Details Modal */}
-      <MeetingDetailsModal
-        isOpen={isMeetingModalOpen}
-        onClose={handleMeetingModalClose}
-        meeting={selectedMeeting}
-        onDelete={handleMeetingDelete}
-      />
     </>
   );
 }
-
-function MonthCalendarSkeleton() {
-  return (
-    <div className="space-y-4 p-3">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-8 w-8" />
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="h-8 w-8" />
-      </div>
-
-      {/* Weekdays */}
-      <div className="flex gap-1">
-        {Array.from({ length: 7 }).map((_, i) => (
-          <Skeleton key={i} className="h-6 flex-1" />
-        ))}
-      </div>
-
-      {/* Days grid */}
-      {Array.from({ length: 5 }).map((_, weekIndex) => (
-        <div key={weekIndex} className="flex gap-1">
-          {Array.from({ length: 7 }).map((_, dayIndex) => (
-            <Skeleton key={dayIndex} className="aspect-square flex-1" />
-          ))}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-// Export refresh function for external use
-export { CalendarView };
