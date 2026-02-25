@@ -121,6 +121,7 @@ export default function CalendarView({ onSlotSelect, className }: CalendarViewPr
     <>
       <div className={cn("flex h-full flex-col gap-4 lg:flex-row", className)}>
         {/* Meetings List - Left Side */}
+
         <div className="glass glass-shadow flex h-full w-full shrink-0 flex-col rounded-2xl p-5 lg:w-80 xl:w-96">
           <MeetingsList onMeetingClick={handleMeetingClick} />
         </div>
