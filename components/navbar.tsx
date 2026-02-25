@@ -10,25 +10,20 @@ import ThemeToggleButton from "./theme-toggle";
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [roomName, setRoomName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
-  // Check if we're on a room detail page
   const isRoomDetailPage =
     pathname?.startsWith("/rooms/") && pathname.split("/").length === 3;
   const roomId = isRoomDetailPage ? pathname.split("/")[2] : null;
 
-  useEffect(() => {
-    let cancelled = false;
+  const [roomName, setRoomName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(!!roomId);
 
-    if (!roomId) {
-      queueMicrotask(() => {
-        if (!cancelled) setRoomName(null);
-      });
-      return () => {
-        cancelled = true;
-      };
-    }
+  const displayedRoomName = roomId ? roomName : null;
+
+  useEffect(() => {
+    if (!roomId) return;
+
+    let cancelled = false;
 
     queueMicrotask(() => {
       if (!cancelled) setIsLoading(true);
@@ -37,7 +32,7 @@ export default function Navbar() {
     getRoomById(roomId)
       .then(({ room }) => {
         if (!cancelled) {
-          setRoomName(room?.name || null);
+          setRoomName(room?.name ?? null);
           setIsLoading(false);
         }
       })
@@ -54,8 +49,8 @@ export default function Navbar() {
   }, [roomId]);
 
   return (
-    <div className="sticky z-50 bg-transparent backdrop-blur-sm">
-      <nav className="container mx-auto flex items-center justify-between px-6 py-4">
+    <nav className="sticky top-0 z-50 bg-transparent backdrop-blur-sm">
+      <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-4">
           {isRoomDetailPage && (
             <>
@@ -69,19 +64,16 @@ export default function Navbar() {
               </Button>
               {isLoading ? (
                 <div className="h-6 w-32 animate-pulse rounded bg-white/30 dark:bg-white/10" />
-              ) : roomName ? (
+              ) : displayedRoomName ? (
                 <h1 className="text-xl font-bold text-primary md:text-2xl lg:text-3xl">
-                  {roomName}
+                  {displayedRoomName}
                 </h1>
               ) : null}
             </>
           )}
         </div>
-
-        {/* theme toggle */}
-
         <ThemeToggleButton />
-      </nav>
-    </div>
+      </div>
+    </nav>
   );
 }
