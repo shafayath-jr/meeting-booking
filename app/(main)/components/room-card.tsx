@@ -30,7 +30,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
       {/* Hover glow effect */}
       <div
         className={cn(
-          "absolute -inset-1 rounded-3xl bg-gradient-to-r opacity-0 blur-xl transition-all duration-500 group-hover:opacity-60",
+          "absolute -inset-1 rounded-3xl bg-linear-to-r opacity-0 blur-xl transition-all duration-500 group-hover:opacity-60",
           gradient
         )}
       />
@@ -50,7 +50,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
         {/* Top gradient accent */}
         <div
           className={cn(
-            "absolute top-0 right-0 left-0 h-1 bg-gradient-to-r",
+            "absolute top-0 right-0 left-0 h-1 bg-linear-to-r",
             gradient.replace(/\/20/g, "/60").replace(/\/10/g, "/40")
           )}
         />
@@ -59,7 +59,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
         <div className="pointer-events-none absolute inset-0 opacity-30 dark:opacity-20">
           <div
             className={cn(
-              "absolute top-4 right-4 h-32 w-32 rounded-full bg-gradient-to-br blur-2xl",
+              "absolute top-4 right-4 h-32 w-32 rounded-full bg-linear-to-br blur-2xl",
               gradient
             )}
           />
@@ -86,7 +86,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
             asChild
             className={cn(
               "h-12 w-full rounded-xl font-semibold",
-              "bg-gradient-to-r from-primary to-primary/90",
+              "bg-linear-to-r from-primary to-primary/90",
               "hover:from-primary/90 hover:to-primary/80",
               "shadow-lg shadow-primary/20",
               "transition-all duration-300",
