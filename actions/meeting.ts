@@ -87,24 +87,25 @@ export const bookMeeting = async (event: Event) => {
       typeof event.guests === "string" ? JSON.parse(event.guests) : (event.guests ?? []),
   };
 
-  // Sync to Microsoft Teams calendar FIRST to get calendar_event_id
-  const { data: calendarEventId, error: syncError } = await syncBookingToTeams(
+  // Sync to Microsoft Teams calendar FIRST to get calendar_event_id and ical_uid
+  const { data: syncData, error: syncError } = await syncBookingToTeams(
     tempBooking,
     "create"
   );
 
-  // Prepare booking data with calendar_event_id already set
+  // Prepare booking data with calendar_event_id and ical_uid already set
   const bookingData = {
     id: bookingId,
     ...event,
-    calendar_event_id: syncError ? null : calendarEventId,
+    calendar_event_id: syncError ? null : syncData?.calendarEventId,
+    ical_uid: syncError ? null : syncData?.icalUid,
   };
 
-  // Upsert into Supabase with calendar_event_id already set
-  // Use upsert to handle race condition where webhook might insert first
+  // Upsert into Supabase using ical_uid as conflict key to prevent duplicate
+  // rows when the Teams daemon's reverse sync also tries to upsert the same event
   const { error } = await supabase
     .from("bookings")
-    .upsert([bookingData], { onConflict: "calendar_event_id" })
+    .upsert([bookingData], { onConflict: "ical_uid" })
     .select()
     .single();
 
