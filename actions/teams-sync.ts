@@ -10,7 +10,7 @@ type SyncOperation = "create" | "update" | "delete";
  *
  * @param booking - The booking record to sync
  * @param operation - The type of operation (create, update, or delete)
- * @returns {Promise<{data?: string, error?: string}>} - Returns calendar_event_id on success
+ * @returns {Promise<{data?: {calendarEventId: string, icalUid: string}, error?: string}>} - Returns calendar_event_id and ical_uid on success
  */
 export const syncBookingToTeams = async (booking: Meeting, operation: SyncOperation) => {
   const daemonUrl = process.env.TEAMS_DAEMON_URL;
@@ -54,7 +54,7 @@ export const syncBookingToTeams = async (booking: Meeting, operation: SyncOperat
 
     console.log(`Teams sync successful (${operation}):`, data.calendar_event_id);
     return {
-      data: data.calendar_event_id,
+      data: { calendarEventId: data.calendar_event_id, icalUid: data.ical_uid },
       error: null,
     };
   } catch (error) {

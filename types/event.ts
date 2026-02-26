@@ -10,4 +10,5 @@ export interface Event {
   room_id: string;
   building_id: string;
   calendar_event_id?: string | null; // Microsoft Teams event ID for sync tracking
+  ical_uid?: string | null; // iCalendar UID for dedup across webapp and Teams daemon
 }
