@@ -34,8 +34,10 @@ function SectionHeader({ subtitle }: { subtitle: string }) {
         <DoorOpen className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
       </div>
       <div>
-        <h2 className="text-xl font-bold tracking-tight">Available Rooms</h2>
-        <p className="text-sm text-muted-foreground">{subtitle}</p>
+        <h2 className="text-xl font-semibold tracking-tight text-secondary">
+          Available Rooms
+        </h2>
+        <p className="text-sm text-secondary/80">{subtitle}</p>
       </div>
     </div>
   );
@@ -60,7 +62,7 @@ function DotIndicators({
             "rounded-full transition-all duration-300",
             index === activeIndex
               ? "h-2 w-6 bg-primary"
-              : "h-2 w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+              : "h-2 w-2 bg-secondary/80 hover:bg-secondary/30"
           )}
           aria-label={`Go to room ${index + 1}`}
         />
