@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -134,64 +132,6 @@
   --brand-yellow: oklch(0.87 0.185 91);
 }
 
-.dark {
-  --background: oklch(0.2046 0 0);
-  --foreground: oklch(0.9219 0 0);
-  --card: oklch(0.2686 0 0);
-  --card-foreground: oklch(0.9219 0 0);
-  --popover: oklch(0.2686 0 0);
-  --popover-foreground: oklch(0.9219 0 0);
-  --primary: oklch(0.6231 0.188 259.8145);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.2686 0 0);
-  --secondary-foreground: oklch(0.9219 0 0);
-  --muted: oklch(0.2393 0 0);
-  --muted-foreground: oklch(0.7155 0 0);
-  --accent: oklch(0.3791 0.1378 265.5222);
-  --accent-foreground: oklch(0.8823 0.0571 254.1284);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --border: oklch(0.3715 0 0);
-  --input: oklch(0.3715 0 0);
-  --ring: oklch(0.6231 0.188 259.8145);
-  --chart-1: oklch(0.7137 0.1434 254.624);
-  --chart-2: oklch(0.6231 0.188 259.8145);
-  --chart-3: oklch(0.5461 0.2152 262.8809);
-  --chart-4: oklch(0.4882 0.2172 264.3763);
-  --chart-5: oklch(0.4244 0.1809 265.6377);
-  --sidebar: oklch(0.2046 0 0);
-  --sidebar-foreground: oklch(0.9219 0 0);
-  --sidebar-primary: oklch(0.6231 0.188 259.8145);
-  --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.3791 0.1378 265.5222);
-  --sidebar-accent-foreground: oklch(0.8823 0.0571 254.1284);
-  --sidebar-border: oklch(0.3715 0 0);
-  --sidebar-ring: oklch(0.6231 0.188 259.8145);
-  --destructive-foreground: oklch(1 0 0);
-  --radius: 0.375rem;
-  --font-sans: Poppins, sans-serif;
-  --font-serif: Source Serif 4, serif;
-  --font-mono: JetBrains Mono, monospace;
-  --brand-blue: oklch(0.52 0.148 231);
-  --brand-green: oklch(0.58 0.152 148);
-  --brand-yellow: oklch(0.87 0.185 91);
-  --shadow-color: oklch(0 0 0);
-  --shadow-opacity: 0.1;
-  --shadow-blur: 3px;
-  --shadow-spread: 0px;
-  --shadow-offset-x: 0;
-  --shadow-offset-y: 1px;
-  --letter-spacing: 0em;
-  --spacing: 0.25rem;
-  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1);
-  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -233,33 +173,9 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
-  .dark .glass {
-    background: rgba(25, 25, 35, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-  }
-
-  .dark .glass-subtle {
-    background: rgba(25, 25, 35, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .dark .glass-strong {
-    background: rgba(25, 25, 35, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-
   /* Gradient backgrounds for glassmorphism */
   .gradient-mesh {
     @apply bg-linear-to-bl from-[#0798F2] to-[#03446D];
-  }
-
-  .dark .gradient-mesh {
-    background:
-      radial-gradient(at 20% 20%, oklch(0.3 0.12 260) 0px, transparent 50%),
-      radial-gradient(at 80% 30%, oklch(0.25 0.08 200) 0px, transparent 50%),
-      radial-gradient(at 40% 70%, oklch(0.28 0.1 280) 0px, transparent 50%),
-      radial-gradient(at 90% 80%, oklch(0.22 0.06 220) 0px, transparent 50%),
-      oklch(0.18 0.01 250);
   }
 
   /* Glass card shadow for depth */
@@ -268,13 +184,6 @@
       0 8px 32px rgba(0, 0, 0, 0.1),
       0 2px 8px rgba(0, 0, 0, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  }
-
-  .dark .glass-shadow {
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.5),
-      0 2px 8px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
   /* Custom animations for ongoing meeting indicator */

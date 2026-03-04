@@ -50,11 +50,11 @@ export default function RoomCard({ room, index = 0 }: Props) {
       <div
         className={cn(
           "relative flex h-full flex-col overflow-hidden rounded-2xl",
-          "bg-white/70 backdrop-blur-xl dark:bg-white/5",
-          "border border-white/50 dark:border-white/10",
-          "shadow-lg shadow-black/5 dark:shadow-black/20",
+          "bg-white/70 backdrop-blur-xl",
+          "border border-white/50",
+          "shadow-lg shadow-black/5",
           "transition-all duration-300",
-          "group-hover:border-white/80 dark:group-hover:border-white/20",
+          "group-hover:border-white/80",
           "group-hover:shadow-xl"
         )}
       >
@@ -67,7 +67,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
         />
 
         {/* Decorative background pattern */}
-        <div className="pointer-events-none absolute inset-0 opacity-30 dark:opacity-20">
+        <div className="pointer-events-none absolute inset-0 opacity-30">
           <div
             className={cn(
               "absolute top-4 right-4 h-32 w-32 rounded-full bg-linear-to-br blur-2xl",
@@ -84,9 +84,7 @@ export default function RoomCard({ room, index = 0 }: Props) {
           {/* Status indicator */}
           <div className="mb-6 flex items-center gap-2">
             <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
-              Available
-            </span>
+            <span className="text-sm font-medium text-emerald-600">Available</span>
           </div>
 
           {/* Spacer */}

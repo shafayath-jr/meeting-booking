@@ -20,9 +20,7 @@ export default function DigitalClockCountdown({
     <div
       className={cn(
         "min-w-[100px] shrink-0 rounded-lg px-3 py-2 transition-all",
-        isSoon
-          ? "bg-destructive/10 dark:bg-destructive/20"
-          : "bg-primary/10 dark:bg-primary/20"
+        isSoon ? "bg-destructive/10" : "bg-primary/10"
       )}
     >
       <div className="text-center">

@@ -15,11 +15,11 @@ import {
 
 const NAV_BUTTON_CLASS = cn(
   "h-10 w-10 rounded-xl",
-  "bg-white/80 backdrop-blur-xl dark:bg-white/10",
-  "border border-white/60 dark:border-white/10",
-  "shadow-lg shadow-black/5 dark:shadow-black/20",
+  "bg-white/80 backdrop-blur-xl",
+  "border border-white/60",
+  "shadow-lg shadow-black/5",
   "transition-all duration-300",
-  "hover:scale-105 hover:bg-white dark:hover:bg-white/20",
+  "hover:scale-105 hover:bg-white",
   "disabled:opacity-40 disabled:hover:scale-100"
 );
 
@@ -30,8 +30,8 @@ type Props = {
 function SectionHeader({ subtitle }: { subtitle: string }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5 dark:from-emerald-500/30 dark:to-teal-500/30">
-        <DoorOpen className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+      <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5">
+        <DoorOpen className="h-5 w-5 text-emerald-600" />
       </div>
       <div>
         <h2 className="text-xl font-semibold tracking-tight text-secondary">
@@ -108,7 +108,7 @@ export default function RoomsSection({ rooms }: Props) {
         <div className="mb-6">
           <SectionHeader subtitle="No rooms available" />
         </div>
-        <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-linear-to-br from-white/60 via-white/40 to-white/20 p-16 text-center backdrop-blur-xl dark:border-white/10 dark:from-white/5 dark:via-white/2 dark:to-transparent">
+        <div className="relative overflow-hidden rounded-3xl border border-white/40 bg-linear-to-br from-white/60 via-white/40 to-white/20 p-16 text-center backdrop-blur-xl">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--tw-gradient-stops))] from-muted/20 via-transparent to-transparent" />
           <div className="relative">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-linear-to-br from-muted/30 to-muted/10">

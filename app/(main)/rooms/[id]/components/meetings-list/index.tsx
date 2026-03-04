@@ -113,7 +113,7 @@ export default function MeetingsList({ onMeetingClick, className }: MeetingsList
           <div className="mb-6">
             <div className="mb-3 flex items-center gap-2">
               <div className="h-px flex-1 bg-linear-to-r from-emerald-500/60 to-transparent" />
-              <h3 className="px-2 text-xs font-semibold tracking-wider text-emerald-600 uppercase dark:text-emerald-400">
+              <h3 className="px-2 text-xs font-semibold tracking-wider text-emerald-600 uppercase">
                 Now
               </h3>
               <div className="h-px flex-1 bg-linear-to-l from-emerald-500/60 to-transparent" />

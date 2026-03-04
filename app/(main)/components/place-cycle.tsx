@@ -39,7 +39,7 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
   return (
     <div className="relative">
       {/* Main Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent dark:shadow-black/20">
+      <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl">
         {/* Decorative gradient */}
         <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-violet-500/5" />
 
@@ -53,9 +53,9 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               disabled={buildings.length <= 1}
               className={cn(
                 "h-12 w-12 rounded-xl md:h-14 md:w-14",
-                "bg-white/60 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20",
-                "border border-white/60 dark:border-white/10",
-                "shadow-lg shadow-black/5 dark:shadow-black/20",
+                "bg-white/60 hover:bg-white",
+                "border border-white/60",
+                "shadow-lg shadow-black/5",
                 "transition-all duration-300 hover:scale-105 active:scale-95",
                 "disabled:opacity-40 disabled:hover:scale-100"
               )}
@@ -83,7 +83,7 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               )}
 
               {/* Location badge */}
-              <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20">
+              <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
                 <MapPin className="h-3 w-3" />
                 <span>Current Location</span>
               </div>
@@ -108,9 +108,9 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               disabled={buildings.length <= 1}
               className={cn(
                 "h-12 w-12 rounded-xl md:h-14 md:w-14",
-                "bg-white/60 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20",
-                "border border-white/60 dark:border-white/10",
-                "shadow-lg shadow-black/5 dark:shadow-black/20",
+                "bg-white/60 hover:bg-white",
+                "border border-white/60",
+                "shadow-lg shadow-black/5",
                 "transition-all duration-300 hover:scale-105 active:scale-95",
                 "disabled:opacity-40 disabled:hover:scale-100"
               )}

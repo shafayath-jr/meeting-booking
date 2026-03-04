@@ -26,7 +26,7 @@ async function HomePage({ searchParams }: Props) {
         <div className="mx-auto max-w-5xl">
           {/* Section Header */}
           <div className="mb-6 flex items-center gap-4">
-            <div className="rounded-xl bg-secondary/10 p-2 dark:bg-primary/20">
+            <div className="rounded-xl bg-secondary/10 p-2">
               <Building2 className="h-5 w-5 text-secondary" />
             </div>
             <div>
