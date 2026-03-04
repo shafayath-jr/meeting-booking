@@ -31,7 +31,7 @@ import { useBookingContext } from "../booking-context";
 export default function MeetingDetailsForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
-  const { selectedTime, selectedDuration, resetFlow } = useBookingContext();
+  const { selectedTime, selectedDuration, setBookingSuccess } = useBookingContext();
 
   const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
@@ -81,8 +81,12 @@ export default function MeetingDetailsForm() {
       if (!res.error) {
         form.reset();
         triggerRefresh();
-        resetFlow();
-        toast.success("Meeting booked successfully");
+        setBookingSuccess({
+          subject: data.subject,
+          hostName: data.hostName,
+          startTime: startDate,
+          endTime: endDate,
+        });
       } else {
         toast.error(res.error || "Something went wrong!");
       }

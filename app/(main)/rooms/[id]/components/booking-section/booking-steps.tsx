@@ -4,9 +4,12 @@ import { useBookingContext } from "./booking-context";
 import TimeSlots from "./time-slots";
 import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
+import SuccessBanner from "./success-banner";
 
 export default function BookingSteps() {
-  const { step } = useBookingContext();
+  const { step, showSuccess } = useBookingContext();
+
+  if (showSuccess) return <SuccessBanner />;
 
   return (
     <div className="space-y-10">
