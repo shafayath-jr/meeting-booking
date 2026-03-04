@@ -1,18 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { isToday, isBefore, parse, addMinutes, format } from "date-fns";
 import { TIME_SLOTS } from "@/lib/constants";
-import { Meeting } from "@/types/meeting";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useBookingContext } from "./booking-context";
 
-type Props = {
-  meetings: Meeting[];
-};
-
-export default function TimeSlots({ meetings }: Props) {
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+export default function TimeSlots() {
+  const { meetings, selectedTime, setSelectedTime } = useBookingContext();
 
   const availableSlots = useMemo(() => {
     const now = new Date();
@@ -33,7 +29,11 @@ export default function TimeSlots({ meetings }: Props) {
   }, [meetings]);
 
   if (availableSlots.length === 0) {
-    return <p className="text-sm text-muted-foreground">No available slots for today.</p>;
+    return (
+      <p className="text-sm font-semibold text-secondary">
+        No available slots for today.
+      </p>
+    );
   }
 
   return (
@@ -44,7 +44,7 @@ export default function TimeSlots({ meetings }: Props) {
           variant="transparent"
           size="lg"
           onClick={() => setSelectedTime(slot)}
-          className={cn(selectedTime === slot && "border-brand-green bg-brand-green", "")}
+          className={cn(selectedTime === slot && "border-brand-green bg-brand-green")}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}
         </Button>

@@ -1,5 +1,3 @@
-import ActionButtons from "./components/action-buttons";
-import CalendarWrapper from "./components/calendar-wrapper";
 import { MeetingsProvider } from "@/components/providers/meetings-provider";
 import PageContainer from "@/components/page-container";
 import Clock from "@/app/(main)/components/clock";
@@ -43,11 +41,6 @@ async function RoomPage({ params }: Props) {
             <MeetingList />
           </div>
         </div>
-        {/* Action buttons */}
-        {/* <ActionButtons /> */}
-
-        {/* Calendar */}
-        {/* <CalendarWrapper /> */}
       </PageContainer>
     </MeetingsProvider>
   );

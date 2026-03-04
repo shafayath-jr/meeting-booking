@@ -75,7 +75,7 @@ export default function MeetingList() {
 
   if (!ongoingMeeting && upcomingMeetings.length === 0) {
     return (
-      <p className="py-4 text-center text-sm text-white/60">
+      <p className="py-4 text-center text-sm text-secondary">
         No meetings scheduled today
       </p>
     );

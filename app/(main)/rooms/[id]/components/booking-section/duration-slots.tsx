@@ -1,21 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { FULL_MEETING_DURATION_OPTIONS } from "@/lib/constants";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
-import { Meeting } from "@/types/meeting";
+import { useBookingContext } from "./booking-context";
+import { parse } from "date-fns";
 
-type Props = {
-  meetings: Meeting[];
-};
-
-export default function DurationSlots({ meetings }: Props) {
-  const [selectedDuration, setSelectedDuration] = useState<string | null>(null);
+export default function DurationSlots() {
+  const { meetings, selectedTime, selectedDuration, setSelectedDuration } =
+    useBookingContext();
 
   const now = new Date();
-  const nextMeeting = meetings.find((m) => new Date(m.end_time) > now) ?? null;
+
+  // Find the next meeting after the selected time slot
+  const nextMeeting = selectedTime
+    ? (() => {
+        const slotStart = parse(selectedTime, "HH:mm", now);
+        return meetings.find((m) => new Date(m.start_time) >= slotStart) ?? null;
+      })()
+    : (meetings.find((m) => new Date(m.end_time) > now) ?? null);
+
   const availability = calculateAvailableDurations(nextMeeting);
 
   return (
