@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Poppins, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
-import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
 const poppins = Poppins({
@@ -31,7 +30,7 @@ export default function RootLayout({
         <Providers>
           <div className="gradient-mesh relative min-h-screen overflow-hidden">
             <div className="relative z-10 flex min-h-screen flex-col">
-              <Navbar />
+              {/* <Navbar /> */}
               <main className="flex-1">{children}</main>
               <Footer />
             </div>
