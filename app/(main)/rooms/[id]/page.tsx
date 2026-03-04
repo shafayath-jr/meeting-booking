@@ -5,6 +5,7 @@ import PageContainer from "@/components/page-container";
 import Clock from "@/app/(main)/components/clock";
 import { getRoomById } from "@/actions/room";
 import BookingSection from "./components/booking-section";
+import MeetingList from "./components/meeting-list";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -17,8 +18,8 @@ async function RoomPage({ params }: Props) {
   return (
     <MeetingsProvider>
       <PageContainer>
-        <div className="flex justify-between gap-4">
-          <div className="w-3/4 space-y-10">
+        <div className="flex justify-between gap-10">
+          <div className="w-3/5 space-y-10">
             {/* clock  */}
 
             <Clock />
@@ -32,7 +33,15 @@ async function RoomPage({ params }: Props) {
             <BookingSection roomId={id} />
           </div>
 
-          <div className="w-1/4">Lorem, ipsum dolor.</div>
+          <div className="w-2/5 space-y-10">
+            <h5 className="text-2xl font-semibold text-secondary">
+              Today&apos;s schedule
+            </h5>
+
+            {/* meeting list */}
+
+            <MeetingList />
+          </div>
         </div>
         {/* Action buttons */}
         {/* <ActionButtons /> */}

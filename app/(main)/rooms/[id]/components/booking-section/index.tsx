@@ -2,6 +2,7 @@ import { getMeetingsByRoom } from "@/actions/meeting";
 import BookNowButton from "./book-now-button";
 import TimeSlots from "./time-slots";
 import DurationSlots from "./duration-slots";
+import MeetingDetailsForm from "./meeting-details-form";
 
 type Props = {
   roomId: string;
@@ -26,6 +27,10 @@ export default async function BookingSection({ roomId }: Props) {
       </div>
 
       {/* meeting details */}
+
+      <div>
+        <MeetingDetailsForm />
+      </div>
 
       {/* book now button */}
       <div className="flex justify-center">
