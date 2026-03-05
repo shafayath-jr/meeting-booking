@@ -189,7 +189,68 @@
 
   /* Gradient backgrounds for glassmorphism */
   .gradient-mesh {
-    @apply bg-linear-to-bl from-[#0798F2] to-[#03446D];
+    background:
+      radial-gradient(
+        ellipse 80% 55% at 15% 8%,
+        rgba(255, 255, 255, 0.12) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 55% 75% at 85% 88%,
+        rgba(255, 255, 255, 0.06) 0%,
+        transparent 65%
+      ),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 45%),
+      linear-gradient(225deg, #0798f2 0%, #03446d 100%);
+  }
+  .gradient-mesh-green {
+    background:
+      radial-gradient(
+        ellipse 80% 55% at 15% 8%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 55% 75% at 85% 88%,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 65%
+      ),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+      linear-gradient(225deg, oklch(0.58 0.152 148) 0%, oklch(0.35 0.1 148) 100%);
+  }
+  .gradient-mesh-yellow {
+    background:
+      radial-gradient(
+        ellipse 80% 55% at 15% 8%,
+        rgba(255, 255, 255, 0.08) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 55% 75% at 85% 88%,
+        rgba(255, 255, 255, 0.04) 0%,
+        transparent 65%
+      ),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+      linear-gradient(225deg, oklch(0.87 0.185 91) 0%, oklch(0.6 0.15 91) 100%);
+  }
+  .gradient-mesh-red {
+    background:
+      radial-gradient(
+        ellipse 80% 55% at 15% 8%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 65%
+      ),
+      radial-gradient(
+        ellipse 55% 75% at 85% 88%,
+        rgba(255, 255, 255, 0.05) 0%,
+        transparent 65%
+      ),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
+      linear-gradient(
+        225deg,
+        oklch(39.392% 0.132 25.663) 0%,
+        oklch(16.773% 0.05965 18.904) 100%
+      );
   }
 
   /* Glass card shadow for depth */

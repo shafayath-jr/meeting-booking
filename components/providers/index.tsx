@@ -2,6 +2,7 @@
 
 import { ReactNode } from "react";
 import { ThemeProvider } from "./theme-provider";
+import { GradientProvider } from "./gradient-context";
 import { Toaster } from "@/components/ui/sonner";
 
 type Props = {
@@ -17,7 +18,9 @@ function Providers({ children }: Props) {
         enableSystem
         disableTransitionOnChange
       >
-        <div>{children}</div>
+        <GradientProvider>
+          <div>{children}</div>
+        </GradientProvider>
         <Toaster richColors />
       </ThemeProvider>
     </>

@@ -37,7 +37,8 @@ export default function DurationSlots() {
             disabled={isDisabled}
             onClick={() => setSelectedDuration(option.value)}
             className={cn(
-              selectedDuration === option.value && "border-brand-green bg-brand-green"
+              selectedDuration === option.value && "border-brand-green bg-brand-green",
+              "rounded-xl"
             )}
           >
             {option.label}

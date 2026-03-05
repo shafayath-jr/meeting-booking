@@ -44,7 +44,10 @@ export default function TimeSlots() {
           variant="transparent"
           size="lg"
           onClick={() => setSelectedTime(slot)}
-          className={cn(selectedTime === slot && "border-brand-green bg-brand-green")}
+          className={cn(
+            selectedTime === slot && "border-brand-green bg-brand-green",
+            "rounded-xl"
+          )}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}
         </Button>
