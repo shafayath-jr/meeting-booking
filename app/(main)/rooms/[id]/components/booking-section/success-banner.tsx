@@ -11,6 +11,8 @@ export default function SuccessBanner() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (!successData) return;
+
     const timer = setTimeout(resetFlow, 10000);
 
     const handleMouseDown = (e: MouseEvent) => {

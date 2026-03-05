@@ -3,9 +3,9 @@
 import { useBookingContext } from "./booking-context";
 
 export default function AvailabilityText() {
-  const { step, hasAvailableSlots } = useBookingContext();
+  const { hasAvailableSlots, showSuccess } = useBookingContext();
 
-  if (step > 0) return null;
+  if (showSuccess) return null;
 
   return (
     <p className="text-xl text-secondary">

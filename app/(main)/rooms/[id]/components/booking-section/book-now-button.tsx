@@ -5,17 +5,15 @@ import { Button } from "@/components/ui/button";
 import { useBookingContext } from "./booking-context";
 
 export default function BookNowButton() {
-  const { step, startBookingFlow, showSuccess, hasAvailableSlots } = useBookingContext();
+  const { openModal, showSuccess, hasAvailableSlots } = useBookingContext();
 
   if (showSuccess) return null;
 
-  const isPulsing = (step === 0 && hasAvailableSlots) || step === 1 || step === 2;
-  const isSubmit = step === 3;
-  const disabled = step === 0 && !hasAvailableSlots;
+  const disabled = !hasAvailableSlots;
 
   return (
     <div className="relative flex items-center justify-center">
-      {isPulsing && (
+      {hasAvailableSlots && (
         <>
           <div className="absolute h-20 w-20 animate-ping rounded-full border border-white/25" />
           <div className="absolute h-20 w-20 animate-ping rounded-full border border-primary/35 [animation-delay:0.7s]" />
@@ -36,9 +34,8 @@ export default function BookNowButton() {
           "flex flex-col items-center justify-center",
           disabled && "cursor-not-allowed opacity-40 saturate-0"
         )}
-        type={isSubmit ? "submit" : "button"}
-        form={isSubmit ? "meeting-details-form" : undefined}
-        onClick={step === 0 ? startBookingFlow : undefined}
+        type="button"
+        onClick={openModal}
         disabled={disabled}
       >
         <span

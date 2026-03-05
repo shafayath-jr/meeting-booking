@@ -15,16 +15,17 @@ export type SuccessData = {
 };
 
 type BookingContextType = {
-  step: 0 | 1 | 2 | 3;
+  isModalOpen: boolean;
   selectedTime: string | null;
   selectedDuration: string | null;
   meetings: Meeting[];
   showSuccess: boolean;
   successData: SuccessData | null;
   hasAvailableSlots: boolean;
+  openModal: () => void;
+  closeModal: () => void;
   setSelectedTime: (time: string) => void;
   setSelectedDuration: (dur: string) => void;
-  startBookingFlow: () => void;
   resetFlow: () => void;
   setBookingSuccess: (data: SuccessData) => void;
 };
@@ -56,7 +57,7 @@ export function BookingProvider({
   initialMeetings,
   roomId,
 }: BookingProviderProps) {
-  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTime, setSelectedTimeState] = useState<string | null>(null);
   const [selectedDuration, setSelectedDurationState] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -66,7 +67,7 @@ export function BookingProvider({
   const { refreshKey } = useMeetingsContext();
 
   useEffect(() => {
-    if (step > 0) return;
+    if (isModalOpen) return;
     getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
       if (fetched) setMeetings(fetched);
     });
@@ -74,20 +75,15 @@ export function BookingProvider({
 
   const hasAvailableSlots = calcHasAvailableSlots(meetings);
 
-  const setSelectedTime = (time: string) => {
-    setSelectedTimeState(time);
-    setStep(2);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
-  const setSelectedDuration = (dur: string) => {
-    setSelectedDurationState(dur);
-    setStep(3);
-  };
+  const setSelectedTime = (time: string) => setSelectedTimeState(time);
 
-  const startBookingFlow = () => setStep(1);
+  const setSelectedDuration = (dur: string) => setSelectedDurationState(dur);
 
   const resetFlow = () => {
-    setStep(0);
+    setIsModalOpen(false);
     setSelectedTimeState(null);
     setSelectedDurationState(null);
     setShowSuccess(false);
@@ -105,16 +101,17 @@ export function BookingProvider({
   return (
     <BookingContext.Provider
       value={{
-        step,
+        isModalOpen,
         selectedTime,
         selectedDuration,
         meetings,
         showSuccess,
         successData,
         hasAvailableSlots,
+        openModal,
+        closeModal,
         setSelectedTime,
         setSelectedDuration,
-        startBookingFlow,
         resetFlow,
         setBookingSuccess,
       }}

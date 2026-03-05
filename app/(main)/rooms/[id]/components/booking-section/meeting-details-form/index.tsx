@@ -31,7 +31,8 @@ import { useBookingContext } from "../booking-context";
 export default function MeetingDetailsForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
-  const { selectedTime, selectedDuration, setBookingSuccess } = useBookingContext();
+  const { selectedTime, selectedDuration, setBookingSuccess, closeModal } =
+    useBookingContext();
 
   const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
@@ -81,6 +82,7 @@ export default function MeetingDetailsForm() {
       if (!res.error) {
         form.reset();
         triggerRefresh();
+        closeModal();
         setBookingSuccess({
           subject: data.subject,
           hostName: data.hostName,
@@ -194,9 +196,6 @@ export default function MeetingDetailsForm() {
           )}
         />
       </FieldGroup>
-
-      {/* Hidden submit — triggered via book-now-button form= attribute */}
-      <button type="submit" hidden disabled={isSubmitting} />
     </form>
   );
 }
