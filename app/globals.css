@@ -152,16 +152,16 @@
   }
 
   .scrollbar-transparent {
-    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
   }
   .scrollbar-transparent::-webkit-scrollbar {
     width: 6px;
   }
   .scrollbar-transparent::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(0, 0, 0, 0.2);
   }
   .scrollbar-transparent::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 3px;
   }
 
