@@ -187,70 +187,118 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
   }
 
+  /* Orb drift animations */
+  @keyframes orb-drift-a {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(3%, 2%) scale(1.04);
+    }
+  }
+  @keyframes orb-drift-b {
+    0%,
+    100% {
+      transform: translate(0, 0) scale(1);
+    }
+    50% {
+      transform: translate(-2%, -3%) scale(1.03);
+    }
+  }
+
+  /* Grain overlay for all gradient meshes */
+  [class*="gradient-mesh"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    z-index: 0;
+  }
+
   /* Gradient backgrounds for glassmorphism */
   .gradient-mesh {
+    transition: background 0.8s ease;
     background:
       radial-gradient(
-        ellipse 80% 55% at 15% 8%,
-        rgba(255, 255, 255, 0.12) 0%,
+        ellipse 70% 60% at 10% 5%,
+        rgba(7, 152, 242, 0.55) 0%,
         transparent 65%
       ),
       radial-gradient(
-        ellipse 55% 75% at 85% 88%,
-        rgba(255, 255, 255, 0.06) 0%,
+        ellipse 50% 55% at 85% 35%,
+        rgba(99, 102, 241, 0.3) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 80% 45% at 50% 95%,
+        rgba(3, 68, 109, 0.6) 0%,
         transparent 65%
       ),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, transparent 45%),
-      linear-gradient(225deg, #0798f2 0%, #03446d 100%);
+      linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, transparent 50%), #060d1f;
   }
   .gradient-mesh-green {
+    transition: background 0.8s ease;
     background:
       radial-gradient(
-        ellipse 80% 55% at 15% 8%,
-        rgba(255, 255, 255, 0.1) 0%,
+        ellipse 65% 55% at 20% 15%,
+        oklch(0.55 0.18 148 / 0.6) 0%,
         transparent 65%
       ),
       radial-gradient(
-        ellipse 55% 75% at 85% 88%,
-        rgba(255, 255, 255, 0.05) 0%,
+        ellipse 55% 60% at 80% 70%,
+        oklch(0.55 0.15 175 / 0.45) 0%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 70% 40% at 50% 90%,
+        oklch(0.45 0.12 140 / 0.5) 0%,
         transparent 65%
       ),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
-      linear-gradient(225deg, oklch(0.58 0.152 148) 0%, oklch(0.35 0.1 148) 100%);
+      linear-gradient(135deg, rgba(167, 243, 208, 0.08) 0%, transparent 50%), #061810;
   }
   .gradient-mesh-yellow {
+    transition: background 0.8s ease;
     background:
       radial-gradient(
-        ellipse 80% 55% at 15% 8%,
-        rgba(255, 255, 255, 0.08) 0%,
+        ellipse 65% 55% at 20% 10%,
+        oklch(0.82 0.18 85 / 0.55) 0%,
         transparent 65%
       ),
       radial-gradient(
-        ellipse 55% 75% at 85% 88%,
-        rgba(255, 255, 255, 0.04) 0%,
-        transparent 65%
+        ellipse 55% 60% at 75% 75%,
+        oklch(0.7 0.2 60 / 0.4) 0%,
+        transparent 60%
       ),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
-      linear-gradient(225deg, oklch(0.87 0.185 91) 0%, oklch(0.6 0.15 91) 100%);
+      radial-gradient(
+        ellipse 60% 45% at 50% 50%,
+        oklch(0.65 0.16 78 / 0.35) 0%,
+        transparent 60%
+      ),
+      linear-gradient(135deg, rgba(253, 230, 138, 0.08) 0%, transparent 50%), #1a0e00;
   }
   .gradient-mesh-red {
+    transition: background 0.8s ease;
     background:
       radial-gradient(
-        ellipse 80% 55% at 15% 8%,
-        rgba(255, 255, 255, 0.1) 0%,
+        ellipse 65% 55% at 15% 10%,
+        oklch(0.45 0.2 15 / 0.6) 0%,
         transparent 65%
       ),
       radial-gradient(
-        ellipse 55% 75% at 85% 88%,
-        rgba(255, 255, 255, 0.05) 0%,
-        transparent 65%
+        ellipse 55% 60% at 80% 80%,
+        oklch(0.45 0.18 355 / 0.45) 0%,
+        transparent 60%
       ),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 45%),
-      linear-gradient(
-        225deg,
-        oklch(39.392% 0.132 25.663) 0%,
-        oklch(16.773% 0.05965 18.904) 100%
-      );
+      radial-gradient(
+        ellipse 60% 45% at 60% 40%,
+        oklch(0.35 0.15 330 / 0.4) 0%,
+        transparent 60%
+      ),
+      linear-gradient(135deg, rgba(251, 113, 133, 0.08) 0%, transparent 50%), #120308;
   }
 
   /* Glass card shadow for depth */
