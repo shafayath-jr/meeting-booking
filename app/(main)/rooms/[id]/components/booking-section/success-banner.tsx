@@ -72,7 +72,7 @@ export default function SuccessBanner() {
           </div>
         </div>
         {timeUntilStart && (
-          <p className="text-center text-sm text-brand-yellow">
+          <p className="text-center text-sm font-semibold text-brand-yellow">
             Meeting starts in {timeUntilStart}
           </p>
         )}

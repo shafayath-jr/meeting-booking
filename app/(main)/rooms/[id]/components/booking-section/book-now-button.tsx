@@ -8,7 +8,9 @@ type Props = {
 };
 
 export default function BookNowButton({ hasAvailableSlots }: Props) {
-  const { step, startBookingFlow } = useBookingContext();
+  const { step, startBookingFlow, showSuccess } = useBookingContext();
+
+  if (showSuccess) return null;
 
   const isPulsing = (step === 0 && hasAvailableSlots) || step === 1 || step === 2;
   const isSubmit = step === 3;
