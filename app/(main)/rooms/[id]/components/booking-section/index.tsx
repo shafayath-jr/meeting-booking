@@ -4,6 +4,7 @@ import { isToday, isBefore, parse, addMinutes } from "date-fns";
 import { BookingProvider } from "./booking-context";
 import BookingSteps from "./booking-steps";
 import BookNowButton from "./book-now-button";
+import AvailabilityText from "./availability-text";
 
 type Props = {
   roomId: string;
@@ -27,9 +28,7 @@ export default async function BookingSection({ roomId }: Props) {
   return (
     <BookingProvider meetings={meetings ?? []}>
       <div className="space-y-10">
-        <p className="text-xl text-secondary">
-          {hasAvailableSlots ? "Slots are available for booking" : "No slots available"}
-        </p>
+        <AvailabilityText hasAvailableSlots={hasAvailableSlots} />
 
         <BookingSteps />
 

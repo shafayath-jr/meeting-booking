@@ -21,7 +21,7 @@ import { getRoomById } from "@/actions/room";
 import { getAllDomains } from "@/actions/domain";
 import { bookMeeting } from "@/actions/meeting";
 import { useEffect, useState } from "react";
-import { addMinutes, format, parse } from "date-fns";
+import { addMinutes, parse } from "date-fns";
 import { Domain } from "@/types/domain";
 import { Room } from "@/types/room";
 import { toast } from "sonner";
@@ -114,7 +114,7 @@ export default function MeetingDetailsForm() {
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter what the meeting is about"
-                className="border-secondary bg-transparent text-secondary placeholder:text-secondary hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -135,7 +135,7 @@ export default function MeetingDetailsForm() {
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter your name"
-                className="border-secondary bg-transparent text-secondary placeholder:text-secondary hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -156,7 +156,7 @@ export default function MeetingDetailsForm() {
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
                 placeholder="Username"
-                className="border-secondary bg-transparent text-secondary placeholder:text-secondary hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -173,7 +173,7 @@ export default function MeetingDetailsForm() {
               </FieldLabel>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger
-                  className="w-full border-secondary bg-transparent text-secondary"
+                  className="w-full border-secondary bg-transparent text-secondary/90!"
                   aria-invalid={fieldState.invalid}
                 >
                   <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ export default function MeetingDetailsForm() {
                     <SelectValue placeholder="Select domain" />
                   </div>
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="text-secondary">
                   {domains.map((domain) => (
                     <SelectItem key={domain.id} value={domain.name}>
                       {domain.name}
