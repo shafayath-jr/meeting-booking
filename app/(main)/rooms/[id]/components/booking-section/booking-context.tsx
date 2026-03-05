@@ -1,7 +1,11 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { Meeting } from "@/types/meeting";
+import { getMeetingsByRoom } from "@/actions/meeting";
+import { useMeetingsContext } from "@/components/providers/meetings-provider";
+import { TIME_SLOTS } from "@/lib/constants";
+import { parse, addMinutes, isToday, isBefore } from "date-fns";
 
 export type SuccessData = {
   subject: string;
@@ -17,6 +21,7 @@ type BookingContextType = {
   meetings: Meeting[];
   showSuccess: boolean;
   successData: SuccessData | null;
+  hasAvailableSlots: boolean;
   setSelectedTime: (time: string) => void;
   setSelectedDuration: (dur: string) => void;
   startBookingFlow: () => void;
@@ -28,15 +33,46 @@ const BookingContext = createContext<BookingContextType | null>(null);
 
 type BookingProviderProps = {
   children: ReactNode;
-  meetings: Meeting[];
+  initialMeetings: Meeting[];
+  roomId: string;
 };
 
-export function BookingProvider({ children, meetings }: BookingProviderProps) {
+function calcHasAvailableSlots(meetings: Meeting[]): boolean {
+  const now = new Date();
+  return TIME_SLOTS.some((slot) => {
+    const slotStart = parse(slot, "HH:mm", now);
+    const slotEnd = addMinutes(slotStart, 30);
+    if (isToday(now) && isBefore(slotStart, now)) return false;
+    return !meetings.some((m) => {
+      const mStart = new Date(m.start_time);
+      const mEnd = new Date(m.end_time);
+      return slotStart < mEnd && slotEnd > mStart;
+    });
+  });
+}
+
+export function BookingProvider({
+  children,
+  initialMeetings,
+  roomId,
+}: BookingProviderProps) {
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [selectedTime, setSelectedTimeState] = useState<string | null>(null);
   const [selectedDuration, setSelectedDurationState] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
+  const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+
+  const { refreshKey } = useMeetingsContext();
+
+  useEffect(() => {
+    if (step > 0) return;
+    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
+      if (fetched) setMeetings(fetched);
+    });
+  }, [refreshKey]);
+
+  const hasAvailableSlots = calcHasAvailableSlots(meetings);
 
   const setSelectedTime = (time: string) => {
     setSelectedTimeState(time);
@@ -56,6 +92,9 @@ export function BookingProvider({ children, meetings }: BookingProviderProps) {
     setSelectedDurationState(null);
     setShowSuccess(false);
     setSuccessData(null);
+    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
+      if (fetched) setMeetings(fetched);
+    });
   };
 
   const setBookingSuccess = (data: SuccessData) => {
@@ -72,6 +111,7 @@ export function BookingProvider({ children, meetings }: BookingProviderProps) {
         meetings,
         showSuccess,
         successData,
+        hasAvailableSlots,
         setSelectedTime,
         setSelectedDuration,
         startBookingFlow,

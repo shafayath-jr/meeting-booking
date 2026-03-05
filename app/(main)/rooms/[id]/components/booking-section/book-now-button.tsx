@@ -3,12 +3,8 @@
 import { Button } from "@/components/ui/button";
 import { useBookingContext } from "./booking-context";
 
-type Props = {
-  hasAvailableSlots: boolean;
-};
-
-export default function BookNowButton({ hasAvailableSlots }: Props) {
-  const { step, startBookingFlow, showSuccess } = useBookingContext();
+export default function BookNowButton() {
+  const { step, startBookingFlow, showSuccess, hasAvailableSlots } = useBookingContext();
 
   if (showSuccess) return null;
 

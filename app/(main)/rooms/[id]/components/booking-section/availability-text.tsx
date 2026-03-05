@@ -2,12 +2,8 @@
 
 import { useBookingContext } from "./booking-context";
 
-type Props = {
-  hasAvailableSlots: boolean;
-};
-
-export default function AvailabilityText({ hasAvailableSlots }: Props) {
-  const { step } = useBookingContext();
+export default function AvailabilityText() {
+  const { step, hasAvailableSlots } = useBookingContext();
 
   if (step > 0) return null;
 
