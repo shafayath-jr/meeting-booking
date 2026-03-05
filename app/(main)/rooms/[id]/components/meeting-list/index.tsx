@@ -65,7 +65,7 @@ export default function MeetingList() {
 
   if (isLoading) {
     return (
-      <div className="space-y-3">
+      <div className="scrollbar-transparent max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-1">
         {Array.from({ length: 3 }).map((_, i) => (
           <Skeleton key={i} className="h-20 bg-black/10" />
         ))}
@@ -75,14 +75,14 @@ export default function MeetingList() {
 
   if (!ongoingMeeting && upcomingMeetings.length === 0) {
     return (
-      <p className="py-4 text-center text-sm text-secondary">
+      <p className="py-4 text-center text-lg text-secondary">
         No meetings scheduled today
       </p>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="scrollbar-transparent max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-2">
       {ongoingMeeting && <MeetingInfoCard meeting={ongoingMeeting} status="Ongoing" />}
       {upcomingMeetings.map((meeting) => (
         <MeetingInfoCard key={meeting.id} meeting={meeting} status="Upcoming" />

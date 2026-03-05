@@ -27,8 +27,8 @@ export default async function BookingSection({ roomId }: Props) {
   return (
     <BookingProvider meetings={meetings ?? []}>
       <div className="space-y-10">
-        <p className="text-sm font-semibold text-secondary">
-          {hasAvailableSlots ? "Slots are available" : "No slots available"}
+        <p className="text-xl text-secondary">
+          {hasAvailableSlots ? "Slots are available for booking" : "No slots available"}
         </p>
 
         <BookingSteps />

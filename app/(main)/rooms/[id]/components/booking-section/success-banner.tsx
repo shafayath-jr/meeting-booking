@@ -32,6 +32,15 @@ export default function SuccessBanner() {
   const minsLeft = differenceInMinutes(startTime, new Date());
   const timeRange = `${format(startTime, "h:mma")}–${format(endTime, "h:mma")}`;
 
+  const timeUntilStart = (() => {
+    if (minsLeft <= 0) return null;
+    const hrs = Math.floor(minsLeft / 60);
+    const mins = minsLeft % 60;
+    if (hrs > 0 && mins > 0) return `${hrs} hr ${mins} min`;
+    if (hrs > 0) return `${hrs} hr${hrs !== 1 ? "s" : ""}`;
+    return `${mins} min${mins !== 1 ? "s" : ""}`;
+  })();
+
   return (
     <div
       ref={containerRef}
@@ -39,7 +48,7 @@ export default function SuccessBanner() {
     >
       <div className="flex flex-col items-center gap-3 text-center">
         <BadgeCheck className="size-16 text-green-500" strokeWidth={1.5} />
-        <h3 className="text-2xl font-semibold text-secondary">Successfully Completed</h3>
+        <h3 className="text-2xl font-semibold text-secondary">Successfully Booked</h3>
       </div>
 
       <div className="space-y-3">
@@ -62,9 +71,9 @@ export default function SuccessBanner() {
             <span className="font-medium text-secondary">{timeRange}</span>
           </div>
         </div>
-        {minsLeft > 0 && (
-          <p className="text-sm text-yellow-500">
-            You have {minsLeft} min{minsLeft !== 1 ? "s" : ""} left for the meeting
+        {timeUntilStart && (
+          <p className="text-center text-sm text-brand-yellow">
+            Meeting starts in {timeUntilStart}
           </p>
         )}
       </div>
