@@ -6,6 +6,7 @@ import { getMeetingsByRoom } from "@/actions/meeting";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { TIME_SLOTS } from "@/lib/constants";
 import { parse, addMinutes, isToday, isBefore } from "date-fns";
+import { calculateAvailableDurations } from "@/lib/duration-helper";
 
 export type SuccessData = {
   subject: string;
@@ -78,7 +79,25 @@ export function BookingProvider({
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const setSelectedTime = (time: string) => setSelectedTimeState(time);
+  const setSelectedTime = (time: string) => {
+    setSelectedTimeState(time);
+
+    if (selectedDuration) {
+      const now = new Date();
+      const slotStart = parse(time, "HH:mm", now);
+      const nextMeeting =
+        meetings.find((m) => new Date(m.start_time) >= slotStart) ?? null;
+      const availability = calculateAvailableDurations(nextMeeting);
+
+      const isDurationStillValid =
+        !availability.isOngoingMeeting &&
+        availability.availableMinutes >= Number(selectedDuration);
+
+      if (!isDurationStillValid) {
+        setSelectedDurationState(null);
+      }
+    }
+  };
 
   const setSelectedDuration = (dur: string) => setSelectedDurationState(dur);
 

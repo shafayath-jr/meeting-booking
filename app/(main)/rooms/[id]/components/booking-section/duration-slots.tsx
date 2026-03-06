@@ -27,6 +27,7 @@ export default function DurationSlots() {
     <div className="grid grid-cols-5 gap-2">
       {FULL_MEETING_DURATION_OPTIONS.map((option) => {
         const isDisabled =
+          !selectedTime ||
           availability.isOngoingMeeting ||
           availability.availableMinutes < Number(option.value);
         return (
