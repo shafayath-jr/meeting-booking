@@ -24,7 +24,7 @@ function computeVariant(
     .sort(
       (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
     )[0];
-  if (upcoming && differenceInMinutes(new Date(upcoming.start_time), now) <= 5)
+  if (upcoming && differenceInMinutes(new Date(upcoming.start_time), now) <= 30)
     return "upcoming-soon";
   return "available";
 }
