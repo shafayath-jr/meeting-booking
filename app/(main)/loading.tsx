@@ -9,7 +9,7 @@ export default function HomeLoading() {
         <div className="mx-auto max-w-5xl">
           {/* Section Header */}
           <div className="mb-6 flex items-center gap-3">
-            <div className="rounded-xl bg-primary/10 p-2 dark:bg-primary/20">
+            <div className="rounded-xl bg-primary/10 p-2">
               <Building2 className="h-5 w-5 text-primary" />
             </div>
             <div>
@@ -19,7 +19,7 @@ export default function HomeLoading() {
           </div>
 
           {/* PlaceCycle Skeleton */}
-          <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:from-white/10 dark:via-white/5 dark:to-transparent dark:shadow-black/20">
+          <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl">
             <div className="p-6 md:p-8">
               <div className="flex items-center justify-between gap-4">
                 {/* Prev button */}
@@ -59,8 +59,8 @@ export default function HomeLoading() {
             {/* Section Header */}
             <div className="mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5 dark:from-emerald-500/30 dark:to-teal-500/30">
-                  <DoorOpen className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                <div className="rounded-2xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5">
+                  <DoorOpen className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
                   <Skeleton className="mb-1 h-6 w-36" />
@@ -89,7 +89,7 @@ export default function HomeLoading() {
             <div className="-mx-4 flex gap-4 overflow-hidden px-4 pb-4">
               {[...Array(4)].map((_, index) => (
                 <div key={index} className="w-80 shrink-0">
-                  <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/50 bg-white/70 shadow-lg shadow-black/5 backdrop-blur-xl dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+                  <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/50 bg-white/70 shadow-lg shadow-black/5 backdrop-blur-xl">
                     {/* Top accent bar */}
                     <Skeleton className="h-1 w-full rounded-none" />
                     <div className="flex flex-1 flex-col p-6">

@@ -24,10 +24,10 @@ export default function MeetingCard({ meeting, onMeetingClick }: MeetingCardProp
       onClick={() => onMeetingClick?.(meeting)}
       className={cn(
         "cursor-pointer rounded-xl p-4 transition-all duration-300",
-        "bg-white/50 backdrop-blur-sm dark:bg-white/5",
-        "border border-white/60 dark:border-white/10",
+        "bg-white/50 backdrop-blur-sm",
+        "border border-white/60",
         "shadow-sm hover:scale-[1.01] hover:shadow-lg",
-        "hover:bg-white/70 dark:hover:bg-white/10",
+        "hover:bg-white/70",
         onMeetingClick && "hover:border-primary/40",
         isSoon &&
           "border-destructive/40 bg-linear-to-br from-destructive/10 to-destructive/5"

@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Source_Serif_4 } from "next/font/google";
+import { Poppins, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
-import Navbar from "@/components/navbar";
-import AmbientBackground from "@/components/ambient-background";
+import GradientBackground from "@/components/gradient-background";
+import Footer from "@/components/footer";
 
-const inter = Inter({
+const poppins = Poppins({
   variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 const sourceSerif = Source_Serif_4({
   variable: "--font-serif",
@@ -26,15 +27,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${sourceSerif.variable} antialiased`}>
+      <body className={`${poppins.variable} ${sourceSerif.variable} antialiased`}>
         <Providers>
-          <div className="gradient-mesh relative min-h-screen overflow-hidden">
-            <AmbientBackground />
-            <div className="relative z-10">
-              <Navbar />
-              {children}
+          <GradientBackground>
+            <div className="relative z-10 flex min-h-screen flex-col">
+              {/* <Navbar /> */}
+              <main className="flex-1">{children}</main>
+              <Footer />
             </div>
-          </div>
+          </GradientBackground>
         </Providers>
       </body>
     </html>

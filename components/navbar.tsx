@@ -58,12 +58,12 @@ export default function Navbar() {
                 variant="outline"
                 size="icon"
                 onClick={() => router.push("/")}
-                className="shrink-0 border-white/40 bg-white/50 backdrop-blur-sm hover:bg-white/70 dark:border-white/20 dark:bg-white/10 dark:hover:bg-white/20"
+                className="shrink-0 border-white/40 bg-white/50 backdrop-blur-sm hover:bg-white/70"
               >
                 <ArrowLeft className="h-4 w-4" />
               </Button>
               {isLoading ? (
-                <div className="h-6 w-32 animate-pulse rounded bg-white/30 dark:bg-white/10" />
+                <div className="h-6 w-32 animate-pulse rounded bg-white/30" />
               ) : displayedRoomName ? (
                 <h1 className="text-xl font-bold text-primary md:text-2xl lg:text-3xl">
                   {displayedRoomName}
