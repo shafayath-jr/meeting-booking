@@ -27,7 +27,7 @@ export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProp
     : null;
 
   return (
-    <Card className="text-seconodary gap-0 border-none bg-black/20 px-5 py-4">
+    <Card className="text-seconodary gap-0 border-2 border-secondary/10 bg-secondary/10 px-5 py-4">
       <div className="flex items-center justify-between">
         <span className="text-xs text-secondary">
           {startTime}–{endTime} ({meeting.duration})

@@ -21,7 +21,7 @@ export default async function BookingSection({ roomId }: Props) {
 
         <SuccessBanner />
 
-        <div className="flex justify-start">
+        <div className="flex justify-center">
           <BookNowButton />
         </div>
       </div>
