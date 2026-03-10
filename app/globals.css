@@ -241,44 +241,36 @@
       linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, transparent 50%), #060d1f;
   }
   .gradient-mesh-green {
-    transition: background 0.8s ease;
-    background:
-      radial-gradient(
-        ellipse 65% 55% at 20% 15%,
-        oklch(0.55 0.18 148 / 0.6) 0%,
-        transparent 65%
-      ),
-      radial-gradient(
-        ellipse 55% 60% at 80% 70%,
-        oklch(0.55 0.15 175 / 0.45) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 70% 40% at 50% 90%,
-        oklch(0.45 0.12 140 / 0.5) 0%,
-        transparent 65%
-      ),
-      linear-gradient(135deg, rgba(167, 243, 208, 0.08) 0%, transparent 50%), #061810;
+    position: relative;
+    background: oklch(0.22 0.056 131);
+    overflow: hidden;
+  }
+  .gradient-mesh-green::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(
+      ellipse 90% 55% at 50% 45%,
+      oklch(48.328% 0.09865 158.454) 0%,
+      oklch(0.22 0.056 131) 75%
+    );
+    transform: rotate(20deg);
   }
   .gradient-mesh-yellow {
-    transition: background 0.8s ease;
-    background:
-      radial-gradient(
-        ellipse 65% 55% at 20% 10%,
-        oklch(0.82 0.18 85 / 0.55) 0%,
-        transparent 65%
-      ),
-      radial-gradient(
-        ellipse 55% 60% at 75% 75%,
-        oklch(0.7 0.2 60 / 0.4) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 60% 45% at 50% 50%,
-        oklch(0.65 0.16 78 / 0.35) 0%,
-        transparent 60%
-      ),
-      linear-gradient(135deg, rgba(253, 230, 138, 0.08) 0%, transparent 50%), #1a0e00;
+    position: relative;
+    background: oklch(0.17 0.045 55);
+    overflow: hidden;
+  }
+  .gradient-mesh-yellow::before {
+    content: "";
+    position: absolute;
+    inset: -20%;
+    background: radial-gradient(
+      ellipse 90% 55% at 50% 45%,
+      oklch(0.7 0.19 55) 0%,
+      oklch(0.17 0.045 55) 75%
+    );
+    transform: rotate(30deg);
   }
   .gradient-mesh-red {
     transition: background 0.8s ease;

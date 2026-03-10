@@ -33,7 +33,7 @@ export default function RootLayout({
             <div className="relative z-10 flex min-h-screen flex-col">
               {/* <Navbar /> */}
               <main className="flex-1">{children}</main>
-              <Footer />
+              {/* <Footer /> */}
             </div>
           </GradientBackground>
         </Providers>
