@@ -8,8 +8,8 @@ export default function AvailabilityText() {
   if (showSuccess) return null;
 
   return (
-    <p className="text-xl text-secondary">
-      {hasAvailableSlots ? "Slots are available for booking" : "No slots available"}
+    <p className="text-2xl text-secondary">
+      {hasAvailableSlots ? "Check available slots" : "No slots available"}
     </p>
   );
 }

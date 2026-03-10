@@ -24,11 +24,15 @@ async function RoomPage({ params }: Props) {
 
             {/* room details */}
 
-            <h3 className="text-4xl font-semibold text-secondary">{room?.name}</h3>
+            <div className="flex flex-col gap-4">
+              <h3 className="text-4xl font-semibold text-secondary uppercase">
+                {room?.name}
+              </h3>
 
-            {/* booking section */}
+              {/* booking section */}
 
-            <BookingSection roomId={id} />
+              <BookingSection roomId={id} />
+            </div>
           </div>
 
           <div className="w-2/5 space-y-10">
