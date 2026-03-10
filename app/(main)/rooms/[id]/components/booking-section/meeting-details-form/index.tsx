@@ -104,7 +104,11 @@ export default function MeetingDetailsForm() {
   };
 
   return (
-    <form id="meeting-details-form" onSubmit={form.handleSubmit(onSubmit)}>
+    <form
+      id="meeting-details-form"
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="mt-6"
+    >
       <FieldGroup className="grid grid-cols-2 gap-4">
         <Controller
           name="subject"

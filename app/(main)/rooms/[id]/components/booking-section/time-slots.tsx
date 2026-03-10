@@ -30,23 +30,23 @@ export default function TimeSlots() {
 
   if (availableSlots.length === 0) {
     return (
-      <p className="text-sm font-semibold text-secondary">
+      <p className="mt-6 text-sm font-semibold text-secondary">
         No available slots for today.
       </p>
     );
   }
 
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="mt-6 grid grid-cols-5 gap-2">
       {availableSlots.map((slot) => (
         <Button
           key={slot}
           variant="transparent"
-          size="lg"
+          size="default"
           onClick={() => setSelectedTime(slot)}
           className={cn(
-            selectedTime === slot && "border-brand-green bg-brand-green",
-            "rounded-xl"
+            selectedTime === slot && "border-secondary bg-secondary text-[#0F401D]",
+            "rounded-xl py-6"
           )}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}

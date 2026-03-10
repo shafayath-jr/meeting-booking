@@ -15,7 +15,7 @@ export default function BookNowButton() {
       variant="secondary"
       type="button"
       onClick={openModal}
-      disabled={disabled}
+      // disabled={disabled}
       className="rounded-xl py-8 text-lg"
       size="lg"
     >

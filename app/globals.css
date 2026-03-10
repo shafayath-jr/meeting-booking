@@ -225,20 +225,29 @@
     background:
       radial-gradient(
         ellipse 70% 60% at 10% 5%,
-        rgba(7, 152, 242, 0.55) 0%,
+        rgba(10, 135, 85, 0.8) 0%,
+        transparent 100%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 75% 100%,
+        rgba(10, 135, 85, 0.8) 0%,
+        transparent 100%
+      ),
+      linear-gradient(135deg, rgba(26, 92, 56, 0.12) 0%, transparent 50%), #051208;
+  }
+  .gradient-mesh-booking {
+    background:
+      radial-gradient(
+        ellipse 70% 60% at 10% 5%,
+        oklch(40.742% 0.12505 145.014 / 0.75) 0%,
         transparent 65%
       ),
       radial-gradient(
-        ellipse 50% 55% at 85% 35%,
-        rgba(99, 102, 241, 0.3) 0%,
+        ellipse 50% 50% at 85% 85%,
+        oklch(0.22 0.07 145 / 0.5) 0%,
         transparent 60%
       ),
-      radial-gradient(
-        ellipse 80% 45% at 50% 95%,
-        rgba(3, 68, 109, 0.6) 0%,
-        transparent 65%
-      ),
-      linear-gradient(135deg, rgba(34, 211, 238, 0.12) 0%, transparent 50%), #060d1f;
+      oklch(0.13 0.045 145);
   }
   .gradient-mesh-green {
     position: relative;
