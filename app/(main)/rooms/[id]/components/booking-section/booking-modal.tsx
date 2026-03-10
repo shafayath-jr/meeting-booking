@@ -15,7 +15,7 @@ import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
 
 export default function BookingModal() {
-  const { isModalOpen, closeModal } = useBookingContext();
+  const { isModalOpen, isSubmitting, closeModal } = useBookingContext();
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
@@ -58,8 +58,13 @@ export default function BookingModal() {
         </div>
 
         <div className="flex justify-end pt-2">
-          <Button type="submit" variant="transparent" form="meeting-details-form">
-            Confirm Booking
+          <Button
+            type="submit"
+            variant="transparent"
+            form="meeting-details-form"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Booking..." : "Confirm Booking"}
           </Button>
         </div>
       </DialogContent>

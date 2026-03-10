@@ -31,12 +31,16 @@ import { useBookingContext } from "../booking-context";
 export default function MeetingDetailsForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
-  const { selectedTime, selectedDuration, setBookingSuccess, closeModal } =
-    useBookingContext();
+  const {
+    selectedTime,
+    selectedDuration,
+    setBookingSuccess,
+    closeModal,
+    setIsSubmitting,
+  } = useBookingContext();
 
   const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {

@@ -23,15 +23,11 @@ export default function BookNowButton() {
       <Button
         variant="ghost"
         className={cn(
-          "relative h-40 w-40 rounded-full p-0",
-          "bg-white/8 backdrop-blur-md",
-          "border border-white/20",
+          "relative flex h-40 w-40 flex-col items-center justify-center rounded-full p-0",
+          "border border-white/20 bg-white/8 backdrop-blur-md",
           "shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(0,0,0,0.15)]",
-          "hover:scale-105 hover:border-white/35 hover:bg-white/5 hover:text-white",
-          "active:scale-[0.97]",
-          "transition-all duration-300",
-          "leading-tight font-bold tracking-widest text-secondary uppercase",
-          "flex flex-col items-center justify-center",
+          "text-lg leading-tight font-bold tracking-widest text-secondary uppercase",
+          "transition-all duration-300 hover:scale-105 hover:border-white/35 hover:bg-white/5 hover:text-white active:scale-[0.97]",
           disabled && "cursor-not-allowed opacity-40 saturate-0"
         )}
         type="button"

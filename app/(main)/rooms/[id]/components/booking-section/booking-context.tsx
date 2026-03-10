@@ -17,6 +17,7 @@ export type SuccessData = {
 
 type BookingContextType = {
   isModalOpen: boolean;
+  isSubmitting: boolean;
   selectedTime: string | null;
   selectedDuration: string | null;
   meetings: Meeting[];
@@ -29,6 +30,7 @@ type BookingContextType = {
   setSelectedDuration: (dur: string) => void;
   resetFlow: () => void;
   setBookingSuccess: (data: SuccessData) => void;
+  setIsSubmitting: (val: boolean) => void;
 };
 
 const BookingContext = createContext<BookingContextType | null>(null);
@@ -59,6 +61,7 @@ export function BookingProvider({
   roomId,
 }: BookingProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTime, setSelectedTimeState] = useState<string | null>(null);
   const [selectedDuration, setSelectedDurationState] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -121,6 +124,7 @@ export function BookingProvider({
     <BookingContext.Provider
       value={{
         isModalOpen,
+        isSubmitting,
         selectedTime,
         selectedDuration,
         meetings,
@@ -133,6 +137,7 @@ export function BookingProvider({
         setSelectedDuration,
         resetFlow,
         setBookingSuccess,
+        setIsSubmitting,
       }}
     >
       {children}
