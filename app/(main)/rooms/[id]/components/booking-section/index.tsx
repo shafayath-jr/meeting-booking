@@ -4,6 +4,7 @@ import BookingModal from "./booking-modal";
 import BookNowButton from "./book-now-button";
 import AvailabilityText from "./availability-text";
 import SuccessBanner from "./success-banner";
+import OngoingMeetingBanner from "./ongoing-meeting-banner";
 import RoomGradientSync from "./room-gradient-sync";
 
 type Props = {
@@ -17,6 +18,7 @@ export default async function BookingSection({ roomId }: Props) {
     <BookingProvider roomId={roomId} initialMeetings={meetings ?? []}>
       <RoomGradientSync />
       <div className="space-y-10">
+        <OngoingMeetingBanner />
         <AvailabilityText />
 
         <SuccessBanner />
