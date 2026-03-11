@@ -45,7 +45,8 @@ export default function TimeSlots() {
           size="default"
           onClick={() => setSelectedTime(slot)}
           className={cn(
-            selectedTime === slot && "border-secondary bg-secondary text-[#0F401D]",
+            selectedTime === slot &&
+              "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80",
             "rounded-xl py-6"
           )}
         >
