@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useBookingContext } from "./booking-context";
+import { cn } from "@/lib/utils";
 
 export default function BookNowButton() {
   const { openModal, showSuccess, hasAvailableSlots, meetings } = useBookingContext();
@@ -20,7 +21,7 @@ export default function BookNowButton() {
       type="button"
       onClick={openModal}
       disabled={disabled}
-      className={`rounded-xl py-6 text-lg${isOngoing ? "mx-auto flex" : ""}`}
+      className={cn("rounded-xl py-6 text-lg", isOngoing && "mx-auto flex")}
       size="lg"
     >
       Book a new meeting
