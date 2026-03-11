@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
-import { isAfter, isBefore, startOfToday, endOfToday } from "date-fns";
+import { isAfter, startOfToday, endOfToday } from "date-fns";
 import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoomForDateRange } from "@/actions/meeting";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -48,16 +48,6 @@ export default function MeetingList() {
     fetchMeetings();
   }, [roomId, refreshKey]);
 
-  const ongoingMeeting = useMemo(
-    () =>
-      allFetchedMeetings.find((m) => {
-        const start = new Date(m.start_time);
-        const end = new Date(m.end_time);
-        return isBefore(start, currentTime) && isAfter(end, currentTime);
-      }) || null,
-    [allFetchedMeetings, currentTime]
-  );
-
   const upcomingMeetings = useMemo(
     () => allFetchedMeetings.filter((m) => isAfter(new Date(m.start_time), currentTime)),
     [allFetchedMeetings, currentTime]
@@ -73,7 +63,7 @@ export default function MeetingList() {
     );
   }
 
-  if (!ongoingMeeting && upcomingMeetings.length === 0) {
+  if (upcomingMeetings.length === 0) {
     return (
       <div className="flex h-[calc(100vh-180px)] items-center justify-center rounded-xl bg-black/20">
         <p className="text-secondary lg:text-lg">No meetings scheduled today</p>
@@ -83,7 +73,6 @@ export default function MeetingList() {
 
   return (
     <div className="scrollbar-transparent max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-2">
-      {ongoingMeeting && <MeetingInfoCard meeting={ongoingMeeting} status="Ongoing" />}
       {upcomingMeetings.map((meeting) => (
         <MeetingInfoCard key={meeting.id} meeting={meeting} status="Upcoming" />
       ))}

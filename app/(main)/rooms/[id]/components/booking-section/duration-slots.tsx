@@ -24,7 +24,7 @@ export default function DurationSlots() {
   const availability = calculateAvailableDurations(nextMeeting);
 
   return (
-    <div className="grid grid-cols-5 gap-2">
+    <div className="mt-6 grid grid-cols-5 gap-2">
       {FULL_MEETING_DURATION_OPTIONS.map((option) => {
         const isDisabled =
           !selectedTime ||
@@ -34,12 +34,13 @@ export default function DurationSlots() {
           <Button
             key={option.value}
             variant="transparent"
-            size="lg"
+            size="default"
             disabled={isDisabled}
             onClick={() => setSelectedDuration(option.value)}
             className={cn(
-              selectedDuration === option.value && "border-brand-green bg-brand-green",
-              "rounded-xl"
+              selectedDuration === option.value &&
+                "border-secondary bg-secondary text-[#0F401D]",
+              "rounded-xl py-6"
             )}
           >
             {option.label}

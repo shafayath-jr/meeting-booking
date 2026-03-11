@@ -31,12 +31,16 @@ import { useBookingContext } from "../booking-context";
 export default function MeetingDetailsForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
-  const { selectedTime, selectedDuration, setBookingSuccess, closeModal } =
-    useBookingContext();
+  const {
+    selectedTime,
+    selectedDuration,
+    setBookingSuccess,
+    closeModal,
+    setIsSubmitting,
+  } = useBookingContext();
 
   const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -100,7 +104,11 @@ export default function MeetingDetailsForm() {
   };
 
   return (
-    <form id="meeting-details-form" onSubmit={form.handleSubmit(onSubmit)}>
+    <form
+      id="meeting-details-form"
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="mt-6"
+    >
       <FieldGroup className="grid grid-cols-2 gap-4">
         <Controller
           name="subject"

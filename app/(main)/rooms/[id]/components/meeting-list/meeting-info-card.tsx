@@ -27,13 +27,13 @@ export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProp
     : null;
 
   return (
-    <Card className="text-seconodary gap-0 border-none bg-black/20 px-5 py-4">
-      <div className="flex items-center justify-between">
+    <Card className="text-seconodary gap-0 rounded-xl border-2 border-secondary/10 bg-secondary/10 px-5 py-4">
+      <div className="mb-2 flex items-center justify-between">
         <span className="text-xs text-secondary">
           {startTime}–{endTime} ({meeting.duration})
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-semibold text-secondary ${
+          className={`rounded-full bg-linear-to-b from-[#25A048] to-[#1F7738] px-2 py-1 text-xs font-semibold text-secondary ${
             status === "Ongoing" ? "bg-emerald-600" : "bg-brand-green"
           }`}
         >
