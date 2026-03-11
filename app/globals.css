@@ -273,33 +273,29 @@
   .gradient-mesh-yellow::before {
     content: "";
     position: absolute;
-    inset: -20%;
+    inset: -50%;
     background: radial-gradient(
-      ellipse 90% 55% at 50% 45%,
-      oklch(0.7 0.19 55) 0%,
+      ellipse 90% 55% at 50% 50%,
+      oklch(65.438% 0.14546 57.442) 0%,
       oklch(0.17 0.045 55) 75%
     );
-    transform: rotate(30deg);
+    transform: rotate(140deg);
   }
   .gradient-mesh-red {
-    transition: background 0.8s ease;
-    background:
-      radial-gradient(
-        ellipse 65% 55% at 15% 10%,
-        oklch(0.45 0.2 15 / 0.6) 0%,
-        transparent 65%
-      ),
-      radial-gradient(
-        ellipse 55% 60% at 80% 80%,
-        oklch(0.45 0.18 355 / 0.45) 0%,
-        transparent 60%
-      ),
-      radial-gradient(
-        ellipse 60% 45% at 60% 40%,
-        oklch(0.35 0.15 330 / 0.4) 0%,
-        transparent 60%
-      ),
-      linear-gradient(135deg, rgba(251, 113, 133, 0.08) 0%, transparent 50%), #120308;
+    position: relative;
+    background: oklch(20% 0.059 1);
+    overflow: hidden;
+  }
+  .gradient-mesh-red::before {
+    content: "";
+    position: absolute;
+    inset: -40%;
+    background: radial-gradient(
+      ellipse 90% 55% at 50% 50%,
+      oklch(56% 0.2 6) 0%,
+      oklch(20% 0.059 1) 75%
+    );
+    transform: rotate(140deg);
   }
 
   /* Glass card shadow for depth */
