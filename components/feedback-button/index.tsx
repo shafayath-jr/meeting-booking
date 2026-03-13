@@ -1,9 +1,9 @@
 "use client";
-
+import emailjs from "@emailjs/browser";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Send, SmilePlus, X } from "lucide-react";
+import { CircleQuestionMark, Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Field, FieldLabel, FieldError } from "@/components/ui/field";
@@ -13,6 +13,11 @@ import {
   feedbackFormDefaultValues,
   type FeedbackFormValues,
 } from "./form-schema";
+import { toast } from "sonner";
+
+const serviceID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
+const templateID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID_CONTACT;
+const publicKey = process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY;
 
 export default function FeedbackButton() {
   const [open, setOpen] = useState(false);
@@ -23,14 +28,25 @@ export default function FeedbackButton() {
     resolver: zodResolver(feedbackFormSchema),
   });
 
-  function onSubmit(data: FeedbackFormValues) {
-    console.log(data);
-    setSubmitted(true);
-    setTimeout(() => {
-      setOpen(false);
-      form.reset();
-      setSubmitted(false);
-    }, 1500);
+  async function onSubmit(data: FeedbackFormValues) {
+    if (!serviceID || !templateID || !publicKey) {
+      toast.error("Email service is not configured properly.");
+      return;
+    }
+
+    try {
+      await emailjs.send(
+        serviceID,
+        templateID,
+        { email: "Not provided", feedback: data.comment },
+        publicKey
+      );
+      toast.success("Thank you for your feedback!");
+      handleClose();
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to send feedback. Please try again.");
+    }
   }
 
   function handleClose() {
@@ -44,7 +60,7 @@ export default function FeedbackButton() {
       {/* Popup panel */}
       <div
         className={cn(
-          "fixed bottom-24 left-6 z-50 w-80 rounded-2xl border border-gray-100 bg-white shadow-2xl transition-all duration-300",
+          "fixed right-6 bottom-24 z-50 w-80 rounded-2xl border border-gray-100 bg-white shadow-2xl transition-all duration-300",
           open
             ? "pointer-events-auto translate-y-0 opacity-100"
             : "pointer-events-none translate-y-4 opacity-0"
@@ -92,7 +108,11 @@ export default function FeedbackButton() {
                   </Field>
                 )}
               />
-              <Button type="submit" className="mt-3 ml-auto block">
+              <Button
+                type="submit"
+                className="mt-3 ml-auto block bg-[#0A8754] text-white hover:bg-[#0A8754]/90"
+                disabled={form.formState.isSubmitting}
+              >
                 <Send className="h-6 w-6" />
               </Button>
             </form>
@@ -103,10 +123,11 @@ export default function FeedbackButton() {
       {/* Floating trigger button */}
       <Button
         onClick={() => setOpen((v) => !v)}
-        className="fixed bottom-6 left-6 z-50 h-14 w-14 rounded-full shadow-lg"
+        className="fixed right-6 bottom-6 z-50 h-14 w-14 rounded-full shadow-lg"
         aria-label="Open feedback"
+        variant="transparent"
       >
-        <SmilePlus className="h-6 w-6" />
+        <CircleQuestionMark className="size-6" />
       </Button>
     </>
   );
