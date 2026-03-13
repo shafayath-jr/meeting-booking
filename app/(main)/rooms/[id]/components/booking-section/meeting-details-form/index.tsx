@@ -9,20 +9,24 @@ import {
 } from "./form-schema";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { getAllDomains } from "@/actions/domain";
+import { searchUsers } from "@/actions/user";
 import { bookMeeting } from "@/actions/meeting";
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { addMinutes, parse } from "date-fns";
-import { Domain } from "@/types/domain";
+import { User } from "@/types/user";
 import { Room } from "@/types/room";
 import { toast } from "sonner";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
@@ -39,20 +43,23 @@ export default function MeetingDetailsForm() {
     setIsSubmitting,
   } = useBookingContext();
 
-  const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
+  const [userOptions, setUserOptions] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const debouncedQuery = useDebounce(searchQuery, 300);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const [{ domains: fetchedDomains }, { room: fetchedRoom }] = await Promise.all([
-        getAllDomains(),
-        getRoomById(roomId),
-      ]);
-      setDomains(fetchedDomains || []);
-      setRoom(fetchedRoom);
-    };
-    fetchData();
+    getRoomById(roomId).then(({ room: fetchedRoom }) => setRoom(fetchedRoom));
   }, [roomId]);
+
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setUserOptions([]);
+      return;
+    }
+    searchUsers(debouncedQuery).then(({ users }) => setUserOptions(users || []));
+  }, [debouncedQuery]);
 
   const form = useForm<MeetingDetailsFormValues>({
     defaultValues: meetingDetailsFormDefaultValues,
@@ -60,6 +67,8 @@ export default function MeetingDetailsForm() {
   });
 
   const onSubmit = async (data: MeetingDetailsFormValues) => {
+    console.log(data);
+
     if (!room || !selectedTime || !selectedDuration) return;
 
     setIsSubmitting(true);
@@ -73,8 +82,8 @@ export default function MeetingDetailsForm() {
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
         date: startDate,
-        booked_by: data.hostName,
-        email: `${data.emailUsername}@${data.emailDomain}`,
+        booked_by: "",
+        email: data.email,
         duration: `${selectedDuration} Minutes`,
         guests: JSON.stringify([]),
         room_id: room.id,
@@ -89,7 +98,7 @@ export default function MeetingDetailsForm() {
         closeModal();
         setBookingSuccess({
           subject: data.subject,
-          hostName: data.hostName,
+          hostName: data.email,
           startTime: startDate,
           endTime: endDate,
         });
@@ -132,73 +141,61 @@ export default function MeetingDetailsForm() {
         />
 
         <Controller
-          name="hostName"
+          name="email"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Meeting Host Name
+                Email
               </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="Enter your name"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="emailUsername"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Email Username
-              </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="Username"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="emailDomain"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Email Domain
-              </FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger
-                  className="w-full border-secondary bg-transparent text-secondary/90!"
-                  aria-invalid={fieldState.invalid}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-inherit">@</span>
-                    <SelectValue placeholder="Select domain" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent className="text-secondary">
-                  {domains.map((domain) => (
-                    <SelectItem key={domain.id} value={domain.name}>
-                      {domain.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover
+                open={open}
+                onOpenChange={(isOpen) => {
+                  setOpen(isOpen);
+                  if (!isOpen) setSearchQuery("");
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    aria-invalid={fieldState.invalid}
+                    className="w-full justify-start border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                  >
+                    {field.value || "Search by email..."}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Type to search..."
+                      value={searchQuery}
+                      onValueChange={setSearchQuery}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        {searchQuery ? "No users found" : "Type to search..."}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {userOptions.map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            value={user.email}
+                            onSelect={() => {
+                              field.onChange(user.email);
+                              setOpen(false);
+                              setSearchQuery("");
+                            }}
+                          >
+                            {user.email}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
