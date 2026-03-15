@@ -42,8 +42,7 @@ export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProp
       </div>
       <h3 className="mt-1 text-lg font-medium text-secondary">{meeting.title}</h3>
       <p className="mt-0.5 text-xs text-secondary">
-        <span className="font-semibold text-white">Meeting Host</span> :{" "}
-        {meeting.booked_by}
+        <span className="font-semibold text-white">Meeting Host</span> : {meeting.email}
       </p>
       {status === "Ongoing" && (
         <div className="mt-3">

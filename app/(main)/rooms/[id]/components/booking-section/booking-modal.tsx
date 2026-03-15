@@ -13,15 +13,48 @@ import { useBookingContext } from "./booking-context";
 import TimeSlots from "./time-slots";
 import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
+import {
+  useGradientContext,
+  type GradientVariant,
+} from "@/components/providers/gradient-context";
+
+const gradientMap: Record<GradientVariant, string> = {
+  default: "gradient-mesh",
+  available: "gradient-mesh",
+  "upcoming-soon": "gradient-standby",
+  ongoing: "gradient-occupied",
+  unavailable: "gradient-occupied",
+};
+
+const borderColorMap: Record<GradientVariant, string> = {
+  default: "#35AD57",
+  available: "#35AD57",
+  "upcoming-soon": "oklch(65.438% 0.14546 57.442)",
+  ongoing: "oklch(56% 0.2 6)",
+  unavailable: "oklch(56% 0.2 6)",
+};
+
+const badgeBgMap: Record<GradientVariant, string> = {
+  default: "#0A8754",
+  available: "#0A8754",
+  "upcoming-soon": "oklch(35% 0.1 57)",
+  ongoing: "oklch(25% 0.12 6)",
+  unavailable: "oklch(25% 0.12 6)",
+};
 
 export default function BookingModal() {
   const { isModalOpen, isSubmitting, closeModal } = useBookingContext();
+  const { variant } = useGradientContext();
+
+  const borderColor = borderColorMap[variant];
+  const badgeBg = badgeBgMap[variant];
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
       <DialogContent
         showCloseButton={false}
-        className="gradient-mesh max-h-[90vh] max-w-4xl! overflow-y-auto border! border-[#35AD57]!"
+        className={`${gradientMap[variant]} max-h-[90vh] max-w-4xl! overflow-y-auto border!`}
+        style={{ borderColor }}
       >
         <DialogHeader>
           <DialogTitle className="text-xl text-secondary">Book a Meeting</DialogTitle>
@@ -40,22 +73,40 @@ export default function BookingModal() {
         </Button>
 
         <div className="space-y-10">
-          <div className="relative mt-8 space-y-4 rounded-4xl border border-[#35AD57] p-4">
-            <div className="absolute -top-6 left-6 rounded-full border border-[#35AD57] bg-[#0A8754] px-4 py-2">
+          <div
+            className="relative mt-8 space-y-4 rounded-4xl border p-4"
+            style={{ borderColor }}
+          >
+            <div
+              className="absolute -top-6 left-6 rounded-full border px-4 py-2"
+              style={{ borderColor, backgroundColor: badgeBg }}
+            >
               <h5 className="font-medium text-secondary">Available slots for today</h5>
             </div>
             <TimeSlots />
           </div>
 
-          <div className="relative mt-8 space-y-4 rounded-4xl border border-[#35AD57] p-4">
-            <div className="absolute -top-6 left-6 rounded-full border border-[#35AD57] bg-[#0A8754] px-4 py-2">
+          <div
+            className="relative mt-8 space-y-4 rounded-4xl border p-4"
+            style={{ borderColor }}
+          >
+            <div
+              className="absolute -top-6 left-6 rounded-full border px-4 py-2"
+              style={{ borderColor, backgroundColor: badgeBg }}
+            >
               <h5 className="font-medium text-secondary">Choose meeting duration</h5>
             </div>
             <DurationSlots />
           </div>
 
-          <div className="relative mt-8 space-y-4 rounded-4xl border border-[#35AD57] p-4">
-            <div className="absolute -top-6 left-6 rounded-full border border-[#35AD57] bg-[#0A8754] px-4 py-2">
+          <div
+            className="relative mt-8 space-y-4 rounded-4xl border p-4"
+            style={{ borderColor }}
+          >
+            <div
+              className="absolute -top-6 left-6 rounded-full border px-4 py-2"
+              style={{ borderColor, backgroundColor: badgeBg }}
+            >
               <h5 className="font-medium text-secondary">Booking details</h5>
             </div>
 
