@@ -94,8 +94,6 @@ export default function MeetingDetailsForm() {
   );
 
   const onSubmit = async (data: MeetingDetailsFormValues) => {
-    console.log(data);
-
     if (!room || !selectedTime || !selectedDuration) return;
 
     setIsSubmitting(true);
