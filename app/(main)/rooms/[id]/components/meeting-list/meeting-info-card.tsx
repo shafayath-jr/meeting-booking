@@ -27,10 +27,10 @@ export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProp
     : null;
 
   return (
-    <Card className="text-seconodary gap-0 rounded-xl border-2 border-secondary/10 bg-secondary/10 px-5 py-4">
+    <Card className="text-seconodary gap-0 rounded-xl border-2 border-secondary/10 bg-secondary/10 px-5 py-6">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs text-secondary">
-          {startTime}–{endTime} ({meeting.duration})
+        <span className="text-lg text-brand-yellow">
+          {startTime}–{endTime}
         </span>
         <span
           className={`rounded-full bg-linear-to-b from-[#25A048] to-[#1F7738] px-2 py-1 text-xs font-semibold text-secondary ${
@@ -41,7 +41,7 @@ export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProp
         </span>
       </div>
       <h3 className="mt-1 text-lg font-medium text-secondary">{meeting.title}</h3>
-      <p className="mt-0.5 text-xs text-secondary">
+      <p className="mt-0.5 text-sm text-secondary">
         <span className="font-semibold text-white">Meeting Host</span> :{" "}
         {meeting.booked_by}
       </p>

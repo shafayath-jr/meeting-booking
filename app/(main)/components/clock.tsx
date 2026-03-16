@@ -16,7 +16,7 @@ export default function Clock() {
   const date = format(now, "EEEE MMMM d, yyyy");
 
   return (
-    <div className="rounded-2xl text-secondary">
+    <div className="mb-10 rounded-2xl text-secondary">
       <div className="flex items-start gap-2">
         <span className="text-7xl leading-none font-bold tracking-tight">{time}</span>
         <span className="mt-1 text-2xl font-semibold">{ampm}</span>

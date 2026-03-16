@@ -16,11 +16,11 @@ export default function MeetingRoomImage() {
 
   return (
     <Image
-      src="/meeting-room-image.png"
+      src="/meeting-room-image.webp"
       alt="Meeting Room"
       width={480}
       height={190}
-      className="h-44 w-md rounded-lg object-cover opacity-90"
+      className="h-60 w-lg rounded-lg object-cover"
     />
   );
 }

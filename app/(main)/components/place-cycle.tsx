@@ -39,10 +39,8 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
   return (
     <div className="relative">
       {/* Main Card */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/40 bg-linear-to-br from-white/80 via-white/60 to-white/40 shadow-xl shadow-black/5 backdrop-blur-xl">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-[#18502E] bg-linear-to-br from-[#0C170F] to-[#18502E] opacity-70">
         {/* Decorative gradient */}
-        <div className="pointer-events-none absolute inset-0 bg-linear-to-r from-primary/5 via-transparent to-violet-500/5" />
-
         <div className="relative p-6 md:p-8">
           <div className="flex items-center justify-between gap-4">
             {/* Previous Button */}
@@ -89,12 +87,12 @@ export default function PlaceCycle({ buildings, currentBuildingId }: Props) {
               </div>
 
               {/* Building name */}
-              <h2 className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-4xl lg:text-5xl">
+              <h2 className="bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-2xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
                 {currentBuilding?.name || "No Building"}
               </h2>
 
               {/* Building count */}
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="mt-2 text-sm text-secondary/80">
                 {currentIndex + 1} of {buildings.length} building
                 {buildings.length !== 1 ? "s" : ""}
               </p>

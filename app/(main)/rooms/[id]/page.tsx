@@ -1,12 +1,13 @@
 import { MeetingsProvider } from "@/components/providers/meetings-provider";
 import PageContainer from "@/components/page-container";
-import Clock from "@/app/(main)/components/clock";
 import { getRoomById } from "@/actions/room";
 import { getMeetingsByRoom } from "@/actions/meeting";
 import BookingSection from "./components/booking-section";
 import MeetingList from "./components/meeting-list";
 import MeetingRoomImage from "./components/booking-section/meeting-room-image";
 import { BookingProvider } from "./components/booking-section/booking-context";
+import Image from "next/image";
+import Clock from "@/app/(main)/components/clock";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -25,9 +26,15 @@ async function RoomPage({ params }: Props) {
         <PageContainer>
           <div className="flex justify-between gap-10">
             <div className="w-3/5 space-y-10">
-              {/* clock  */}
+              {/* logo  */}
 
-              <Clock />
+              <Image
+                src="/pen-logo.svg"
+                alt="Pen Logo"
+                width={200}
+                height={100}
+                className="mb-16 h-20 w-auto"
+              />
 
               {/* room details */}
 
@@ -44,7 +51,11 @@ async function RoomPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="w-2/5 space-y-10">
+            <div className="w-2/5 space-y-3">
+              {/* clock */}
+
+              <Clock />
+
               <h5 className="text-2xl font-semibold text-secondary">
                 Today&apos;s schedule
               </h5>

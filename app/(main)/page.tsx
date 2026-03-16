@@ -20,14 +20,14 @@ async function HomePage({ searchParams }: Props) {
     : { rooms: [] };
 
   return (
-    <div>
+    <div className="py-10">
       {/* Building Selection Section */}
       <div className="px-6 pb-8">
         <div className="mx-auto max-w-5xl">
           {/* Section Header */}
           <div className="mb-6 flex items-center gap-4">
-            <div className="rounded-xl bg-secondary/10 p-2">
-              <Building2 className="h-5 w-5 text-secondary" />
+            <div className="rounded-xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5">
+              <Building2 className="h-5 w-5 text-emerald-600" />
             </div>
             <div>
               <h2 className="text-xl font-semibold text-secondary">Select Building</h2>

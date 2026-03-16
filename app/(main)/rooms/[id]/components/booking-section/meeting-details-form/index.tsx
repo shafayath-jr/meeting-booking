@@ -1,6 +1,6 @@
 "use client";
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   formSchema,
@@ -9,22 +9,29 @@ import {
 } from "./form-schema";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { X } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useParams } from "next/navigation";
 import { getRoomById } from "@/actions/room";
-import { getAllDomains } from "@/actions/domain";
+import { searchUsers } from "@/actions/user";
 import { bookMeeting } from "@/actions/meeting";
 import { useEffect, useState } from "react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { addMinutes, parse } from "date-fns";
-import { Domain } from "@/types/domain";
+import { User } from "@/types/user";
 import { Room } from "@/types/room";
 import { toast } from "sonner";
+import { nameFromEmail } from "@/lib/utils";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { useBookingContext } from "../booking-context";
 
@@ -39,25 +46,52 @@ export default function MeetingDetailsForm() {
     setIsSubmitting,
   } = useBookingContext();
 
-  const [domains, setDomains] = useState<Domain[]>([]);
   const [room, setRoom] = useState<Room | null>(null);
+  const [userOptions, setUserOptions] = useState<User[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [open, setOpen] = useState(false);
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
+  const [guestOptions, setGuestOptions] = useState<User[]>([]);
+  const [guestSearchQuery, setGuestSearchQuery] = useState("");
+  const [guestOpen, setGuestOpen] = useState(false);
+  const debouncedGuestQuery = useDebounce(guestSearchQuery, 300);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const [{ domains: fetchedDomains }, { room: fetchedRoom }] = await Promise.all([
-        getAllDomains(),
-        getRoomById(roomId),
-      ]);
-      setDomains(fetchedDomains || []);
-      setRoom(fetchedRoom);
-    };
-    fetchData();
+    getRoomById(roomId).then(({ room: fetchedRoom }) => setRoom(fetchedRoom));
   }, [roomId]);
+
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setUserOptions([]);
+      return;
+    }
+    searchUsers(debouncedQuery).then(({ users }) => setUserOptions(users || []));
+  }, [debouncedQuery]);
+
+  useEffect(() => {
+    if (!debouncedGuestQuery) {
+      setGuestOptions([]);
+      return;
+    }
+    searchUsers(debouncedGuestQuery).then(({ users }) => setGuestOptions(users || []));
+  }, [debouncedGuestQuery]);
 
   const form = useForm<MeetingDetailsFormValues>({
     defaultValues: meetingDetailsFormDefaultValues,
     resolver: zodResolver(formSchema),
   });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "guests",
+  });
+
+  const hostEmail = form.watch("email");
+
+  const filteredGuestOptions = guestOptions.filter(
+    (u) => u.email !== hostEmail && !fields.some((f) => f.value === u.email)
+  );
 
   const onSubmit = async (data: MeetingDetailsFormValues) => {
     if (!room || !selectedTime || !selectedDuration) return;
@@ -73,10 +107,13 @@ export default function MeetingDetailsForm() {
         start_time: startDate.toISOString(),
         end_time: endDate.toISOString(),
         date: startDate,
-        booked_by: data.hostName,
-        email: `${data.emailUsername}@${data.emailDomain}`,
+        booked_by: "",
+        email: data.email,
         duration: `${selectedDuration} Minutes`,
-        guests: JSON.stringify([]),
+        guests: JSON.stringify(
+          data.guests?.map((g) => ({ email: g.value, name: nameFromEmail(g.value) })) ??
+            []
+        ),
         room_id: room.id,
         building_id: room.place_id,
       };
@@ -89,7 +126,7 @@ export default function MeetingDetailsForm() {
         closeModal();
         setBookingSuccess({
           subject: data.subject,
-          hostName: data.hostName,
+          hostName: data.email,
           startTime: startDate,
           endTime: endDate,
         });
@@ -132,74 +169,152 @@ export default function MeetingDetailsForm() {
         />
 
         <Controller
-          name="hostName"
+          name="email"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Meeting Host Name
+                Email
               </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="Enter your name"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
-              />
+              <Popover
+                open={open}
+                onOpenChange={(isOpen) => {
+                  setOpen(isOpen);
+                  if (!isOpen) setSearchQuery("");
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={open}
+                    aria-invalid={fieldState.invalid}
+                    className="w-full justify-between border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                  >
+                    <span>{field.value || "Search by email..."}</span>
+                    {field.value && (
+                      <span
+                        role="button"
+                        aria-label="Clear email"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          field.onChange("");
+                        }}
+                        className="ml-2 rounded-sm opacity-70 hover:opacity-100"
+                      >
+                        <X className="h-4 w-4" />
+                      </span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Type to search..."
+                      value={searchQuery}
+                      onValueChange={setSearchQuery}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        {searchQuery ? "No users found" : "Type to search..."}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {userOptions.map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            value={user.email}
+                            onSelect={() => {
+                              field.onChange(user.email);
+                              setOpen(false);
+                              setSearchQuery("");
+                            }}
+                          >
+                            {user.email}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
         />
 
-        <Controller
-          name="emailUsername"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Email Username
-              </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                autoComplete="off"
-                aria-invalid={fieldState.invalid}
-                placeholder="Username"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
+        {/* guests */}
 
         <Controller
-          name="emailDomain"
+          name="guests"
           control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Email Domain
-              </FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger
-                  className="w-full border-secondary bg-transparent text-secondary/90!"
-                  aria-invalid={fieldState.invalid}
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="text-inherit">@</span>
-                    <SelectValue placeholder="Select domain" />
+          render={() => (
+            <Field className="col-span-2">
+              <FieldLabel className="text-lg text-secondary">Guests</FieldLabel>
+              <Popover
+                open={guestOpen}
+                onOpenChange={(isOpen) => {
+                  setGuestOpen(isOpen);
+                  if (!isOpen) setGuestSearchQuery("");
+                }}
+              >
+                <PopoverTrigger asChild>
+                  <div
+                    role="combobox"
+                    aria-expanded={guestOpen}
+                    aria-controls="guest-popover"
+                    tabIndex={0}
+                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/10 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
+                  >
+                    {fields.length > 0 ? (
+                      fields.map((field, index) => (
+                        <Badge key={field.id} variant="secondary" className="gap-1 pr-1">
+                          {field.value}
+                          <button
+                            type="button"
+                            aria-label={`Remove ${field.value}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              remove(index);
+                            }}
+                            className="ml-0.5 rounded-sm opacity-70 hover:opacity-100 focus:outline-none"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))
+                    ) : (
+                      <span>Add guests...</span>
+                    )}
                   </div>
-                </SelectTrigger>
-                <SelectContent className="text-secondary">
-                  {domains.map((domain) => (
-                    <SelectItem key={domain.id} value={domain.name}>
-                      {domain.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </PopoverTrigger>
+                <PopoverContent id="guest-popover" className="w-full p-0" align="start">
+                  <Command shouldFilter={false}>
+                    <CommandInput
+                      placeholder="Type to search..."
+                      value={guestSearchQuery}
+                      onValueChange={setGuestSearchQuery}
+                    />
+                    <CommandList>
+                      <CommandEmpty>
+                        {guestSearchQuery ? "No users found" : "Type to search..."}
+                      </CommandEmpty>
+                      <CommandGroup>
+                        {filteredGuestOptions.map((user) => (
+                          <CommandItem
+                            key={user.id}
+                            value={user.email}
+                            onSelect={() => {
+                              append({ value: user.email });
+                            }}
+                          >
+                            {user.email}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </Field>
           )}
         />

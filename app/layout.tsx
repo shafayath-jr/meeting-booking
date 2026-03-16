@@ -3,7 +3,8 @@ import { Poppins, Source_Serif_4 } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers";
 import GradientBackground from "@/components/gradient-background";
-import Footer from "@/components/footer";
+
+import FeedbackButton from "@/components/feedback-button";
 
 const poppins = Poppins({
   variable: "--font-sans",
@@ -34,6 +35,8 @@ export default function RootLayout({
               {/* <Navbar /> */}
               <main className="flex-1">{children}</main>
               {/* <Footer /> */}
+
+              <FeedbackButton />
             </div>
           </GradientBackground>
         </Providers>

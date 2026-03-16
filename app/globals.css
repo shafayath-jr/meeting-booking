@@ -235,6 +235,31 @@
       ),
       linear-gradient(135deg, rgba(26, 92, 56, 0.12) 0%, transparent 50%), #051208;
   }
+
+  .gradient-standby {
+    transition: background 0.8s ease;
+    background:
+      radial-gradient(
+        ellipse 70% 60% at 10% 5%,
+        oklch(65.438% 0.14546 57.442) 0%,
+        transparent 100%
+      ),
+      radial-gradient(
+        ellipse 80% 60% at 75% 100%,
+        oklch(65.438% 0.14546 57.442) 0%,
+        transparent 100%
+      ),
+      linear-gradient(135deg, rgba(26, 92, 56, 0.12) 0%, transparent 50%), #051208;
+  }
+
+  .gradient-occupied {
+    transition: background 0.8s ease;
+    background:
+      radial-gradient(ellipse 70% 60% at 10% 5%, oklch(56% 0.2 6) 0%, transparent 100%),
+      radial-gradient(ellipse 80% 60% at 75% 100%, oklch(56% 0.2 6) 0%, transparent 100%),
+      linear-gradient(135deg, rgba(26, 92, 56, 0.12) 0%, transparent 50%), #051208;
+  }
+
   .gradient-mesh-booking {
     background:
       radial-gradient(
