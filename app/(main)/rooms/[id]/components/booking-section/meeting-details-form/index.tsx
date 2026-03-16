@@ -242,6 +242,8 @@ export default function MeetingDetailsForm() {
           )}
         />
 
+        {/* guests */}
+
         <Controller
           name="guests"
           control={form.control}
@@ -256,14 +258,33 @@ export default function MeetingDetailsForm() {
                 }}
               >
                 <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
+                  <div
                     role="combobox"
                     aria-expanded={guestOpen}
-                    className="w-full justify-start border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                    tabIndex={0}
+                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/10 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
                   >
-                    Add guests...
-                  </Button>
+                    {fields.length > 0 ? (
+                      fields.map((field, index) => (
+                        <Badge key={field.id} variant="secondary" className="gap-1 pr-1">
+                          {field.value}
+                          <button
+                            type="button"
+                            aria-label={`Remove ${field.value}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              remove(index);
+                            }}
+                            className="ml-0.5 rounded-sm opacity-70 hover:opacity-100 focus:outline-none"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
+                        </Badge>
+                      ))
+                    ) : (
+                      <span>Add guests...</span>
+                    )}
+                  </div>
                 </PopoverTrigger>
                 <PopoverContent className="w-full p-0" align="start">
                   <Command shouldFilter={false}>
@@ -293,23 +314,6 @@ export default function MeetingDetailsForm() {
                   </Command>
                 </PopoverContent>
               </Popover>
-              {fields.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {fields.map((field, index) => (
-                    <Badge key={field.id} variant="secondary" className="gap-1">
-                      {field.value}
-                      <button
-                        type="button"
-                        aria-label={`Remove ${field.value}`}
-                        onClick={() => remove(index)}
-                        className="ml-1 rounded-sm opacity-70 hover:opacity-100"
-                      >
-                        <X className="h-3 w-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
             </Field>
           )}
         />
