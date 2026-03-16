@@ -261,6 +261,7 @@ export default function MeetingDetailsForm() {
                   <div
                     role="combobox"
                     aria-expanded={guestOpen}
+                    aria-controls="guest-popover"
                     tabIndex={0}
                     className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/10 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
                   >
@@ -286,7 +287,7 @@ export default function MeetingDetailsForm() {
                     )}
                   </div>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0" align="start">
+                <PopoverContent id="guest-popover" className="w-full p-0" align="start">
                   <Command shouldFilter={false}>
                     <CommandInput
                       placeholder="Type to search..."
