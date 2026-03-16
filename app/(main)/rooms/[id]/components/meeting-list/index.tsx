@@ -65,7 +65,7 @@ export default function MeetingList() {
 
   if (upcomingMeetings.length === 0) {
     return (
-      <div className="flex h-[calc(100vh-180px)] items-center justify-center rounded-xl bg-black/20">
+      <div className="flex h-[calc(100vh-380px)] items-center justify-center rounded-xl bg-black/20">
         <p className="text-secondary lg:text-lg">No meetings scheduled today</p>
       </div>
     );
