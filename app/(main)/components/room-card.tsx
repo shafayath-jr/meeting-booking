@@ -11,80 +11,55 @@ type Props = {
   index?: number;
 };
 
-// Array of gradient combinations for visual variety
-const gradients = [
-  "from-violet-500/20 via-fuchsia-500/10 to-pink-500/20",
-  "from-cyan-500/20 via-blue-500/10 to-indigo-500/20",
-  "from-emerald-500/20 via-teal-500/10 to-cyan-500/20",
-  "from-orange-500/20 via-amber-500/10 to-yellow-500/20",
-  "from-rose-500/20 via-pink-500/10 to-fuchsia-500/20",
-  "from-indigo-500/20 via-purple-500/10 to-violet-500/20",
-];
-
-// Accent versions (higher opacity) — must be static for Tailwind to include them
-const accentGradients = [
-  "from-violet-500/60 via-fuchsia-500/40 to-pink-500/60",
-  "from-cyan-500/60 via-blue-500/40 to-indigo-500/60",
-  "from-emerald-500/60 via-teal-500/40 to-cyan-500/60",
-  "from-orange-500/60 via-amber-500/40 to-yellow-500/60",
-  "from-rose-500/60 via-pink-500/40 to-fuchsia-500/60",
-  "from-indigo-500/60 via-purple-500/40 to-violet-500/60",
-];
-
 export default function RoomCard({ room, index = 0 }: Props) {
-  const gradientIndex = index % gradients.length;
-  const gradient = gradients[gradientIndex];
-  const accentGradient = accentGradients[gradientIndex];
+  const roomNumber = String(index + 1).padStart(2, "0");
 
   return (
     <div className="group relative h-full">
-      {/* Hover glow effect */}
-      <div
-        className={cn(
-          "absolute -inset-1 rounded-3xl bg-linear-to-r opacity-0 blur-xl transition-all duration-500 group-hover:opacity-60",
-          gradient
-        )}
-      />
-
       {/* Card */}
       <div
         className={cn(
           "relative flex h-full flex-col overflow-hidden rounded-2xl",
-          "bg-white/70 backdrop-blur-xl",
-          "border border-white/50",
-          "shadow-lg shadow-black/5",
+          "bg-[#d4e2db]",
+          "border border-white/20",
+          "shadow-lg shadow-black/15",
           "transition-all duration-300",
-          "group-hover:border-white/80",
-          "group-hover:shadow-xl"
+          "group-hover:-translate-y-1",
+          "group-hover:shadow-xl group-hover:shadow-black/20"
         )}
       >
-        {/* Top gradient accent */}
+        {/* Giant watermark number — the signature element */}
         <div
-          className={cn(
-            "absolute top-0 right-0 left-0 h-1 bg-linear-to-r",
-            accentGradient
-          )}
-        />
-
-        {/* Decorative background pattern */}
-        <div className="pointer-events-none absolute inset-0 opacity-30">
-          <div
-            className={cn(
-              "absolute top-4 right-4 h-32 w-32 rounded-full bg-linear-to-br blur-2xl",
-              gradient
-            )}
-          />
+          className="pointer-events-none absolute right-0 bottom-0 font-serif leading-none font-light text-black/[0.07] select-none"
+          style={{ fontSize: "clamp(100px, 18vw, 160px)" }}
+        >
+          {roomNumber}
         </div>
 
         {/* Content */}
         <div className="relative flex flex-1 flex-col p-6">
+          {/* Room number label */}
+          <div className="mb-3 text-[10px] font-bold tracking-[0.22em] text-foreground/40 uppercase">
+            Room {roomNumber}
+          </div>
+
           {/* Room Name */}
-          <h3 className="mb-3 text-xl font-bold tracking-tight">{room.name}</h3>
+          <h3 className="mb-5 text-xl leading-tight font-bold tracking-tight text-foreground">
+            {room.name}
+          </h3>
 
           {/* Status indicator */}
           <div className="mb-6 flex items-center gap-2">
-            <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
-            <span className="text-sm font-medium text-emerald-600">Available</span>
+            <span className="relative flex h-2 w-2">
+              <span
+                className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-60"
+                style={{ animationDuration: "2.5s" }}
+              />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            <span className="text-[11px] font-bold tracking-widest text-emerald-700 uppercase">
+              Available
+            </span>
           </div>
 
           {/* Spacer */}
@@ -94,12 +69,10 @@ export default function RoomCard({ room, index = 0 }: Props) {
           <Button
             asChild
             className={cn(
-              "h-12 w-full rounded-xl font-semibold",
-              "bg-linear-to-r from-primary to-primary/90",
-              "hover:from-primary/90 hover:to-primary/80",
-              "shadow-lg shadow-primary/20",
-              "transition-all duration-300",
-              "group-hover:shadow-xl group-hover:shadow-primary/30"
+              "h-11 w-full rounded-xl font-semibold",
+              "bg-primary hover:bg-primary/90",
+              "shadow-md shadow-primary/20",
+              "transition-all duration-200"
             )}
           >
             <Link

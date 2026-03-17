@@ -22,18 +22,21 @@ async function HomePage({ searchParams }: Props) {
   return (
     <div className="py-10">
       {/* Building Selection Section */}
-      <div className="px-6 pb-8">
+      <div className="animate-fade-in-up px-6 pb-8">
         <div className="mx-auto max-w-5xl">
           {/* Section Header */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="rounded-xl bg-linear-to-br from-emerald-500/20 to-teal-500/20 p-2.5">
-              <Building2 className="h-5 w-5 text-emerald-600" />
-            </div>
+          <div className="mb-6 flex items-center gap-5">
             <div>
-              <h2 className="text-xl font-semibold text-secondary">Select Building</h2>
-              <p className="text-sm text-secondary/80">
-                Choose your location to view available rooms
+              <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+                Location
               </p>
+              <h2 className="text-2xl font-semibold tracking-tight text-secondary">
+                Select Building
+              </h2>
+            </div>
+            <div className="h-px flex-1 bg-white/10" />
+            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5">
+              <Building2 className="h-5 w-5 text-emerald-400" />
             </div>
           </div>
 
@@ -46,7 +49,7 @@ async function HomePage({ searchParams }: Props) {
       </div>
 
       {/* Rooms Section */}
-      <div className="px-6">
+      <div className="animate-fade-in-up px-6" style={{ animationDelay: "120ms" }}>
         <div className="mx-auto max-w-5xl">
           <RoomsSection rooms={rooms || []} />
         </div>
