@@ -41,9 +41,14 @@ async function RoomPage({ params }: Props) {
               <div className="flex flex-col gap-4">
                 <MeetingRoomImage />
 
-                <h3 className="text-4xl font-semibold text-secondary uppercase">
-                  {room?.name}
-                </h3>
+                <div>
+                  <p className="mb-1 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+                    Meeting Room
+                  </p>
+                  <h3 className="font-serif text-4xl font-light tracking-tight text-secondary">
+                    {room?.name}
+                  </h3>
+                </div>
 
                 {/* booking section */}
 
@@ -56,9 +61,14 @@ async function RoomPage({ params }: Props) {
 
               <Clock />
 
-              <h5 className="text-2xl font-semibold text-secondary">
-                Today&apos;s schedule
-              </h5>
+              <div>
+                <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+                  Schedule
+                </p>
+                <h5 className="text-xl font-semibold text-secondary">
+                  Today&apos;s Meetings
+                </h5>
+              </div>
 
               {/* meeting list */}
 

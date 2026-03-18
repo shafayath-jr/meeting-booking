@@ -13,15 +13,27 @@ export default function Clock() {
 
   const time = format(now, "hh:mm");
   const ampm = format(now, "aa");
-  const date = format(now, "EEEE MMMM d, yyyy");
+  const date = format(now, "EEEE, MMMM d, yyyy");
 
   return (
-    <div className="mb-10 rounded-2xl text-secondary">
-      <div className="flex items-start gap-2">
-        <span className="text-7xl leading-none font-bold tracking-tight">{time}</span>
-        <span className="mt-1 text-2xl font-semibold">{ampm}</span>
+    <div className="mb-8 text-secondary">
+      <div className="flex items-baseline gap-3">
+        <span className="font-serif text-8xl leading-none font-light tracking-tight">
+          {time}
+        </span>
+        <div className="flex flex-col">
+          <span className="text-xl font-semibold tracking-widest text-secondary/60 uppercase">
+            {ampm}
+          </span>
+        </div>
       </div>
-      <p className="text-lg font-light">{date}</p>
+      <div className="mt-4 flex items-center gap-4">
+        <div className="h-px flex-1 bg-white/15" />
+        <p className="text-[11px] font-semibold tracking-[0.22em] text-secondary/45 uppercase">
+          {date}
+        </p>
+        <div className="h-px flex-1 bg-white/15" />
+      </div>
     </div>
   );
 }
