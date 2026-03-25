@@ -2,9 +2,8 @@
 
 import { useMemo } from "react";
 import { isToday, isBefore, parse, addMinutes, format } from "date-fns";
-import { TIME_SLOTS } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, getTimeSlotsForTimezone } from "@/lib/utils";
 import { useBookingContext } from "./booking-context";
 
 export default function TimeSlots() {
@@ -14,7 +13,7 @@ export default function TimeSlots() {
     const now = new Date();
     const today = isToday(now);
 
-    return TIME_SLOTS.filter((slot) => {
+    return getTimeSlotsForTimezone().filter((slot) => {
       const slotStart = parse(slot, "HH:mm", now);
       const slotEnd = addMinutes(slotStart, 30);
 
