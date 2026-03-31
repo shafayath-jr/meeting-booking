@@ -38,4 +38,19 @@ export const TIME_SLOTS = [
   "16:00",
   "16:30",
   "17:00",
+  "17:30",
+  "18:00",
+  "18:30",
+  "19:00",
+  "19:30",
+  "20:00",
+  "20:30",
+  "21:00",
+  "21:30",
+  "22:00",
 ];
+
+export const TIMEZONE_SLOT_RANGES: Record<string, { start: string; end: string }> = {
+  "Europe/London": { start: "09:00", end: "17:00" },
+  "Asia/Dhaka": { start: "13:00", end: "22:00" },
+};
