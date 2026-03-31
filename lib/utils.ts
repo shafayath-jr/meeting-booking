@@ -9,6 +9,7 @@ import {
   differenceInDays,
 } from "date-fns";
 import { Meeting } from "@/types/meeting";
+import { TIME_SLOTS, TIMEZONE_SLOT_RANGES } from "@/lib/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -122,6 +123,13 @@ export function getNextBoundary(meetings: Meeting[], now: Date): Date | null {
   }
 
   return earliest;
+}
+
+export function getTimeSlotsForTimezone(): string[] {
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const range = TIMEZONE_SLOT_RANGES[tz];
+  if (!range) return TIME_SLOTS;
+  return TIME_SLOTS.filter((slot) => slot >= range.start && slot <= range.end);
 }
 
 export function nameFromEmail(email: string): string {
