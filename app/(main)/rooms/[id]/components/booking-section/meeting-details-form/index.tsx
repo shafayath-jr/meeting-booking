@@ -174,7 +174,7 @@ export default function MeetingDetailsForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Email
+                Your Email
               </FieldLabel>
               <Popover
                 open={open}

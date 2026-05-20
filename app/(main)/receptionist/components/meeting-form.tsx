@@ -173,7 +173,7 @@ export default function MeetingForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name} className="text-sm text-foreground/80">
-                Host email
+                Your email
               </FieldLabel>
               <Popover
                 open={open}
