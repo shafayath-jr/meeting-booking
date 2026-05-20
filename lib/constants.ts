@@ -18,6 +18,7 @@ export const FULL_MEETING_DURATION_OPTIONS = [
   { value: "30", label: "30 Minutes" },
   { value: "45", label: "45 Minutes" },
   { value: "60", label: "60 Minutes" },
+  { value: "120", label: "120 Minutes" },
 ] as const;
 
 export const TIME_SLOTS = [
