@@ -333,7 +333,7 @@ export default function MeetingForm() {
           type="submit"
           variant="outline"
           disabled={!canSubmit || isSubmitting}
-          className="rounded-xl border-emerald-500 bg-emerald-500! px-8 py-5 text-white hover:bg-emerald-600!"
+          className="rounded-xl border-emerald-500 bg-emerald-500! px-8 py-5 text-white hover:bg-emerald-600! hover:text-white!"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">
