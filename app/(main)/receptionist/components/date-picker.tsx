@@ -1,0 +1,58 @@
+"use client";
+
+import { format, startOfToday } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useReceptionistBooking } from "./receptionist-booking-context";
+
+export default function DatePicker() {
+  const { selectedDate, setSelectedDate } = useReceptionistBooking();
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant="transparent"
+          className={cn(
+            "h-12 w-full justify-start gap-3 rounded-xl border border-white/15 px-4 text-left font-normal text-secondary",
+            "hover:border-white/30 hover:bg-white/[0.06]"
+          )}
+        >
+          <CalendarIcon className="h-4 w-4 text-emerald-400" />
+          <span className="flex-1">{format(selectedDate, "EEE, MMM d, yyyy")}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="start"
+        className="w-auto border-emerald-900/60 bg-[#0C170F]/95 p-2 text-secondary"
+      >
+        <Calendar
+          mode="single"
+          selected={selectedDate}
+          onSelect={(date) => date && setSelectedDate(date)}
+          disabled={{ before: startOfToday() }}
+          autoFocus
+          className="bg-transparent text-secondary [--cell-size:--spacing(9)]"
+          classNames={{
+            caption_label: "select-none font-medium text-sm text-secondary",
+            button_previous:
+              "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
+            button_next:
+              "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
+            weekday:
+              "rounded-md flex-1 font-normal text-[0.8rem] select-none text-white/40",
+            day_button:
+              "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-secondary rounded-md hover:bg-white/10 data-[selected-single=true]:bg-secondary data-[selected-single=true]:text-[#0F401D] data-[selected-single=true]:hover:bg-secondary/90",
+            today:
+              "rounded-md border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 data-[selected=true]:rounded-md",
+            outside: "text-white/20 aria-selected:text-white/30",
+            disabled: "text-white/15 opacity-40",
+          }}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
