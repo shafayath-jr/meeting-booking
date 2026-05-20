@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useDebounce } from "@/hooks/use-debounce";
-import { nameFromEmail } from "@/lib/utils";
+import { cn, nameFromEmail } from "@/lib/utils";
 import { searchUsers } from "@/actions/user";
 import { bookMeeting } from "@/actions/meeting";
 import { User } from "@/types/user";
@@ -145,13 +145,13 @@ export default function MeetingForm() {
       onSubmit={form.handleSubmit(onSubmit)}
       className="space-y-4"
     >
-      <FieldGroup className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <FieldGroup className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Controller
           name="subject"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-sm text-secondary">
+              <FieldLabel htmlFor={field.name} className="text-sm text-foreground/80">
                 Meeting Subject
               </FieldLabel>
               <Input
@@ -160,7 +160,7 @@ export default function MeetingForm() {
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
                 placeholder="What is the meeting about?"
-                className="border-secondary/20 bg-secondary/10 text-secondary/90 placeholder:text-secondary/50 hover:bg-secondary/15 focus-visible:border-secondary/40 focus-visible:bg-secondary/15 focus-visible:ring-secondary/20"
+                className="h-11 rounded-md! border-black/15! bg-[#d4e2db]! text-foreground shadow-none! backdrop-blur-none! placeholder:text-foreground/45 hover:bg-[#d4e2db]! focus-visible:border-emerald-500/40! focus-visible:bg-[#d4e2db]! focus-visible:ring-emerald-500/20!"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -172,7 +172,7 @@ export default function MeetingForm() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-sm text-secondary">
+              <FieldLabel htmlFor={field.name} className="text-sm text-foreground/80">
                 Host email
               </FieldLabel>
               <Popover
@@ -188,9 +188,11 @@ export default function MeetingForm() {
                     role="combobox"
                     aria-expanded={open}
                     aria-invalid={fieldState.invalid}
-                    className="w-full justify-between border! border-secondary/20! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                    className="w-full justify-between border! border-black/15! bg-[#d4e2db]! py-5! font-normal text-foreground shadow-none hover:bg-[#d4e2db]! hover:text-foreground!"
                   >
-                    <span className="truncate">
+                    <span
+                      className={cn("truncate", !field.value && "text-foreground/45")}
+                    >
                       {field.value || "Search by email..."}
                     </span>
                     {field.value && (
@@ -209,7 +211,7 @@ export default function MeetingForm() {
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-[var(--radix-popover-trigger-width)] p-0"
+                  className="w-(--radix-popover-trigger-width) border-0 bg-[#d4e2db] p-0"
                   align="start"
                 >
                   <Command shouldFilter={false}>
@@ -250,8 +252,8 @@ export default function MeetingForm() {
           name="guests"
           control={form.control}
           render={() => (
-            <Field className="lg:col-span-2">
-              <FieldLabel className="text-sm text-secondary">Guests</FieldLabel>
+            <Field className="xl:col-span-2">
+              <FieldLabel className="text-sm text-foreground/80">Guests</FieldLabel>
               <Popover
                 open={guestOpen}
                 onOpenChange={(isOpen) => {
@@ -265,7 +267,7 @@ export default function MeetingForm() {
                     aria-expanded={guestOpen}
                     aria-controls="receptionist-guest-popover"
                     tabIndex={0}
-                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/20 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
+                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-black/15 bg-[#d4e2db] px-3 py-2 text-sm text-foreground hover:bg-[#d4e2db] focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:outline-none"
                   >
                     {fields.length > 0 ? (
                       fields.map((field, index) => (
@@ -285,13 +287,13 @@ export default function MeetingForm() {
                         </Badge>
                       ))
                     ) : (
-                      <span className="text-secondary/50">Add guests...</span>
+                      <span className="text-foreground/45">Add guests...</span>
                     )}
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
                   id="receptionist-guest-popover"
-                  className="w-[var(--radix-popover-trigger-width)] p-0"
+                  className="w-(--radix-popover-trigger-width) border-0 bg-[#d4e2db] p-0"
                   align="start"
                 >
                   <Command shouldFilter={false}>
@@ -331,7 +333,7 @@ export default function MeetingForm() {
           type="submit"
           variant="outline"
           disabled={!canSubmit || isSubmitting}
-          className="rounded-xl border-secondary bg-transparent! px-8 py-5 text-secondary hover:bg-secondary/10!"
+          className="rounded-xl border-emerald-500 bg-emerald-500! px-8 py-5 text-white hover:bg-emerald-600!"
         >
           {isSubmitting ? (
             <span className="flex items-center gap-2">

@@ -17,11 +17,11 @@ export default function DatePicker() {
         <Button
           variant="transparent"
           className={cn(
-            "h-12 w-full justify-start gap-3 rounded-xl border border-white/15 px-4 text-left font-normal text-secondary",
-            "hover:border-white/30 hover:bg-white/[0.06]"
+            "h-12 w-full justify-start gap-3 rounded-xl border border-black/15 bg-[#d4e2db] px-4 text-left font-normal text-foreground",
+            "hover:bg-[#d4e2db]"
           )}
         >
-          <CalendarIcon className="h-4 w-4 text-emerald-400" />
+          <CalendarIcon className="h-4 w-4 text-emerald-600" />
           <span className="flex-1">{format(selectedDate, "EEE, MMM d, yyyy")}</span>
         </Button>
       </PopoverTrigger>

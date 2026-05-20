@@ -11,22 +11,13 @@ function ColumnFrame({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-emerald-900/40 bg-linear-to-br from-[#102016] to-[#1E633A]">
-      <div
-        className="pointer-events-none absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
-        }}
-      />
-
-      <div className="relative flex items-center gap-3 border-b border-white/10 px-5 py-5">
+    <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/20 bg-[#d4e2db] shadow-lg shadow-black/15">
+      <div className="relative flex items-center gap-3 border-b border-black/10 px-5 py-5">
         <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5">
           {icon}
         </div>
         <div>
-          <h3 className="text-base font-semibold tracking-tight text-secondary">
+          <h3 className="text-base font-semibold tracking-tight text-foreground">
             {title}
           </h3>
         </div>
@@ -39,19 +30,19 @@ function ColumnFrame({
 
 function ListRowSkeleton() {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
-      <Skeleton className="h-7 w-7 rounded-lg bg-white/5" />
-      <Skeleton className="h-4 flex-1 bg-white/5" />
+    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/5 px-4 py-3.5">
+      <Skeleton className="h-7 w-7 rounded-lg bg-black/10" />
+      <Skeleton className="h-4 flex-1 bg-black/10" />
     </div>
   );
 }
 
 function RoomRowSkeleton() {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
-      <Skeleton className="h-6 w-9 rounded-lg bg-white/5" />
-      <Skeleton className="h-4 flex-1 bg-white/5" />
-      <Skeleton className="h-2 w-2 rounded-full bg-white/5" />
+    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/5 px-4 py-3.5">
+      <Skeleton className="h-6 w-9 rounded-lg bg-black/10" />
+      <Skeleton className="h-4 flex-1 bg-black/10" />
+      <Skeleton className="h-2 w-2 rounded-full bg-black/10" />
     </div>
   );
 }
@@ -64,8 +55,8 @@ function BookingSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative space-y-4 rounded-3xl border border-emerald-900/40 p-4 pt-7">
-      <div className="absolute -top-3 left-5 rounded-full border border-emerald-900/40 bg-[#0A8754] px-3 py-1">
+    <div className="relative space-y-4 rounded-3xl border border-black/10 p-4 pt-7">
+      <div className="absolute -top-3 left-5 rounded-full border border-black/10 bg-[#0A8754] px-3 py-1">
         <h5 className="text-xs font-medium text-secondary">{label}</h5>
       </div>
       {children}
@@ -111,22 +102,13 @@ export default function ReceptionistLoading() {
             ))}
           </ColumnFrame>
 
-          <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-emerald-900/40 bg-linear-to-br from-[#102016] to-[#1E633A]">
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.04]"
-              style={{
-                backgroundImage:
-                  "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-                backgroundSize: "20px 20px",
-              }}
-            />
-
-            <div className="relative flex items-center gap-3 border-b border-white/10 px-5 py-5">
+          <div className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/20 bg-[#d4e2db] shadow-lg shadow-black/15">
+            <div className="relative flex items-center gap-3 border-b border-black/10 px-5 py-5">
               <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-2.5">
                 <CalendarClock className="h-4 w-4 text-emerald-400" />
               </div>
               <div>
-                <h3 className="text-base font-semibold tracking-tight text-secondary">
+                <h3 className="text-base font-semibold tracking-tight text-foreground">
                   Book Meeting
                 </h3>
               </div>
@@ -134,13 +116,13 @@ export default function ReceptionistLoading() {
 
             <div className="relative flex-1 space-y-6 overflow-hidden p-5">
               <BookingSection label="Date">
-                <Skeleton className="h-12 w-full rounded-xl bg-white/5" />
+                <Skeleton className="h-12 w-full rounded-xl bg-black/10" />
               </BookingSection>
 
               <BookingSection label="Available time slots">
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
                   {Array.from({ length: 8 }).map((_, i) => (
-                    <Skeleton key={i} className="h-10 rounded-xl bg-white/5" />
+                    <Skeleton key={i} className="h-10 rounded-xl bg-black/10" />
                   ))}
                 </div>
               </BookingSection>
@@ -148,7 +130,7 @@ export default function ReceptionistLoading() {
               <BookingSection label="Meeting duration">
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Skeleton key={i} className="h-10 rounded-xl bg-white/5" />
+                    <Skeleton key={i} className="h-10 rounded-xl bg-black/10" />
                   ))}
                 </div>
               </BookingSection>
@@ -156,20 +138,20 @@ export default function ReceptionistLoading() {
               <BookingSection label="Meeting details">
                 <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-24 bg-white/5" />
-                    <Skeleton className="h-10 w-full rounded-md bg-white/5" />
+                    <Skeleton className="h-4 w-24 bg-black/10" />
+                    <Skeleton className="h-10 w-full rounded-md bg-black/10" />
                   </div>
                   <div className="space-y-2">
-                    <Skeleton className="h-4 w-20 bg-white/5" />
-                    <Skeleton className="h-10 w-full rounded-md bg-white/5" />
+                    <Skeleton className="h-4 w-20 bg-black/10" />
+                    <Skeleton className="h-10 w-full rounded-md bg-black/10" />
                   </div>
                   <div className="space-y-2 lg:col-span-2">
-                    <Skeleton className="h-4 w-16 bg-white/5" />
-                    <Skeleton className="h-11 w-full rounded-md bg-white/5" />
+                    <Skeleton className="h-4 w-16 bg-black/10" />
+                    <Skeleton className="h-11 w-full rounded-md bg-black/10" />
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Skeleton className="h-11 w-40 rounded-xl bg-white/5" />
+                  <Skeleton className="h-11 w-40 rounded-xl bg-black/10" />
                 </div>
               </BookingSection>
             </div>

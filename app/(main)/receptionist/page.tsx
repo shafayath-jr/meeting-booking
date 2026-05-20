@@ -11,7 +11,7 @@ export default async function ReceptionistPage() {
       <div className="mx-auto max-w-7xl">
         <div className="animate-fade-in-up mb-8 flex items-center gap-5">
           <div>
-            <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+            <p className="mb-0.5 text-base font-semibold tracking-[0.22em] text-white/35 uppercase">
               Receptionist
             </p>
             <h2 className="text-2xl font-semibold tracking-tight text-secondary">

@@ -39,14 +39,14 @@ export default function DurationGrid() {
     return (
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-11 rounded-xl bg-white/5" />
+          <Skeleton key={i} className="h-11 rounded-xl bg-black/5" />
         ))}
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+    <div className="grid grid-cols-3 gap-2">
       {FULL_MEETING_DURATION_OPTIONS.map((option) => {
         const isDisabled =
           isSubmitting || !selectedTime || availableMinutes < Number(option.value);
@@ -58,9 +58,9 @@ export default function DurationGrid() {
             disabled={isDisabled}
             onClick={() => setSelectedDuration(option.value)}
             className={cn(
-              "rounded-xl py-5 text-sm",
+              "rounded-xl border border-black/15 py-5 text-sm text-foreground hover:bg-black/4",
               selectedDuration === option.value &&
-                "border-secondary bg-secondary text-[#0F401D]"
+                "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700"
             )}
           >
             {option.label}

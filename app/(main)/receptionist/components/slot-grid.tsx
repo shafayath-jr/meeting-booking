@@ -44,7 +44,7 @@ export default function SlotGrid() {
     return (
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-11 rounded-xl bg-white/5" />
+          <Skeleton key={i} className="h-11 rounded-xl bg-black/5" />
         ))}
       </div>
     );
@@ -52,14 +52,14 @@ export default function SlotGrid() {
 
   if (availableSlots.length === 0) {
     return (
-      <p className="mt-2 text-sm font-medium text-white/50">
+      <p className="mt-2 text-sm font-medium text-foreground/50">
         No available slots for this date.
       </p>
     );
   }
 
   return (
-    <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+    <div className="grid grid-cols-3 gap-2 xl:grid-cols-4">
       {availableSlots.map((slot) => (
         <Button
           key={slot}
@@ -68,9 +68,9 @@ export default function SlotGrid() {
           disabled={isSubmitting}
           onClick={() => setSelectedTime(slot)}
           className={cn(
-            "rounded-xl py-5 text-sm",
+            "rounded-xl border border-black/15 py-5 text-sm text-foreground hover:bg-black/4",
             selectedTime === slot &&
-              "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80"
+              "border-emerald-600 bg-emerald-600 text-white hover:bg-emerald-700"
           )}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}
