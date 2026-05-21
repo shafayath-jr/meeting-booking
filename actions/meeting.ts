@@ -14,6 +14,10 @@ function parseMeeting(raw: Record<string, unknown>): Meeting {
   } as Meeting;
 }
 
+function isCanceled(m: { title?: string | null }): boolean {
+  return (m.title ?? "").trim().toLowerCase().startsWith("canceled:");
+}
+
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
   const dateObj = date ? new Date(date) : new Date();
@@ -33,7 +37,9 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 
   return {
     error: error?.message,
-    meetings: (data ?? []).map((m) => parseMeeting(m as Record<string, unknown>)),
+    meetings: (data ?? [])
+      .map((m) => parseMeeting(m as Record<string, unknown>))
+      .filter((m) => !isCanceled(m)),
   };
 };
 
@@ -48,13 +54,16 @@ export const getNextMeetingByRoom = async (roomId: string) => {
     .lte("start_time", currentTime)
     .gte("end_time", currentTime)
     .order("start_time", { ascending: true })
-    .limit(1)
-    .single();
+    .limit(5);
 
-  if (data) {
+  const ongoing = (data ?? [])
+    .map((m) => parseMeeting(m as Record<string, unknown>))
+    .find((m) => !isCanceled(m));
+
+  if (ongoing) {
     return {
       error: error?.message,
-      meeting: parseMeeting(data as Record<string, unknown>),
+      meeting: ongoing,
     };
   }
 
@@ -64,12 +73,15 @@ export const getNextMeetingByRoom = async (roomId: string) => {
     .eq("room_id", roomId)
     .gt("start_time", currentTime)
     .order("start_time", { ascending: true })
-    .limit(1)
-    .single();
+    .limit(5);
+
+  const upcoming = (nextData ?? [])
+    .map((m) => parseMeeting(m as Record<string, unknown>))
+    .find((m) => !isCanceled(m));
 
   return {
     error: nextError?.message,
-    meeting: nextData ? parseMeeting(nextData as Record<string, unknown>) : null,
+    meeting: upcoming ?? null,
   };
 };
 
@@ -176,6 +188,8 @@ export const getMeetingsByRoomForDateRange = async (
 
   return {
     error: error?.message,
-    meetings: (data ?? []).map((m) => parseMeeting(m as Record<string, unknown>)),
+    meetings: (data ?? [])
+      .map((m) => parseMeeting(m as Record<string, unknown>))
+      .filter((m) => !isCanceled(m)),
   };
 };

@@ -1,12 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { addMinutes, set } from "date-fns";
+import { Loader2, X } from "lucide-react";
+import { toast } from "sonner";
+
 import {
   formSchema,
   meetingDetailsFormDefaultValues,
   MeetingDetailsFormValues,
-} from "./form-schema";
+} from "@/app/(main)/rooms/[id]/components/booking-section/meeting-details-form/form-schema";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,34 +24,34 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { X } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useParams } from "next/navigation";
-import { getRoomById } from "@/actions/room";
+import { useDebounce } from "@/hooks/use-debounce";
+import { cn, nameFromEmail } from "@/lib/utils";
 import { searchUsers } from "@/actions/user";
 import { bookMeeting } from "@/actions/meeting";
-import { useEffect, useState } from "react";
-import { useDebounce } from "@/hooks/use-debounce";
-import { addMinutes, parse } from "date-fns";
 import { User } from "@/types/user";
-import { Room } from "@/types/room";
-import { toast } from "sonner";
-import { nameFromEmail } from "@/lib/utils";
-import { useMeetingsContext } from "@/components/providers/meetings-provider";
-import { useBookingContext } from "../booking-context";
 
-export default function MeetingDetailsForm() {
-  const { id: roomId } = useParams<{ id: string }>();
-  const { triggerRefresh } = useMeetingsContext();
+import { useReceptionistBooking } from "./receptionist-booking-context";
+
+function slotStartOnDate(slot: string, date: Date): Date {
+  const [hours, minutes] = slot.split(":").map(Number);
+  return set(date, { hours, minutes, seconds: 0, milliseconds: 0 });
+}
+
+export default function MeetingForm() {
   const {
+    selectedBuildingId,
+    selectedRoomId,
+    selectedDate,
     selectedTime,
     selectedDuration,
-    setBookingSuccess,
-    closeModal,
+    isSubmitting,
     setIsSubmitting,
-  } = useBookingContext();
+    setSelectedTime,
+    setSelectedDuration,
+    triggerRefresh,
+  } = useReceptionistBooking();
 
-  const [room, setRoom] = useState<Room | null>(null);
   const [userOptions, setUserOptions] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [open, setOpen] = useState(false);
@@ -56,10 +61,6 @@ export default function MeetingDetailsForm() {
   const [guestSearchQuery, setGuestSearchQuery] = useState("");
   const [guestOpen, setGuestOpen] = useState(false);
   const debouncedGuestQuery = useDebounce(guestSearchQuery, 300);
-
-  useEffect(() => {
-    getRoomById(roomId).then(({ room: fetchedRoom }) => setRoom(fetchedRoom));
-  }, [roomId]);
 
   useEffect(() => {
     if (!debouncedQuery) {
@@ -88,18 +89,19 @@ export default function MeetingDetailsForm() {
   });
 
   const hostEmail = form.watch("email");
-
   const filteredGuestOptions = guestOptions.filter(
     (u) => u.email !== hostEmail && !fields.some((f) => f.value === u.email)
   );
 
+  const canSubmit =
+    !!selectedBuildingId && !!selectedRoomId && !!selectedTime && !!selectedDuration;
+
   const onSubmit = async (data: MeetingDetailsFormValues) => {
-    if (!room || !selectedTime || !selectedDuration) return;
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
     try {
-      const now = new Date();
-      const startDate = parse(selectedTime, "HH:mm", now);
+      const startDate = slotStartOnDate(selectedTime!, selectedDate);
       const endDate = addMinutes(startDate, Number(selectedDuration));
 
       const event = {
@@ -114,25 +116,22 @@ export default function MeetingDetailsForm() {
           data.guests?.map((g) => ({ email: g.value, name: nameFromEmail(g.value) })) ??
             []
         ),
-        room_id: room.id,
-        building_id: room.place_id,
+        room_id: selectedRoomId!,
+        building_id: selectedBuildingId!,
       };
 
       const res = await bookMeeting(event);
 
-      if (!res.error) {
-        form.reset();
-        triggerRefresh();
-        closeModal();
-        setBookingSuccess({
-          subject: data.subject,
-          hostName: data.email,
-          startTime: startDate,
-          endTime: endDate,
-        });
-      } else {
+      if (res.error) {
         toast.error(res.error || "Something went wrong!");
+        return;
       }
+
+      toast.success("Meeting booked successfully");
+      form.reset();
+      setSelectedTime(null);
+      setSelectedDuration(null);
+      triggerRefresh();
     } catch {
       toast.error("Something went wrong!");
     } finally {
@@ -142,17 +141,17 @@ export default function MeetingDetailsForm() {
 
   return (
     <form
-      id="meeting-details-form"
+      id="receptionist-meeting-form"
       onSubmit={form.handleSubmit(onSubmit)}
-      className="mt-6"
+      className="space-y-4"
     >
-      <FieldGroup className="grid grid-cols-2 gap-4">
+      <FieldGroup className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <Controller
           name="subject"
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
+              <FieldLabel htmlFor={field.name} className="text-sm text-foreground/80">
                 Meeting Subject
               </FieldLabel>
               <Input
@@ -160,8 +159,8 @@ export default function MeetingDetailsForm() {
                 id={field.name}
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
-                placeholder="Enter what the meeting is about"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                placeholder="What is the meeting about?"
+                className="h-11 rounded-md! border-black/15! bg-[#d4e2db]! text-foreground shadow-none! backdrop-blur-none! placeholder:text-foreground/45 hover:bg-[#d4e2db]! focus-visible:border-emerald-500/40! focus-visible:bg-[#d4e2db]! focus-visible:ring-emerald-500/20!"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -173,8 +172,8 @@ export default function MeetingDetailsForm() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
-                Your Email
+              <FieldLabel htmlFor={field.name} className="text-sm text-foreground/80">
+                Your email
               </FieldLabel>
               <Popover
                 open={open}
@@ -189,9 +188,13 @@ export default function MeetingDetailsForm() {
                     role="combobox"
                     aria-expanded={open}
                     aria-invalid={fieldState.invalid}
-                    className="w-full justify-between border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                    className="w-full justify-between border! border-black/15! bg-[#d4e2db]! py-5! font-normal text-foreground shadow-none hover:bg-[#d4e2db]! hover:text-foreground!"
                   >
-                    <span>{field.value || "Search by email..."}</span>
+                    <span
+                      className={cn("truncate", !field.value && "text-foreground/45")}
+                    >
+                      {field.value || "Search by email..."}
+                    </span>
                     {field.value && (
                       <span
                         role="button"
@@ -207,7 +210,10 @@ export default function MeetingDetailsForm() {
                     )}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0" align="start">
+                <PopoverContent
+                  className="w-(--radix-popover-trigger-width) border-0 bg-[#d4e2db] p-0"
+                  align="start"
+                >
                   <Command shouldFilter={false}>
                     <CommandInput
                       placeholder="Type to search..."
@@ -242,14 +248,12 @@ export default function MeetingDetailsForm() {
           )}
         />
 
-        {/* guests */}
-
         <Controller
           name="guests"
           control={form.control}
           render={() => (
-            <Field className="col-span-2">
-              <FieldLabel className="text-lg text-secondary">Guests</FieldLabel>
+            <Field className="xl:col-span-2">
+              <FieldLabel className="text-sm text-foreground/80">Guests</FieldLabel>
               <Popover
                 open={guestOpen}
                 onOpenChange={(isOpen) => {
@@ -261,9 +265,9 @@ export default function MeetingDetailsForm() {
                   <div
                     role="combobox"
                     aria-expanded={guestOpen}
-                    aria-controls="guest-popover"
+                    aria-controls="receptionist-guest-popover"
                     tabIndex={0}
-                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/10 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
+                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-black/15 bg-[#d4e2db] px-3 py-2 text-sm text-foreground hover:bg-[#d4e2db] focus-visible:ring-2 focus-visible:ring-emerald-500/20 focus-visible:outline-none"
                   >
                     {fields.length > 0 ? (
                       fields.map((field, index) => (
@@ -283,11 +287,15 @@ export default function MeetingDetailsForm() {
                         </Badge>
                       ))
                     ) : (
-                      <span>Add guests...</span>
+                      <span className="text-foreground/45">Add guests...</span>
                     )}
                   </div>
                 </PopoverTrigger>
-                <PopoverContent id="guest-popover" className="w-full p-0" align="start">
+                <PopoverContent
+                  id="receptionist-guest-popover"
+                  className="w-(--radix-popover-trigger-width) border-0 bg-[#d4e2db] p-0"
+                  align="start"
+                >
                   <Command shouldFilter={false}>
                     <CommandInput
                       placeholder="Type to search..."
@@ -319,6 +327,24 @@ export default function MeetingDetailsForm() {
           )}
         />
       </FieldGroup>
+
+      <div className="flex justify-end pt-2">
+        <Button
+          type="submit"
+          variant="outline"
+          disabled={!canSubmit || isSubmitting}
+          className="rounded-xl border-emerald-500 bg-emerald-500! px-8 py-5 text-white hover:bg-emerald-600! hover:text-white!"
+        >
+          {isSubmitting ? (
+            <span className="flex items-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Booking...
+            </span>
+          ) : (
+            "Confirm Booking"
+          )}
+        </Button>
+      </div>
     </form>
   );
 }
