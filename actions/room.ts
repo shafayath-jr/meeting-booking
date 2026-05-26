@@ -18,7 +18,8 @@ export const getRoomsByBuilding = async (buildingId: string) => {
   const { data, error } = await supabase
     .from("rooms")
     .select()
-    .eq("place_id", buildingId);
+    .eq("place_id", buildingId)
+    .order("created_at", { ascending: true });
 
   return {
     error: error?.message,
