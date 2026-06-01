@@ -33,9 +33,9 @@ function SectionHeader({ subtitle }: { subtitle: string }) {
         <DoorOpen className="h-5 w-5 text-emerald-400" />
       </div>
       <div>
-        <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+        {/* <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
           Inventory
-        </p>
+        </p> */}
         <h2 className="text-xl font-semibold tracking-tight text-secondary">
           Available Rooms
         </h2>

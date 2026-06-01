@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Room } from "@/types/room";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
@@ -15,7 +14,10 @@ export default function RoomCard({ room, index = 0 }: Props) {
   const roomNumber = String(index + 1).padStart(2, "0");
 
   return (
-    <div className="group relative h-full">
+    <Link
+      href={`/rooms/${room.id}`}
+      className="group relative block h-full focus-visible:outline-none"
+    >
       {/* Card */}
       <div
         className={cn(
@@ -25,7 +27,8 @@ export default function RoomCard({ room, index = 0 }: Props) {
           "shadow-lg shadow-black/15",
           "transition-all duration-300",
           "group-hover:-translate-y-1",
-          "group-hover:shadow-xl group-hover:shadow-black/20"
+          "group-hover:shadow-xl group-hover:shadow-black/20",
+          "group-focus-visible:ring-2 group-focus-visible:ring-primary group-focus-visible:ring-offset-2"
         )}
       >
         {/* Giant watermark number — the signature element */}
@@ -65,26 +68,20 @@ export default function RoomCard({ room, index = 0 }: Props) {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* Action Button */}
-          <Button
-            asChild
+          {/* Action indicator */}
+          <div
             className={cn(
-              "h-11 w-full rounded-xl font-semibold",
-              "bg-primary hover:bg-primary/90",
+              "flex h-11 w-full items-center justify-center gap-2 rounded-xl font-semibold text-primary-foreground",
+              "bg-primary group-hover:bg-primary/90",
               "shadow-md shadow-primary/20",
               "transition-all duration-200"
             )}
           >
-            <Link
-              href={`/rooms/${room.id}`}
-              className="flex items-center justify-center gap-2"
-            >
-              <span>Book Room</span>
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
-          </Button>
+            <span>Book Room</span>
+            <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
