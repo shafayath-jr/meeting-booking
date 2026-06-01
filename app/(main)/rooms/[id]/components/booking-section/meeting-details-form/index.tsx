@@ -31,7 +31,7 @@ import { addMinutes, parse } from "date-fns";
 import { User } from "@/types/user";
 import { Room } from "@/types/room";
 import { toast } from "sonner";
-import { nameFromEmail } from "@/lib/utils";
+import { cn, nameFromEmail } from "@/lib/utils";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { useBookingContext } from "../booking-context";
 
@@ -189,7 +189,11 @@ export default function MeetingDetailsForm() {
                     role="combobox"
                     aria-expanded={open}
                     aria-invalid={fieldState.invalid}
-                    className="w-full justify-between border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!"
+                    className={cn(
+                      "w-full justify-between border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
+                      fieldState.invalid &&
+                        "border-destructive! ring-2 ring-destructive/20"
+                    )}
                   >
                     <span>{field.value || "Search by email..."}</span>
                     {field.value && (
