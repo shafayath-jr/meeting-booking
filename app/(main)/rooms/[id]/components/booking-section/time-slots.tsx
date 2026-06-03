@@ -11,6 +11,7 @@ export default function TimeSlots() {
   const { meetings, selectedDate, selectedTime, setSelectedTime } = useBookingContext();
   const { variant } = useGradientContext();
   const isAvailable = variant === "available" || variant === "default";
+  const isOngoing = variant === "ongoing" || variant === "unavailable";
 
   const availableSlots = useMemo(() => {
     const now = new Date();
@@ -55,7 +56,13 @@ export default function TimeSlots() {
                   selectedTime === slot &&
                     "border-[#06476F] bg-[#06476F] text-white hover:bg-[#06476F]/90"
                 )
-              : selectedTime === slot &&
+              : isOngoing
+                ? cn(
+                    "border-[#C07090]/40 bg-white text-[#7F012E] hover:border-[#C07090] hover:bg-[#C07090]/20",
+                    selectedTime === slot &&
+                      "border-[#7F012E] bg-[#7F012E] text-white hover:bg-[#7F012E]/90"
+                  )
+                : selectedTime === slot &&
                   "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80"
           )}
         >

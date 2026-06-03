@@ -13,6 +13,7 @@ export default function BookingDatePicker() {
   const { selectedDate, setSelectedDate } = useBookingContext();
   const { variant } = useGradientContext();
   const isAvailable = variant === "available" || variant === "default";
+  const isOngoing = variant === "ongoing" || variant === "unavailable";
 
   const today = startOfToday();
   const maxDate = addDays(today, 6);
@@ -26,13 +27,19 @@ export default function BookingDatePicker() {
             "h-12 w-full justify-start gap-3 rounded-xl border px-4 text-left font-normal",
             isAvailable
               ? "border-[#6CADD5]/60 bg-[#F3F8FC] text-[#0A76B9] hover:bg-[#F3F8FC]"
-              : "border-secondary/20 bg-secondary/10 text-secondary hover:bg-secondary/20"
+              : isOngoing
+                ? "border-[#C07090]/60 bg-white text-[#7F012E] hover:bg-white"
+                : "border-secondary/20 bg-secondary/10 text-secondary hover:bg-secondary/20"
           )}
         >
           <CalendarIcon
             className={cn(
               "h-4 w-4",
-              isAvailable ? "text-[#0A76B9]/70" : "text-secondary/70"
+              isAvailable
+                ? "text-[#0A76B9]/70"
+                : isOngoing
+                  ? "text-[#7F012E]/70"
+                  : "text-secondary/70"
             )}
           />
           <span className="flex-1">
@@ -48,7 +55,9 @@ export default function BookingDatePicker() {
           "w-auto p-2",
           isAvailable
             ? "border border-[#6CADD5]/40 bg-[#F3F8FC]!"
-            : "border border-emerald-500/20 bg-emerald-950!"
+            : isOngoing
+              ? "border border-[#C07090]/40 bg-white!"
+              : "border border-emerald-500/20 bg-emerald-950!"
         )}
       >
         <Calendar
@@ -61,7 +70,9 @@ export default function BookingDatePicker() {
             "bg-transparent [--cell-size:--spacing(9)]",
             isAvailable
               ? "text-[#0A76B9] [--ring:#6CADD5]"
-              : "text-secondary [--ring:#10b981]"
+              : isOngoing
+                ? "text-[#7F012E] [--ring:#C07090]"
+                : "text-secondary [--ring:#10b981]"
           )}
           classNames={
             isAvailable
@@ -80,21 +91,37 @@ export default function BookingDatePicker() {
                   outside: "text-[#0A76B9]/20 aria-selected:text-[#0A76B9]/30",
                   disabled: "text-[#0A76B9]/30",
                 }
-              : {
-                  caption_label: "select-none font-medium text-sm text-secondary",
-                  button_previous:
-                    "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
-                  button_next:
-                    "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
-                  weekday:
-                    "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-white/80",
-                  day_button:
-                    "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-secondary rounded-md hover:bg-emerald-500/20 hover:text-white data-[selected-single=true]:bg-emerald-500 data-[selected-single=true]:text-white data-[selected-single=true]:hover:bg-emerald-400",
-                  today:
-                    "rounded-md border border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
-                  outside: "text-white/20 aria-selected:text-white/30",
-                  disabled: "text-white",
-                }
+              : isOngoing
+                ? {
+                    caption_label: "select-none font-medium text-sm text-[#7F012E]",
+                    button_previous:
+                      "size-(--cell-size) p-0 select-none text-[#7F012E]/70 hover:bg-[#C07090]/20 hover:text-[#7F012E] aria-disabled:opacity-50",
+                    button_next:
+                      "size-(--cell-size) p-0 select-none text-[#7F012E]/70 hover:bg-[#C07090]/20 hover:text-[#7F012E] aria-disabled:opacity-50",
+                    weekday:
+                      "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-[#7F012E]/60",
+                    day_button:
+                      "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-[#7F012E] rounded-md bg-white border border-[#C07090]/30 hover:bg-[#C07090]/20 hover:border-[#C07090] data-[selected-single=true]:bg-[#7F012E] data-[selected-single=true]:text-white data-[selected-single=true]:border-[#7F012E]",
+                    today:
+                      "rounded-md border border-[#C07090] bg-[#C07090]/10 text-[#7F012E]",
+                    outside: "text-[#7F012E]/20 aria-selected:text-[#7F012E]/30",
+                    disabled: "text-[#7F012E]/30",
+                  }
+                : {
+                    caption_label: "select-none font-medium text-sm text-secondary",
+                    button_previous:
+                      "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
+                    button_next:
+                      "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
+                    weekday:
+                      "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-white/80",
+                    day_button:
+                      "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-secondary rounded-md hover:bg-emerald-500/20 hover:text-white data-[selected-single=true]:bg-emerald-500 data-[selected-single=true]:text-white data-[selected-single=true]:hover:bg-emerald-400",
+                    today:
+                      "rounded-md border border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
+                    outside: "text-white/20 aria-selected:text-white/30",
+                    disabled: "text-white",
+                  }
           }
         />
       </PopoverContent>

@@ -39,6 +39,7 @@ import { useGradientContext } from "@/components/providers/gradient-context";
 export default function MeetingDetailsForm() {
   const { variant } = useGradientContext();
   const isAvailable = variant === "available" || variant === "default";
+  const isOngoing = variant === "ongoing" || variant === "unavailable";
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
   const {
@@ -159,7 +160,11 @@ export default function MeetingDetailsForm() {
                 htmlFor={field.name}
                 className={cn(
                   "text-lg",
-                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                  isAvailable
+                    ? "text-[#0A76B9]"
+                    : isOngoing
+                      ? "text-[#7F012E]"
+                      : "text-secondary"
                 )}
               >
                 Meeting Subject
@@ -173,7 +178,9 @@ export default function MeetingDetailsForm() {
                 className={
                   isAvailable
                     ? "border-[#6CADD5]/40 bg-white! text-[#06476F] placeholder:text-[#0A76B9] hover:bg-white! focus-visible:border-[#6CADD5] focus-visible:bg-white! focus-visible:ring-[#6CADD5]/20"
-                    : "border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                    : isOngoing
+                      ? "border-[#C07090]/40 bg-white! text-[#2D0808] placeholder:text-[#7F012E]/70 hover:bg-white! focus-visible:border-[#C07090] focus-visible:bg-white! focus-visible:ring-[#C07090]/20"
+                      : "border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
                 }
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -190,7 +197,11 @@ export default function MeetingDetailsForm() {
                 htmlFor={field.name}
                 className={cn(
                   "text-lg",
-                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                  isAvailable
+                    ? "text-[#0A76B9]"
+                    : isOngoing
+                      ? "text-[#7F012E]"
+                      : "text-secondary"
                 )}
               >
                 Your Email
@@ -212,7 +223,9 @@ export default function MeetingDetailsForm() {
                       "w-full justify-between rounded-lg py-4.5! font-normal",
                       isAvailable
                         ? "border! border-[#6CADD5]/40! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]!"
-                        : "border! border-secondary/10! bg-secondary/10! text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
+                        : isOngoing
+                          ? "border! border-[#C07090]/40! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]!"
+                          : "border! border-secondary/10! bg-secondary/10! text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
                       fieldState.invalid &&
                         "border-destructive! ring-2 ring-destructive/20"
                     )}
@@ -278,7 +291,11 @@ export default function MeetingDetailsForm() {
               <FieldLabel
                 className={cn(
                   "text-lg",
-                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                  isAvailable
+                    ? "text-[#0A76B9]"
+                    : isOngoing
+                      ? "text-[#7F012E]"
+                      : "text-secondary"
                 )}
               >
                 Guests
@@ -300,7 +317,9 @@ export default function MeetingDetailsForm() {
                       "flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none",
                       isAvailable
                         ? "border-[#6CADD5]/40 bg-white text-[#06476F] hover:bg-[#F3F8FC] focus-visible:ring-[#6CADD5]/20"
-                        : "border-secondary/10 bg-secondary/10 text-secondary/90 hover:bg-secondary/20 focus-visible:ring-secondary/20"
+                        : isOngoing
+                          ? "border-[#C07090]/40 bg-white text-[#2D0808] hover:bg-white/90 focus-visible:ring-[#C07090]/20"
+                          : "border-secondary/10 bg-secondary/10 text-secondary/90 hover:bg-secondary/20 focus-visible:ring-secondary/20"
                     )}
                   >
                     {fields.length > 0 ? (

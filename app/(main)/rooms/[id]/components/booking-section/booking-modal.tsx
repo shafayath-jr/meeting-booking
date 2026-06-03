@@ -50,6 +50,7 @@ export default function BookingModal() {
   const { variant } = useGradientContext();
 
   const isAvailable = variant === "available" || variant === "default";
+  const isOngoing = variant === "ongoing" || variant === "unavailable";
   const borderColor = borderColorMap[variant];
   const badgeBg = badgeBgMap[variant];
 
@@ -147,7 +148,9 @@ export default function BookingModal() {
               "rounded-xl px-8 py-6",
               isAvailable
                 ? "border-[#6CADD5]! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]! disabled:bg-white!"
-                : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
+                : isOngoing
+                  ? "border-[#C07090]! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]! disabled:bg-white!"
+                  : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
             )}
           >
             {isSubmitting ? "Booking..." : "Confirm Booking"}
