@@ -39,6 +39,7 @@ export default function MeetingDetailsForm() {
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
   const {
+    selectedDate,
     selectedTime,
     selectedDuration,
     setBookingSuccess,
@@ -98,8 +99,7 @@ export default function MeetingDetailsForm() {
 
     setIsSubmitting(true);
     try {
-      const now = new Date();
-      const startDate = parse(selectedTime, "HH:mm", now);
+      const startDate = parse(selectedTime, "HH:mm", selectedDate);
       const endDate = addMinutes(startDate, Number(selectedDuration));
 
       const event = {

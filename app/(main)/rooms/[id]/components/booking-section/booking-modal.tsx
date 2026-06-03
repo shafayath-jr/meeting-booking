@@ -1,5 +1,6 @@
 "use client";
 
+import { isToday, format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -13,6 +14,7 @@ import { useBookingContext } from "./booking-context";
 import TimeSlots from "./time-slots";
 import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
+import BookingDatePicker from "./booking-date-picker";
 import {
   useGradientContext,
   type GradientVariant,
@@ -43,7 +45,7 @@ const badgeBgMap: Record<GradientVariant, string> = {
 };
 
 export default function BookingModal() {
-  const { isModalOpen, isSubmitting, closeModal } = useBookingContext();
+  const { isModalOpen, isSubmitting, selectedDate, closeModal } = useBookingContext();
   const { variant } = useGradientContext();
 
   const borderColor = borderColorMap[variant];
@@ -81,7 +83,26 @@ export default function BookingModal() {
               className="absolute -top-6 left-6 rounded-full border px-4 py-2"
               style={{ borderColor, backgroundColor: badgeBg }}
             >
-              <h5 className="font-medium text-secondary">Available slots for today</h5>
+              <h5 className="font-medium text-secondary">Select date</h5>
+            </div>
+            <div className="mt-2">
+              <BookingDatePicker />
+            </div>
+          </div>
+
+          <div
+            className="relative mt-8 space-y-4 rounded-4xl border p-4"
+            style={{ borderColor }}
+          >
+            <div
+              className="absolute -top-6 left-6 rounded-full border px-4 py-2"
+              style={{ borderColor, backgroundColor: badgeBg }}
+            >
+              <h5 className="font-medium text-secondary">
+                {isToday(selectedDate)
+                  ? "Available slots for today"
+                  : `Available slots for ${format(selectedDate, "EEE, MMM d")}`}
+              </h5>
             </div>
             <TimeSlots />
           </div>

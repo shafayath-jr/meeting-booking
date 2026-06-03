@@ -7,17 +7,17 @@ import { cn, getTimeSlotsForTimezone } from "@/lib/utils";
 import { useBookingContext } from "./booking-context";
 
 export default function TimeSlots() {
-  const { meetings, selectedTime, setSelectedTime } = useBookingContext();
+  const { meetings, selectedDate, selectedTime, setSelectedTime } = useBookingContext();
 
   const availableSlots = useMemo(() => {
     const now = new Date();
-    const today = isToday(now);
+    const isSelectedToday = isToday(selectedDate);
 
     return getTimeSlotsForTimezone().filter((slot) => {
-      const slotStart = parse(slot, "HH:mm", now);
+      const slotStart = parse(slot, "HH:mm", selectedDate);
       const slotEnd = addMinutes(slotStart, 30);
 
-      if (today && isBefore(slotStart, now)) return false;
+      if (isSelectedToday && isBefore(slotStart, now)) return false;
 
       return !meetings.some((meeting) => {
         const meetingStart = new Date(meeting.start_time);
@@ -25,12 +25,13 @@ export default function TimeSlots() {
         return slotStart < meetingEnd && slotEnd > meetingStart;
       });
     });
-  }, [meetings]);
+  }, [meetings, selectedDate]);
 
   if (availableSlots.length === 0) {
     return (
       <p className="mt-6 text-sm font-semibold text-secondary">
-        No available slots for today.
+        No available slots for{" "}
+        {isToday(selectedDate) ? "today" : format(selectedDate, "EEE, MMM d")}.
       </p>
     );
   }
