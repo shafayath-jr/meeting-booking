@@ -74,7 +74,7 @@ export default function MeetingList() {
   return (
     <div className="scrollbar-transparent max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-2">
       {upcomingMeetings.map((meeting) => (
-        <MeetingInfoCard key={meeting.id} meeting={meeting} status="Upcoming" />
+        <MeetingInfoCard key={meeting.id} meeting={meeting} />
       ))}
     </div>
   );
