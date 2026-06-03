@@ -34,7 +34,7 @@ export default function BookingDatePicker() {
       </PopoverTrigger>
       <PopoverContent
         align="start"
-        className="w-auto border-secondary/30 bg-[#0C170F]/95 p-2 text-secondary"
+        className="w-auto border border-emerald-500/20 bg-emerald-950! p-2 text-secondary"
       >
         <Calendar
           mode="single"
@@ -42,7 +42,7 @@ export default function BookingDatePicker() {
           onSelect={(date) => date && setSelectedDate(date)}
           disabled={{ before: today, after: maxDate }}
           autoFocus
-          className="bg-transparent text-secondary [--cell-size:--spacing(9)]"
+          className="bg-transparent text-secondary [--cell-size:--spacing(9)] [--ring:#10b981]"
           classNames={{
             caption_label: "select-none font-medium text-sm text-secondary",
             button_previous:
@@ -50,13 +50,13 @@ export default function BookingDatePicker() {
             button_next:
               "size-(--cell-size) p-0 select-none text-white/70 hover:bg-white/10 hover:text-secondary aria-disabled:opacity-50",
             weekday:
-              "rounded-md flex-1 font-normal text-[0.8rem] select-none text-white/40",
+              "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-white/80",
             day_button:
-              "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-secondary rounded-md hover:bg-white/10 data-[selected-single=true]:bg-secondary data-[selected-single=true]:text-[#0F401D] data-[selected-single=true]:hover:bg-secondary/90",
+              "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-secondary rounded-md hover:bg-emerald-500/20 hover:text-white data-[selected-single=true]:bg-emerald-500 data-[selected-single=true]:text-white data-[selected-single=true]:hover:bg-emerald-400",
             today:
-              "rounded-md border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 data-[selected=true]:rounded-md",
+              "rounded-md border border-emerald-500/40 bg-emerald-500/10 text-emerald-300",
             outside: "text-white/20 aria-selected:text-white/30",
-            disabled: "text-white/15 opacity-40",
+            disabled: "text-white",
           }}
         />
       </PopoverContent>
