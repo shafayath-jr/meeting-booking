@@ -24,8 +24,8 @@ const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
   available: "gradient-mesh",
   "upcoming-soon": "gradient-standby",
-  ongoing: "gradient-occupied",
-  unavailable: "gradient-occupied",
+  ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
+  unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
 };
 
 const borderColorMap: Record<GradientVariant, string> = {
