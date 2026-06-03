@@ -23,7 +23,7 @@ export default function BookNowButton() {
       variant="secondary"
       type="button"
       onClick={openModal}
-      // disabled={disabled}
+      disabled={disabled}
       className={cn(
         "w-full rounded-xl py-8 text-lg",
         isBooked ? "text-[#2D0808]" : "text-[#0A76B9]",

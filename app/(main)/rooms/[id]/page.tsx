@@ -42,7 +42,7 @@ async function RoomPage({ params }: Props) {
         />
         <PageContainer>
           <div className="flex justify-between gap-10">
-            <div className="w-3/5 space-y-10">
+            <div className="w-1/2 space-y-10">
               {/* logo  */}
 
               <Image
@@ -68,7 +68,7 @@ async function RoomPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="w-2/5 space-y-3">
+            <div className="w-1/2 space-y-3">
               {/* clock */}
 
               <Clock />
