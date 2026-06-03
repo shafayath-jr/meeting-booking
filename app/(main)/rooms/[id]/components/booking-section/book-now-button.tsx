@@ -21,7 +21,10 @@ export default function BookNowButton() {
       type="button"
       onClick={openModal}
       disabled={disabled}
-      className={cn("rounded-xl py-6 text-lg", isOngoing && "mx-auto flex")}
+      className={cn(
+        "w-full rounded-xl py-8 text-lg text-[#0A76B9]",
+        isOngoing && "mx-auto flex"
+      )}
       size="lg"
     >
       Book a new meeting

@@ -16,23 +16,23 @@ export default function Clock() {
   const date = format(now, "EEEE, MMMM d, yyyy");
 
   return (
-    <div className="mb-8 text-secondary">
+    <div className="mb-8 text-black">
       <div className="flex items-baseline gap-3">
         <span className="font-serif text-8xl leading-none font-light tracking-tight">
           {time}
         </span>
         <div className="flex flex-col">
-          <span className="text-xl font-semibold tracking-widest text-secondary/60 uppercase">
+          <span className="text-xl font-semibold tracking-widest text-black/60 uppercase">
             {ampm}
           </span>
         </div>
       </div>
       <div className="mt-4 flex items-center gap-4">
-        <div className="h-px flex-1 bg-white/15" />
-        <p className="text-[11px] font-semibold tracking-[0.22em] text-secondary/45 uppercase">
+        <div className="h-px flex-1 bg-black/15" />
+        <p className="text-[11px] font-semibold tracking-[0.22em] text-black/45 uppercase">
           {date}
         </p>
-        <div className="h-px flex-1 bg-white/15" />
+        <div className="h-px flex-1 bg-black/15" />
       </div>
     </div>
   );

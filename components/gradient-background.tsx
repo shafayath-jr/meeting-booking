@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const variantClassMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
-  available: "gradient-mesh-green",
+  available: "gradient-grain bg-linear-to-t from-[#085E94] via-[#3B91C7] to-[#F3F8FC]",
   "upcoming-soon": "gradient-mesh-yellow",
   ongoing: "gradient-mesh-red",
   unavailable: "gradient-mesh-red",

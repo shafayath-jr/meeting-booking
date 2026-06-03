@@ -14,7 +14,7 @@ export default function AvailabilityText() {
   if (isOngoing) return null;
 
   return (
-    <p className="text-2xl text-secondary">
+    <p className="text-lg text-[#06476F]">
       {hasAvailableSlots ? "Check available slots" : "No slots available"}
     </p>
   );
