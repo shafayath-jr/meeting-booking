@@ -5,11 +5,14 @@ import { cn } from "@/lib/utils";
 import { FULL_MEETING_DURATION_OPTIONS } from "@/lib/constants";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
 import { useBookingContext } from "./booking-context";
+import { useGradientContext } from "@/components/providers/gradient-context";
 import { parse } from "date-fns";
 
 export default function DurationSlots() {
   const { meetings, selectedTime, selectedDuration, setSelectedDuration } =
     useBookingContext();
+  const { variant } = useGradientContext();
+  const isAvailable = variant === "available" || variant === "default";
 
   const now = new Date();
 
@@ -38,9 +41,15 @@ export default function DurationSlots() {
             disabled={isDisabled}
             onClick={() => setSelectedDuration(option.value)}
             className={cn(
-              selectedDuration === option.value &&
-                "border-secondary bg-secondary text-[#0F401D]",
-              "rounded-xl py-6"
+              "rounded-xl py-6",
+              isAvailable
+                ? cn(
+                    "border-[#6CADD5]/40 bg-white text-[#0A76B9] hover:border-[#6CADD5] hover:bg-[#6CADD5]/20",
+                    selectedDuration === option.value &&
+                      "border-[#06476F] bg-[#06476F] text-white hover:bg-[#06476F]/90"
+                  )
+                : selectedDuration === option.value &&
+                    "border-secondary bg-secondary text-[#0F401D]"
             )}
           >
             {option.label}

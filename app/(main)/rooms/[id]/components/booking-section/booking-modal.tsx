@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { XIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useBookingContext } from "./booking-context";
 import TimeSlots from "./time-slots";
 import DurationSlots from "./duration-slots";
@@ -22,7 +23,7 @@ import {
 
 const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
-  available: "gradient-mesh",
+  available: "bg-linear-to-br from-[#F3F8FC] via-[#C2DDF0] to-[#8BBCD6]",
   "upcoming-soon": "gradient-standby",
   ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
   unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
@@ -30,7 +31,7 @@ const gradientMap: Record<GradientVariant, string> = {
 
 const borderColorMap: Record<GradientVariant, string> = {
   default: "#35AD57",
-  available: "#35AD57",
+  available: "#6CADD5",
   "upcoming-soon": "oklch(65.438% 0.14546 57.442)",
   ongoing: "oklch(56% 0.2 6)",
   unavailable: "oklch(56% 0.2 6)",
@@ -38,7 +39,7 @@ const borderColorMap: Record<GradientVariant, string> = {
 
 const badgeBgMap: Record<GradientVariant, string> = {
   default: "#0A8754",
-  available: "#0A8754",
+  available: "#0A76B9",
   "upcoming-soon": "oklch(35% 0.1 57)",
   ongoing: "oklch(25% 0.12 6)",
   unavailable: "oklch(25% 0.12 6)",
@@ -48,6 +49,7 @@ export default function BookingModal() {
   const { isModalOpen, isSubmitting, selectedDate, closeModal } = useBookingContext();
   const { variant } = useGradientContext();
 
+  const isAvailable = variant === "available" || variant === "default";
   const borderColor = borderColorMap[variant];
   const badgeBg = badgeBgMap[variant];
 
@@ -59,7 +61,7 @@ export default function BookingModal() {
         style={{ borderColor }}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl text-secondary">Book a Meeting</DialogTitle>
+          <DialogTitle className="text-xl">Book a Meeting</DialogTitle>
         </DialogHeader>
 
         <Button
@@ -141,7 +143,12 @@ export default function BookingModal() {
             variant="outline"
             form="meeting-details-form"
             disabled={isSubmitting}
-            className="rounded-xl border-secondary bg-transparent! px-8 py-6 text-secondary"
+            className={cn(
+              "rounded-xl px-8 py-6",
+              isAvailable
+                ? "border-[#6CADD5]! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]! disabled:bg-white!"
+                : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
+            )}
           >
             {isSubmitting ? "Booking..." : "Confirm Booking"}
           </Button>

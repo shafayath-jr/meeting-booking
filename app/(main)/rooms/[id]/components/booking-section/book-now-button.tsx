@@ -2,10 +2,13 @@
 
 import { Button } from "@/components/ui/button";
 import { useBookingContext } from "./booking-context";
+import { useGradientContext } from "@/components/providers/gradient-context";
 import { cn } from "@/lib/utils";
 
 export default function BookNowButton() {
   const { openModal, showSuccess, hasAvailableSlots, meetings } = useBookingContext();
+  const { variant } = useGradientContext();
+  const isBooked = variant === "ongoing" || variant === "unavailable";
 
   if (showSuccess) return null;
 
@@ -22,7 +25,8 @@ export default function BookNowButton() {
       onClick={openModal}
       disabled={disabled}
       className={cn(
-        "w-full rounded-xl py-8 text-lg text-[#0A76B9]",
+        "w-full rounded-xl py-8 text-lg",
+        isBooked ? "text-[#2D0808]" : "text-[#0A76B9]",
         isOngoing && "mx-auto flex"
       )}
       size="lg"

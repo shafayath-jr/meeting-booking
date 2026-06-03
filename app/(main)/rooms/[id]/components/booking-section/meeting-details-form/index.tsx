@@ -34,8 +34,11 @@ import { toast } from "sonner";
 import { cn, nameFromEmail } from "@/lib/utils";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { useBookingContext } from "../booking-context";
+import { useGradientContext } from "@/components/providers/gradient-context";
 
 export default function MeetingDetailsForm() {
+  const { variant } = useGradientContext();
+  const isAvailable = variant === "available" || variant === "default";
   const { id: roomId } = useParams<{ id: string }>();
   const { triggerRefresh } = useMeetingsContext();
   const {
@@ -152,7 +155,13 @@ export default function MeetingDetailsForm() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
+              <FieldLabel
+                htmlFor={field.name}
+                className={cn(
+                  "text-lg",
+                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                )}
+              >
                 Meeting Subject
               </FieldLabel>
               <Input
@@ -161,7 +170,11 @@ export default function MeetingDetailsForm() {
                 autoComplete="off"
                 aria-invalid={fieldState.invalid}
                 placeholder="Enter what the meeting is about"
-                className="border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                className={
+                  isAvailable
+                    ? "border-[#6CADD5]/40 bg-white! text-[#06476F] placeholder:text-[#0A76B9] hover:bg-white! focus-visible:border-[#6CADD5] focus-visible:bg-white! focus-visible:ring-[#6CADD5]/20"
+                    : "border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
+                }
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -173,7 +186,13 @@ export default function MeetingDetailsForm() {
           control={form.control}
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name} className="text-lg text-secondary">
+              <FieldLabel
+                htmlFor={field.name}
+                className={cn(
+                  "text-lg",
+                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                )}
+              >
                 Your Email
               </FieldLabel>
               <Popover
@@ -190,7 +209,10 @@ export default function MeetingDetailsForm() {
                     aria-expanded={open}
                     aria-invalid={fieldState.invalid}
                     className={cn(
-                      "w-full justify-between border! border-secondary/10! bg-secondary/10! py-4.5! font-normal text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
+                      "w-full justify-between rounded-lg py-4.5! font-normal",
+                      isAvailable
+                        ? "border! border-[#6CADD5]/40! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]!"
+                        : "border! border-secondary/10! bg-secondary/10! text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
                       fieldState.invalid &&
                         "border-destructive! ring-2 ring-destructive/20"
                     )}
@@ -253,7 +275,14 @@ export default function MeetingDetailsForm() {
           control={form.control}
           render={() => (
             <Field className="col-span-2">
-              <FieldLabel className="text-lg text-secondary">Guests</FieldLabel>
+              <FieldLabel
+                className={cn(
+                  "text-lg",
+                  isAvailable ? "text-[#0A76B9]" : "text-secondary"
+                )}
+              >
+                Guests
+              </FieldLabel>
               <Popover
                 open={guestOpen}
                 onOpenChange={(isOpen) => {
@@ -267,7 +296,12 @@ export default function MeetingDetailsForm() {
                     aria-expanded={guestOpen}
                     aria-controls="guest-popover"
                     tabIndex={0}
-                    className="flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-md border border-secondary/10 bg-secondary/10 px-3 py-2 text-sm text-secondary/90 hover:bg-secondary/20 focus-visible:ring-2 focus-visible:ring-secondary/20 focus-visible:outline-none"
+                    className={cn(
+                      "flex min-h-[2.75rem] w-full cursor-pointer flex-wrap items-center gap-1.5 rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none",
+                      isAvailable
+                        ? "border-[#6CADD5]/40 bg-white text-[#06476F] hover:bg-[#F3F8FC] focus-visible:ring-[#6CADD5]/20"
+                        : "border-secondary/10 bg-secondary/10 text-secondary/90 hover:bg-secondary/20 focus-visible:ring-secondary/20"
+                    )}
                   >
                     {fields.length > 0 ? (
                       fields.map((field, index) => (

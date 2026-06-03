@@ -5,9 +5,12 @@ import { isToday, isBefore, parse, addMinutes, format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { cn, getTimeSlotsForTimezone } from "@/lib/utils";
 import { useBookingContext } from "./booking-context";
+import { useGradientContext } from "@/components/providers/gradient-context";
 
 export default function TimeSlots() {
   const { meetings, selectedDate, selectedTime, setSelectedTime } = useBookingContext();
+  const { variant } = useGradientContext();
+  const isAvailable = variant === "available" || variant === "default";
 
   const availableSlots = useMemo(() => {
     const now = new Date();
@@ -45,9 +48,15 @@ export default function TimeSlots() {
           size="default"
           onClick={() => setSelectedTime(slot)}
           className={cn(
-            selectedTime === slot &&
-              "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80",
-            "rounded-xl py-6"
+            "rounded-xl py-6",
+            isAvailable
+              ? cn(
+                  "border-[#6CADD5]/40 bg-white text-[#0A76B9] hover:border-[#6CADD5] hover:bg-[#6CADD5]/20",
+                  selectedTime === slot &&
+                    "border-[#06476F] bg-[#06476F] text-white hover:bg-[#06476F]/90"
+                )
+              : selectedTime === slot &&
+                  "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80"
           )}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}

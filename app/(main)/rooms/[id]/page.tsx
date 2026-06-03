@@ -5,6 +5,7 @@ import { getMeetingsByRoom } from "@/actions/meeting";
 import BookingSection from "./components/booking-section";
 import MeetingList from "./components/meeting-list";
 import MeetingRoomImage from "./components/booking-section/meeting-room-image";
+import RoomName from "./components/room-name";
 import { BookingProvider } from "./components/booking-section/booking-context";
 import Image from "next/image";
 import Clock from "@/app/(main)/components/clock";
@@ -31,6 +32,14 @@ async function RoomPage({ params }: Props) {
           aria-hidden
           className="pointer-events-none fixed bottom-0 left-0 -z-10"
         />
+        <Image
+          src="/pattern-right.svg"
+          alt=""
+          width={201}
+          height={416}
+          aria-hidden
+          className="pointer-events-none fixed top-1/2 right-0 -z-10 -translate-y-1/2"
+        />
         <PageContainer>
           <div className="flex justify-between gap-10">
             <div className="w-3/5 space-y-10">
@@ -50,9 +59,7 @@ async function RoomPage({ params }: Props) {
                 <MeetingRoomImage />
 
                 <div>
-                  <h3 className="font-serif text-2xl font-semibold tracking-tight text-[#042F4A]">
-                    {room?.name}
-                  </h3>
+                  <RoomName name={room?.name ?? ""} />
                 </div>
 
                 {/* booking section */}
