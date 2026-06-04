@@ -58,9 +58,9 @@ export default function DurationSlots() {
                     )
                   : isUpcoming
                     ? cn(
-                        "border-[#EFB700]/40 bg-white text-[#8A5A00] hover:border-[#EFB700] hover:bg-[#EFB700]/20",
+                        "border-[#F78A05]/40 bg-white text-[#7A3B00] hover:border-[#F78A05] hover:bg-[#F78A05]/20",
                         selectedDuration === option.value &&
-                          "border-[#8A5A00] bg-[#8A5A00] text-white hover:bg-[#8A5A00]/90"
+                          "border-[#7A3B00] bg-[#7A3B00] text-white hover:bg-[#7A3B00]/90"
                       )
                     : selectedDuration === option.value &&
                       "border-secondary bg-secondary text-[#0F401D]"

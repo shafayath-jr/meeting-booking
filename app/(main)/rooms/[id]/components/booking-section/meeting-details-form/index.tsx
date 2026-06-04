@@ -166,7 +166,7 @@ export default function MeetingDetailsForm() {
                     : isOngoing
                       ? "text-[#7F012E]"
                       : isUpcoming
-                        ? "text-[#8A5A00]"
+                        ? "text-[#7A3B00]"
                         : "text-secondary"
                 )}
               >
@@ -184,7 +184,7 @@ export default function MeetingDetailsForm() {
                     : isOngoing
                       ? "border-[#C07090]/40 bg-white! text-[#2D0808] placeholder:text-[#7F012E]/70 hover:bg-white! focus-visible:border-[#C07090] focus-visible:bg-white! focus-visible:ring-[#C07090]/20"
                       : isUpcoming
-                        ? "border-[#EFB700]/40 bg-white! text-[#4A2F00] placeholder:text-[#8A5A00]/70 hover:bg-white! focus-visible:border-[#EFB700] focus-visible:bg-white! focus-visible:ring-[#EFB700]/20"
+                        ? "border-[#F78A05]/40 bg-white! text-[#3D1800] placeholder:text-[#7A3B00]/70 hover:bg-white! focus-visible:border-[#F78A05] focus-visible:bg-white! focus-visible:ring-[#F78A05]/20"
                         : "border-secondary bg-transparent text-secondary/90 placeholder:text-secondary/90 hover:bg-transparent focus-visible:border-secondary/50 focus-visible:bg-transparent focus-visible:ring-secondary/20"
                 }
               />
@@ -207,7 +207,7 @@ export default function MeetingDetailsForm() {
                     : isOngoing
                       ? "text-[#7F012E]"
                       : isUpcoming
-                        ? "text-[#8A5A00]"
+                        ? "text-[#7A3B00]"
                         : "text-secondary"
                 )}
               >
@@ -233,7 +233,7 @@ export default function MeetingDetailsForm() {
                         : isOngoing
                           ? "border! border-[#C07090]/40! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]!"
                           : isUpcoming
-                            ? "border! border-[#EFB700]/40! bg-white! text-[#4A2F00] hover:bg-[#FFF8E5]! hover:text-[#4A2F00]!"
+                            ? "border! border-[#F78A05]/40! bg-white! text-[#3D1800] hover:bg-[#FFF3E0]! hover:text-[#3D1800]!"
                             : "border! border-secondary/10! bg-secondary/10! text-secondary/90 hover:bg-secondary/20! hover:text-secondary!",
                       fieldState.invalid &&
                         "border-destructive! ring-2 ring-destructive/20"
@@ -305,7 +305,7 @@ export default function MeetingDetailsForm() {
                     : isOngoing
                       ? "text-[#7F012E]"
                       : isUpcoming
-                        ? "text-[#8A5A00]"
+                        ? "text-[#7A3B00]"
                         : "text-secondary"
                 )}
               >
@@ -331,7 +331,7 @@ export default function MeetingDetailsForm() {
                         : isOngoing
                           ? "border-[#C07090]/40 bg-white text-[#2D0808] hover:bg-white/90 focus-visible:ring-[#C07090]/20"
                           : isUpcoming
-                            ? "border-[#EFB700]/40 bg-white text-[#4A2F00] hover:bg-[#FFF8E5] focus-visible:ring-[#EFB700]/20"
+                            ? "border-[#F78A05]/40 bg-white text-[#3D1800] hover:bg-[#FFF3E0] focus-visible:ring-[#F78A05]/20"
                             : "border-secondary/10 bg-secondary/10 text-secondary/90 hover:bg-secondary/20 focus-visible:ring-secondary/20"
                     )}
                   >

@@ -25,7 +25,7 @@ import TimeSlots from "./time-slots";
 const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
   available: "bg-linear-to-br from-[#F3F8FC] via-[#C2DDF0] to-[#8BBCD6]",
-  "upcoming-soon": "bg-linear-to-br from-[#FFFFFF] via-[#E3CA78] to-[#EFB700]",
+  "upcoming-soon": "bg-linear-to-b from-[#FFF5EA] to-[#C86E00]",
   ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
   unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
 };
@@ -33,7 +33,7 @@ const gradientMap: Record<GradientVariant, string> = {
 const borderColorMap: Record<GradientVariant, string> = {
   default: "#35AD57",
   available: "#6CADD5",
-  "upcoming-soon": "#EFB700",
+  "upcoming-soon": "#F78A05",
   ongoing: "oklch(56% 0.2 6)",
   unavailable: "oklch(56% 0.2 6)",
 };
@@ -41,7 +41,7 @@ const borderColorMap: Record<GradientVariant, string> = {
 const badgeBgMap: Record<GradientVariant, string> = {
   default: "#0A8754",
   available: "#0A76B9",
-  "upcoming-soon": "#8A5A00",
+  "upcoming-soon": "#7A3B00",
   ongoing: "oklch(25% 0.12 6)",
   unavailable: "oklch(25% 0.12 6)",
 };
@@ -195,7 +195,7 @@ export default function BookingModal() {
                 : isOngoing
                   ? "border-[#C07090]! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]! disabled:bg-white!"
                   : isUpcoming
-                    ? "border-[#EFB700]! bg-white! text-[#4A2F00] hover:bg-[#FFF8E5]! hover:text-[#4A2F00]! disabled:bg-white!"
+                    ? "border-[#F78A05]! bg-white! text-[#3D1800] hover:bg-[#FFF3E0]! hover:text-[#3D1800]! disabled:bg-white!"
                     : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
             )}
           >

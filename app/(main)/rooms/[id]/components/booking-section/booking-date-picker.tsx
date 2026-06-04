@@ -30,7 +30,7 @@ export default function BookingDatePicker() {
               : isOngoing
                 ? "border-[#C07090]/60 bg-white text-[#7F012E] hover:bg-white"
                 : isUpcoming
-                  ? "border-[#EFB700]/60 bg-[#FFF8E5] text-[#8A5A00] hover:bg-[#FFF8E5]"
+                  ? "border-[#F78A05]/60 bg-[#FFF3E0] text-[#7A3B00] hover:bg-[#FFF3E0]"
                   : "border-secondary/20 bg-secondary/10 text-secondary hover:bg-secondary/20"
           )}
         >
@@ -42,7 +42,7 @@ export default function BookingDatePicker() {
                 : isOngoing
                   ? "text-[#7F012E]/70"
                   : isUpcoming
-                    ? "text-[#8A5A00]/70"
+                    ? "text-[#7A3B00]/70"
                     : "text-secondary/70"
             )}
           />
@@ -62,7 +62,7 @@ export default function BookingDatePicker() {
             : isOngoing
               ? "border border-[#C07090]/40 bg-white!"
               : isUpcoming
-                ? "border border-[#EFB700]/40 bg-[#FFF8E5]!"
+                ? "border border-[#F78A05]/40 bg-[#FFF3E0]!"
                 : "border border-emerald-500/20 bg-emerald-950!"
         )}
       >
@@ -80,7 +80,7 @@ export default function BookingDatePicker() {
               : isOngoing
                 ? "text-[#7F012E] [--ring:#C07090]"
                 : isUpcoming
-                  ? "text-[#8A5A00] [--ring:#EFB700]"
+                  ? "text-[#7A3B00] [--ring:#F78A05]"
                   : "text-secondary [--ring:#10b981]"
           )}
           classNames={
@@ -118,19 +118,19 @@ export default function BookingDatePicker() {
                   }
                 : isUpcoming
                   ? {
-                      caption_label: "select-none font-medium text-sm text-[#8A5A00]",
+                      caption_label: "select-none font-medium text-sm text-[#7A3B00]",
                       button_previous:
-                        "size-(--cell-size) p-0 select-none text-[#8A5A00]/70 hover:bg-[#EFB700]/20 hover:text-[#8A5A00] aria-disabled:opacity-50",
+                        "size-(--cell-size) p-0 select-none text-[#7A3B00]/70 hover:bg-[#F78A05]/20 hover:text-[#7A3B00] aria-disabled:opacity-50",
                       button_next:
-                        "size-(--cell-size) p-0 select-none text-[#8A5A00]/70 hover:bg-[#EFB700]/20 hover:text-[#8A5A00] aria-disabled:opacity-50",
+                        "size-(--cell-size) p-0 select-none text-[#7A3B00]/70 hover:bg-[#F78A05]/20 hover:text-[#7A3B00] aria-disabled:opacity-50",
                       weekday:
-                        "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-[#8A5A00]/60",
+                        "rounded-md flex-1 font-semibold text-[0.8rem] select-none text-[#7A3B00]/60",
                       day_button:
-                        "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-[#8A5A00] rounded-md bg-white border border-[#EFB700]/30 hover:bg-[#EFB700]/20 hover:border-[#EFB700] data-[selected-single=true]:bg-[#8A5A00] data-[selected-single=true]:text-white data-[selected-single=true]:border-[#8A5A00]",
+                        "flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal text-[#7A3B00] rounded-md bg-white border border-[#F78A05]/30 hover:bg-[#F78A05]/20 hover:border-[#F78A05] data-[selected-single=true]:bg-[#7A3B00] data-[selected-single=true]:text-white data-[selected-single=true]:border-[#7A3B00]",
                       today:
-                        "rounded-md border border-[#EFB700] bg-[#EFB700]/10 text-[#8A5A00]",
-                      outside: "text-[#8A5A00]/20 aria-selected:text-[#8A5A00]/30",
-                      disabled: "text-[#8A5A00]/30",
+                        "rounded-md border border-[#F78A05] bg-[#F78A05]/10 text-[#7A3B00]",
+                      outside: "text-[#7A3B00]/20 aria-selected:text-[#7A3B00]/30",
+                      disabled: "text-[#7A3B00]/30",
                     }
                   : {
                       caption_label: "select-none font-medium text-sm text-secondary",
