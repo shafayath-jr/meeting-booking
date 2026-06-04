@@ -1,6 +1,6 @@
 "use client";
 
-import { format, startOfToday, addDays, isToday } from "date-fns";
+import { format, startOfToday, isToday } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -17,7 +17,6 @@ export default function BookingDatePicker() {
   const isUpcoming = variant === "upcoming-soon";
 
   const today = startOfToday();
-  const maxDate = addDays(today, 6);
 
   return (
     <Popover>
@@ -69,9 +68,10 @@ export default function BookingDatePicker() {
       >
         <Calendar
           mode="single"
+          weekStartsOn={1}
           selected={selectedDate}
           onSelect={(date) => date && setSelectedDate(date)}
-          disabled={{ before: today, after: maxDate }}
+          disabled={{ before: today }}
           autoFocus
           className={cn(
             "bg-transparent [--cell-size:--spacing(9)]",
