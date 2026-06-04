@@ -65,8 +65,10 @@ export default function MeetingList() {
 
   if (upcomingMeetings.length === 0) {
     return (
-      <div className="flex h-[calc(100vh-380px)] items-center justify-center rounded-xl bg-black/20">
-        <p className="text-secondary lg:text-lg">No meetings scheduled today</p>
+      <div className="flex h-[25vh] items-center justify-center rounded-xl bg-black/20">
+        <p className="text-center text-secondary lg:text-lg">
+          No meetings scheduled today
+        </p>
       </div>
     );
   }
@@ -74,7 +76,7 @@ export default function MeetingList() {
   return (
     <div className="scrollbar-transparent max-h-[calc(100vh-220px)] space-y-3 overflow-y-auto pr-2">
       {upcomingMeetings.map((meeting) => (
-        <MeetingInfoCard key={meeting.id} meeting={meeting} status="Upcoming" />
+        <MeetingInfoCard key={meeting.id} meeting={meeting} />
       ))}
     </div>
   );

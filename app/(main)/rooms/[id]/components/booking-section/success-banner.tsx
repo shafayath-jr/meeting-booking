@@ -1,30 +1,22 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { BadgeCheck } from "lucide-react";
-import { format, differenceInMinutes } from "date-fns";
-import { useBookingContext } from "./booking-context";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { differenceInMinutes, format } from "date-fns";
+import { BadgeCheck } from "lucide-react";
+import { useEffect } from "react";
+import { useBookingContext } from "./booking-context";
 
 export default function SuccessBanner() {
   const { successData, resetFlow } = useBookingContext();
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!successData) return;
 
     const timer = setTimeout(resetFlow, 10000);
 
-    const handleMouseDown = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        resetFlow();
-      }
-    };
-    document.addEventListener("mousedown", handleMouseDown);
-
     return () => {
       clearTimeout(timer);
-      document.removeEventListener("mousedown", handleMouseDown);
     };
   }, [resetFlow]);
 
@@ -44,49 +36,71 @@ export default function SuccessBanner() {
   })();
 
   return (
-    <div
-      ref={containerRef}
-      className="space-y-6 rounded-xl border border-secondary/30 bg-secondary/5 p-8"
-    >
-      <div className="flex flex-col items-center gap-3 text-center">
-        <BadgeCheck className="size-16 text-green-500" strokeWidth={1.5} />
-        <h3 className="text-2xl font-semibold text-secondary">Successfully Booked</h3>
-        <h5 className="text-lg text-secondary">Meeting Details</h5>
-      </div>
+    <Dialog open={!!successData} onOpenChange={(open) => (!open ? resetFlow() : null)}>
+      <DialogContent
+        showCloseButton={false}
+        className="w-full max-w-[666px]! overflow-hidden rounded-[32px] border border-[#0A76B9] p-8 text-[#F3F8FC]"
+        style={{ backgroundColor: "#085E94" }}
+      >
+        <div className="flex flex-col items-center gap-3 text-center">
+          <BadgeCheck className="size-14 text-[#9DC8E3]" strokeWidth={1.5} />
+          <h3 className="font-sans text-[24px] leading-9 font-semibold tracking-normal text-[#F3F8FC]">
+            Successfully Completed
+          </h3>
+          <p className="text-[18px] leading-6 tracking-normal text-[#F3F8FC]">
+            Meeting Details
+          </p>
+        </div>
 
-      <div className="space-y-3">
-        <div className="space-y-2 text-secondary/80">
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-secondary">Meeting Subject:</span>
-            <span>{subject}</span>
+        <div className="mt-6 grid gap-y-6 text-white/90 sm:grid-cols-2 sm:gap-x-0">
+          <div className="space-y-2 sm:pr-6">
+            <p className="text-[16px] leading-6 tracking-normal text-[#9DC8E3]">
+              Meeting Subject:
+            </p>
+            <p className="text-[18px] font-medium tracking-normal break-words text-[#F3F8FC]">
+              {subject}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-secondary">Meeting Host:</span>
-            <span>{hostName}</span>
+          <div className="space-y-2 sm:border-l sm:border-white/15 sm:pl-6">
+            <p className="text-[16px] leading-6 tracking-normal text-wrap text-[#9DC8E3]">
+              Meeting Host:
+            </p>
+            <p className="text-[18px] font-medium tracking-normal break-words text-[#F3F8FC]">
+              {hostName}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-secondary">Meeting Date:</span>
-            <span>{format(startTime, "MMMM d, yyyy")}</span>
+          <div className="space-y-2 sm:pr-6">
+            <p className="text-[16px] leading-6 tracking-normal text-[#9DC8E3]">
+              Meeting Date:
+            </p>
+            <p className="inline-flex items-center rounded-full bg-[#3B91C7] px-3 py-1 text-[18px] leading-[26px] font-medium tracking-normal whitespace-nowrap text-[#F3F8FC]">
+              {format(startTime, "EEEE")}
+            </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="font-medium text-secondary">Meeting Time:</span>
-            <span>{timeRange}</span>
+          <div className="space-y-2 sm:border-l sm:border-white/15 sm:pl-6">
+            <p className="text-[16px] leading-6 tracking-normal text-[#9DC8E3]">
+              Meeting Time:
+            </p>
+            <p className="inline-flex items-center rounded-full bg-[#688597] px-3 py-1 text-[18px] leading-[26px] font-medium tracking-normal whitespace-nowrap text-[#F3F8FC]">
+              {timeRange}
+            </p>
           </div>
         </div>
+
         {timeUntilStart && (
-          <p className="text-center text-sm font-semibold text-brand-yellow">
-            Meeting starts in {timeUntilStart}
+          <p className="mt-6 text-center font-sans text-[18px] leading-[26px] font-medium tracking-normal text-[#FEC909]">
+            You have {timeUntilStart} left for the meeting
           </p>
         )}
-      </div>
 
-      <Button
-        variant="transparent"
-        className="w-full rounded-xl py-6"
-        onClick={resetFlow}
-      >
-        Book Another Meeting
-      </Button>
-    </div>
+        <Button
+          variant="transparent"
+          className="mt-8 w-full rounded-xl border border-white/40 py-6 text-white"
+          onClick={resetFlow}
+        >
+          Book a New Meeting
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }
