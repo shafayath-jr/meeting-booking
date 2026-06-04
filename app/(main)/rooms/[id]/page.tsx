@@ -1,15 +1,14 @@
-import { getMeetingsByRoom } from "@/actions/meeting";
-import { getRoomById } from "@/actions/room";
-import Clock from "@/app/(main)/components/clock";
-import PageContainer from "@/components/page-container";
 import { MeetingsProvider } from "@/components/providers/meetings-provider";
-import Image from "next/image";
+import PageContainer from "@/components/page-container";
+import { getRoomById } from "@/actions/room";
+import { getMeetingsByRoom } from "@/actions/meeting";
 import BookingSection from "./components/booking-section";
-import { BookingProvider } from "./components/booking-section/booking-context";
-import MeetingRoomImage from "./components/booking-section/meeting-room-image";
 import MeetingList from "./components/meeting-list";
-import RoomDebugPanel from "./components/room-debug-panel";
+import MeetingRoomImage from "./components/booking-section/meeting-room-image";
 import RoomName from "./components/room-name";
+import { BookingProvider } from "./components/booking-section/booking-context";
+import Image from "next/image";
+import Clock from "@/app/(main)/components/clock";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -25,7 +24,6 @@ async function RoomPage({ params }: Props) {
   return (
     <MeetingsProvider>
       <BookingProvider roomId={id} initialMeetings={meetings ?? []}>
-        <RoomDebugPanel />
         <Image
           src="/pen_pattern.svg"
           alt=""

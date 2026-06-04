@@ -1,13 +1,13 @@
 "use client";
 
+import { useEffect } from "react";
+import { differenceInMinutes } from "date-fns";
+import { useBookingContext } from "./booking-context";
 import {
-  GradientVariant,
   useGradientContext,
+  GradientVariant,
 } from "@/components/providers/gradient-context";
 import { Meeting } from "@/types/meeting";
-import { differenceInMinutes } from "date-fns";
-import { useEffect } from "react";
-import { useBookingContext } from "./booking-context";
 
 function computeVariant(
   meetings: Meeting[],
@@ -34,19 +34,10 @@ export default function RoomGradientSync() {
   const { setVariant } = useGradientContext();
 
   useEffect(() => {
-    const nextVariant = computeVariant(meetings, hasAvailableSlots);
-    if (process.env.NODE_ENV === "production") {
-      console.log("[room-gradient-sync] meetings", meetings.length);
-      console.log("[room-gradient-sync] variant", nextVariant);
-    }
-    setVariant(nextVariant);
+    setVariant(computeVariant(meetings, hasAvailableSlots));
 
     const interval = setInterval(() => {
-      const intervalVariant = computeVariant(meetings, hasAvailableSlots);
-      if (process.env.NODE_ENV === "production") {
-        console.log("[room-gradient-sync] interval variant", intervalVariant);
-      }
-      setVariant(intervalVariant);
+      setVariant(computeVariant(meetings, hasAvailableSlots));
     }, 30_000);
 
     return () => {
