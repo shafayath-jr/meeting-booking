@@ -50,11 +50,30 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
     .gte("end_time", currentTime)
     .order("start_time", { ascending: true });
 
+  console.log("getMeetingsByRoom debug:", {
+    roomId,
+    date,
+    dayStart,
+    dayEnd,
+    currentTime,
+    count: data?.length,
+    error,
+  });
+
   return {
     error: error?.message,
     meetings: (data ?? [])
       .map((m) => parseMeeting(m as Record<string, unknown>))
       .filter((m) => !isCanceled(m)),
+    debug: {
+      roomId,
+      date,
+      dayStart,
+      dayEnd,
+      currentTime,
+      fetchedCount: data?.length ?? 0,
+      sqlError: error?.message,
+    },
   };
 };
 
