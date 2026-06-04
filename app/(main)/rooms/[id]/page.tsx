@@ -5,6 +5,7 @@ import { getMeetingsByRoom } from "@/actions/meeting";
 import BookingSection from "./components/booking-section";
 import MeetingList from "./components/meeting-list";
 import MeetingRoomImage from "./components/booking-section/meeting-room-image";
+import RoomName from "./components/room-name";
 import { BookingProvider } from "./components/booking-section/booking-context";
 import Image from "next/image";
 import Clock from "@/app/(main)/components/clock";
@@ -23,13 +24,29 @@ async function RoomPage({ params }: Props) {
   return (
     <MeetingsProvider>
       <BookingProvider roomId={id} initialMeetings={meetings ?? []}>
+        <Image
+          src="/pen_pattern.svg"
+          alt=""
+          width={241}
+          height={249}
+          aria-hidden
+          className="pointer-events-none fixed bottom-0 left-0 -z-10"
+        />
+        <Image
+          src="/pattern-right.svg"
+          alt=""
+          width={201}
+          height={416}
+          aria-hidden
+          className="pointer-events-none fixed top-1/2 right-0 -z-10 -translate-y-1/2"
+        />
         <PageContainer>
           <div className="flex justify-between gap-10">
-            <div className="w-3/5 space-y-10">
+            <div className="w-1/2 space-y-10">
               {/* logo  */}
 
               <Image
-                src="/pen-logo.svg"
+                src="/pen-master-logo.svg"
                 alt="Pen Logo"
                 width={200}
                 height={100}
@@ -42,12 +59,7 @@ async function RoomPage({ params }: Props) {
                 <MeetingRoomImage />
 
                 <div>
-                  <p className="mb-1 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
-                    Meeting Room
-                  </p>
-                  <h3 className="font-serif text-4xl font-light tracking-tight text-secondary">
-                    {room?.name}
-                  </h3>
+                  <RoomName name={room?.name ?? ""} />
                 </div>
 
                 {/* booking section */}
@@ -56,16 +68,16 @@ async function RoomPage({ params }: Props) {
               </div>
             </div>
 
-            <div className="w-2/5 space-y-3">
+            <div className="w-1/2 space-y-3">
               {/* clock */}
 
               <Clock />
 
               <div>
-                <p className="mb-0.5 text-[10px] font-semibold tracking-[0.22em] text-white/35 uppercase">
+                <p className="text-black`/35 mb-0.5 text-[10px] font-semibold tracking-[0.22em] uppercase">
                   Schedule
                 </p>
-                <h5 className="text-xl font-semibold text-secondary">
+                <h5 className="text-xl font-semibold text-black">
                   Today&apos;s Meetings
                 </h5>
               </div>

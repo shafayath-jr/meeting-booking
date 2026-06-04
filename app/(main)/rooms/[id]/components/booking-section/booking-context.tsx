@@ -5,7 +5,7 @@ import { Meeting } from "@/types/meeting";
 import { getMeetingsByRoom } from "@/actions/meeting";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { TIME_SLOTS } from "@/lib/constants";
-import { parse, addMinutes, isToday, isBefore } from "date-fns";
+import { parse, addMinutes, isToday, isBefore, startOfToday } from "date-fns";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
 
 export type SuccessData = {
@@ -18,6 +18,7 @@ export type SuccessData = {
 type BookingContextType = {
   isModalOpen: boolean;
   isSubmitting: boolean;
+  selectedDate: Date;
   selectedTime: string | null;
   selectedDuration: string | null;
   meetings: Meeting[];
@@ -26,6 +27,7 @@ type BookingContextType = {
   hasAvailableSlots: boolean;
   openModal: () => void;
   closeModal: () => void;
+  setSelectedDate: (date: Date) => void;
   setSelectedTime: (time: string) => void;
   setSelectedDuration: (dur: string) => void;
   resetFlow: () => void;
@@ -62,6 +64,7 @@ export function BookingProvider({
 }: BookingProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedDate, setSelectedDateState] = useState<Date>(() => startOfToday());
   const [selectedTime, setSelectedTimeState] = useState<string | null>(null);
   const [selectedDuration, setSelectedDurationState] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -72,15 +75,31 @@ export function BookingProvider({
 
   useEffect(() => {
     if (isModalOpen) return;
-    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
-      if (fetched) setMeetings(fetched);
-    });
-  }, [refreshKey]);
+    getMeetingsByRoom(roomId, selectedDate.toISOString()).then(
+      ({ meetings: fetched }) => {
+        if (fetched) setMeetings(fetched);
+      }
+    );
+  }, [refreshKey, selectedDate]);
 
   const hasAvailableSlots = calcHasAvailableSlots(meetings);
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedDateState(startOfToday());
+    setSelectedTimeState(null);
+    setSelectedDurationState(null);
+  };
+
+  const setSelectedDate = (date: Date) => {
+    setSelectedDateState(date);
+    setSelectedTimeState(null);
+    setSelectedDurationState(null);
+    getMeetingsByRoom(roomId, date.toISOString()).then(({ meetings: fetched }) => {
+      if (fetched) setMeetings(fetched);
+    });
+  };
 
   const setSelectedTime = (time: string) => {
     setSelectedTimeState(time);
@@ -106,6 +125,7 @@ export function BookingProvider({
 
   const resetFlow = () => {
     setIsModalOpen(false);
+    setSelectedDateState(startOfToday());
     setSelectedTimeState(null);
     setSelectedDurationState(null);
     setShowSuccess(false);
@@ -125,6 +145,7 @@ export function BookingProvider({
       value={{
         isModalOpen,
         isSubmitting,
+        selectedDate,
         selectedTime,
         selectedDuration,
         meetings,
@@ -133,6 +154,7 @@ export function BookingProvider({
         hasAvailableSlots,
         openModal,
         closeModal,
+        setSelectedDate,
         setSelectedTime,
         setSelectedDuration,
         resetFlow,

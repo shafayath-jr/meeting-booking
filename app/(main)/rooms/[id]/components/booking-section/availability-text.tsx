@@ -1,9 +1,13 @@
 "use client";
 
 import { useBookingContext } from "./booking-context";
+import { useGradientContext } from "@/components/providers/gradient-context";
+import { cn } from "@/lib/utils";
 
 export default function AvailabilityText() {
   const { hasAvailableSlots, showSuccess, meetings } = useBookingContext();
+  const { variant } = useGradientContext();
+  const isBooked = variant === "ongoing" || variant === "unavailable";
 
   if (showSuccess) return null;
 
@@ -14,7 +18,7 @@ export default function AvailabilityText() {
   if (isOngoing) return null;
 
   return (
-    <p className="text-2xl text-secondary">
+    <p className={cn("text-lg", isBooked ? "text-[#2D0808]" : "text-[#06476F]")}>
       {hasAvailableSlots ? "Check available slots" : "No slots available"}
     </p>
   );

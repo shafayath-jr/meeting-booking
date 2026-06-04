@@ -1,64 +1,38 @@
-"use client";
-
-import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { Meeting } from "@/types/meeting";
-import { useCurrentTime } from "@/hooks/use-current-time";
-import { getRemainingTime, getProgress } from "@/lib/utils";
+import { format } from "date-fns";
+import { Clock } from "lucide-react";
 
 interface MeetingInfoCardProps {
   meeting: Meeting;
-  status: "Upcoming" | "Ongoing";
 }
 
-export default function MeetingInfoCard({ meeting, status }: MeetingInfoCardProps) {
-  const startTime = format(new Date(meeting.start_time), "h:mma");
-  const endTime = format(new Date(meeting.end_time), "h:mma");
-
-  const liveTime = useCurrentTime(1000);
-  const progress = status === "Ongoing" ? getProgress(meeting, liveTime) : 0;
-  const remaining =
-    status === "Ongoing" ? getRemainingTime(new Date(meeting.end_time), liveTime) : null;
-
-  const countdownText = remaining
-    ? remaining.hours !== "00"
-      ? `${remaining.hours}h ${remaining.minutes}m ${remaining.seconds}s remaining`
-      : `${remaining.minutes}m ${remaining.seconds}s remaining`
-    : null;
+export default function MeetingInfoCard({ meeting }: MeetingInfoCardProps) {
+  const startTime = format(new Date(meeting.start_time), "h:mm a");
+  const endTime = format(new Date(meeting.end_time), "h:mm a");
 
   return (
-    <Card className="gap-0 rounded-xl border border-white/10 bg-white/8 px-5 py-5 backdrop-blur-sm">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <span className="font-mono text-sm font-medium tracking-wide text-brand-yellow">
-          {startTime} — {endTime}
+    <Card className="gap-2 rounded-[12px] border border-[#CEE4F1] bg-[#f3f8fc80] px-4 py-6">
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-2 font-sans text-[14px] leading-5 font-medium tracking-normal text-[#332802]">
+          <Clock className="size-4.5" />
+          {startTime}–{endTime}
         </span>
-        <span
-          className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold tracking-wider text-white uppercase ${
-            status === "Ongoing"
-              ? "bg-emerald-600/70 ring-1 ring-emerald-500/30"
-              : "bg-emerald-800/70 ring-1 ring-emerald-600/20"
-          }`}
-        >
-          {status}
+        <span className="rounded-full bg-[#0A76B9] px-2 py-1 font-sans text-[9px] leading-[14px] font-medium tracking-normal text-[#F3F8FC]">
+          Upcoming
         </span>
       </div>
-      <h3 className="mb-1 text-base leading-snug font-semibold text-secondary">
+      <h3 className="mt-1.5 font-sans text-[14px] leading-5 font-medium tracking-normal text-[#06476F]">
         {meeting.title}
       </h3>
-      <p className="text-xs text-white/40">
-        <span className="font-medium text-white/55">Host</span> {meeting.booked_by}
-      </p>
-      {status === "Ongoing" && (
-        <div className="mt-4">
-          <div className="h-1 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full rounded-full bg-linear-to-r from-emerald-500 to-teal-400 transition-all duration-1000"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="mt-1.5 text-[11px] font-medium text-white/40">{countdownText}</p>
-        </div>
-      )}
+      <div className="flex items-center gap-2">
+        <span className="font-sans text-[14px] leading-5 tracking-normal text-[#042F4A]">
+          Host
+        </span>
+        <span className="truncate rounded-full border border-[#E2E8F0] bg-[#CDD6DC] px-2.5 py-1 text-[14px] leading-5 tracking-normal text-[#06476F]">
+          {meeting.booked_by}
+        </span>
+      </div>
     </Card>
   );
 }
