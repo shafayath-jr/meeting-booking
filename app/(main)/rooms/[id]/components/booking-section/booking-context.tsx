@@ -1,12 +1,27 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Meeting } from "@/types/meeting";
-import { getMeetingsByRoom } from "@/actions/meeting";
+import { getMeetingsByRoomForDateRange } from "@/actions/meeting";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { TIME_SLOTS } from "@/lib/constants";
-import { parse, addMinutes, isToday, isBefore, startOfToday } from "date-fns";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
+import { Meeting } from "@/types/meeting";
+import {
+  addMinutes,
+  endOfDay,
+  isBefore,
+  isToday,
+  parse,
+  startOfDay,
+  startOfToday,
+} from "date-fns";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 export type SuccessData = {
   subject: string;
@@ -73,14 +88,25 @@ export function BookingProvider({
 
   const { refreshKey } = useMeetingsContext();
 
+  const fetchMeetingsForDate = useCallback(
+    async (date: Date) => {
+      const { meetings: fetched } = await getMeetingsByRoomForDateRange(
+        roomId,
+        startOfDay(date).toISOString(),
+        endOfDay(date).toISOString()
+      );
+      if (fetched) setMeetings(fetched);
+    },
+    [roomId]
+  );
+
   useEffect(() => {
     if (isModalOpen) return;
-    getMeetingsByRoom(roomId, selectedDate.toISOString()).then(
-      ({ meetings: fetched }) => {
-        if (fetched) setMeetings(fetched);
-      }
-    );
-  }, [refreshKey, selectedDate]);
+    const id = setTimeout(() => {
+      void fetchMeetingsForDate(selectedDate);
+    }, 0);
+    return () => clearTimeout(id);
+  }, [fetchMeetingsForDate, isModalOpen, refreshKey, selectedDate]);
 
   const hasAvailableSlots = calcHasAvailableSlots(meetings);
 
@@ -96,9 +122,7 @@ export function BookingProvider({
     setSelectedDateState(date);
     setSelectedTimeState(null);
     setSelectedDurationState(null);
-    getMeetingsByRoom(roomId, date.toISOString()).then(({ meetings: fetched }) => {
-      if (fetched) setMeetings(fetched);
-    });
+    fetchMeetingsForDate(date);
   };
 
   const setSelectedTime = (time: string) => {
@@ -130,9 +154,7 @@ export function BookingProvider({
     setSelectedDurationState(null);
     setShowSuccess(false);
     setSuccessData(null);
-    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
-      if (fetched) setMeetings(fetched);
-    });
+    fetchMeetingsForDate(startOfToday());
   };
 
   const setBookingSuccess = (data: SuccessData) => {
