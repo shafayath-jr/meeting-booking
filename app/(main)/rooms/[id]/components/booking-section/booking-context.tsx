@@ -1,6 +1,6 @@
 "use client";
 
-import { getMeetingsByRoomForDateRange } from "@/actions/meeting";
+import { getMeetingsByRoomForDateRange, getNextMeetingByRoom } from "@/actions/meeting";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { TIME_SLOTS } from "@/lib/constants";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
@@ -95,7 +95,36 @@ export function BookingProvider({
         startOfDay(date).toISOString(),
         endOfDay(date).toISOString()
       );
-      if (fetched) setMeetings(fetched);
+      if (!fetched) return;
+
+      const now = new Date();
+      const hasOngoing = fetched.some(
+        (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
+      );
+
+      if (hasOngoing) {
+        setMeetings(fetched);
+        return;
+      }
+
+      const { meeting } = await getNextMeetingByRoom(roomId);
+      const isOngoing =
+        meeting &&
+        new Date(meeting.start_time) <= now &&
+        new Date(meeting.end_time) > now;
+
+      if (!meeting || !isOngoing) {
+        setMeetings(fetched);
+        return;
+      }
+
+      const merged = [meeting, ...fetched].filter(
+        (m, index, arr) => arr.findIndex((other) => other.id === m.id) === index
+      );
+      merged.sort(
+        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      );
+      setMeetings(merged);
     },
     [roomId]
   );

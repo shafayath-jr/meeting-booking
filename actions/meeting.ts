@@ -1,9 +1,9 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { Meeting } from "@/types/meeting";
 import { Event } from "@/types/event";
-import { startOfDay, endOfDay } from "date-fns";
+import { Meeting } from "@/types/meeting";
+import { endOfDay, startOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { syncBookingToTeams } from "./teams-sync";
 
@@ -44,8 +44,8 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .gte("start_time", dayStart)
     .lte("start_time", dayEnd)
+    .gte("end_time", dayStart)
     .order("start_time", { ascending: true });
 
   console.log("getMeetingsByRoom debug:", {
@@ -212,8 +212,8 @@ export const getMeetingsByRoomForDateRange = async (
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .gte("start_time", startDate)
     .lte("start_time", endDate)
+    .gte("end_time", startDate)
     .order("start_time", { ascending: true });
 
   return {
