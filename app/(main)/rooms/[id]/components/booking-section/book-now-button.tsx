@@ -6,15 +6,16 @@ import { useGradientContext } from "@/components/providers/gradient-context";
 import { cn } from "@/lib/utils";
 
 export default function BookNowButton() {
-  const { openModal, showSuccess, hasAvailableSlots, meetings } = useBookingContext();
+  const { openModal, showSuccess, todayHasAvailableSlots, todayMeetings } =
+    useBookingContext();
   const { variant } = useGradientContext();
   const isBooked = variant === "ongoing" || variant === "unavailable";
 
   if (showSuccess) return null;
 
-  const disabled = !hasAvailableSlots;
+  const disabled = !todayHasAvailableSlots;
   const now = new Date();
-  const isOngoing = meetings.some(
+  const isOngoing = todayMeetings.some(
     (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
   );
 

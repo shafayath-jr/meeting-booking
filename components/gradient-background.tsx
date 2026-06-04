@@ -10,8 +10,7 @@ import { cn } from "@/lib/utils";
 const variantClassMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
   available: "gradient-grain bg-linear-to-t from-[#085E94] via-[#3B91C7] to-[#F3F8FC]",
-  "upcoming-soon":
-    "gradient-grain bg-linear-to-t from-[#EFB700] via-[#E3CA78] to-[#FFFFFF]",
+  "upcoming-soon": "gradient-grain bg-linear-to-t from-[#C86E00] to-[#FFF5EA]",
   ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
   unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
 };
