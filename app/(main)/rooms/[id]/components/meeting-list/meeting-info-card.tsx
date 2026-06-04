@@ -12,7 +12,7 @@ export default function MeetingInfoCard({ meeting }: MeetingInfoCardProps) {
   const endTime = format(new Date(meeting.end_time), "h:mm a");
 
   return (
-    <Card className="space-y-0 rounded-2xl border border-blue-200 bg-blue-100 p-5">
+    <Card className="space-y-2 rounded-2xl border border-blue-200 bg-blue-100 p-5">
       <div className="flex items-center justify-between gap-2">
         <span className="flex items-center gap-2 text-xs font-semibold">
           <Clock className="size-4" />
