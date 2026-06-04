@@ -12,6 +12,7 @@ export default function TimeSlots() {
   const { variant } = useGradientContext();
   const isAvailable = variant === "available" || variant === "default";
   const isOngoing = variant === "ongoing" || variant === "unavailable";
+  const isUpcoming = variant === "upcoming-soon";
 
   const availableSlots = useMemo(() => {
     const now = new Date();
@@ -62,8 +63,14 @@ export default function TimeSlots() {
                     selectedTime === slot &&
                       "border-[#7F012E] bg-[#7F012E] text-white hover:bg-[#7F012E]/90"
                   )
-                : selectedTime === slot &&
-                  "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80"
+                : isUpcoming
+                  ? cn(
+                      "border-[#EFB700]/40 bg-white text-[#8A5A00] hover:border-[#EFB700] hover:bg-[#EFB700]/20",
+                      selectedTime === slot &&
+                        "border-[#8A5A00] bg-[#8A5A00] text-white hover:bg-[#8A5A00]/90"
+                    )
+                  : selectedTime === slot &&
+                    "border-secondary bg-secondary text-[#0F401D] hover:bg-secondary/80"
           )}
         >
           {format(parse(slot, "HH:mm", new Date()), "hh:mma")}

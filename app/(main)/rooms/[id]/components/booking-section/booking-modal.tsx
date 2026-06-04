@@ -25,7 +25,7 @@ import TimeSlots from "./time-slots";
 const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
   available: "bg-linear-to-br from-[#F3F8FC] via-[#C2DDF0] to-[#8BBCD6]",
-  "upcoming-soon": "gradient-standby",
+  "upcoming-soon": "bg-linear-to-br from-[#FFFFFF] via-[#E3CA78] to-[#EFB700]",
   ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
   unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
 };
@@ -33,7 +33,7 @@ const gradientMap: Record<GradientVariant, string> = {
 const borderColorMap: Record<GradientVariant, string> = {
   default: "#35AD57",
   available: "#6CADD5",
-  "upcoming-soon": "oklch(65.438% 0.14546 57.442)",
+  "upcoming-soon": "#EFB700",
   ongoing: "oklch(56% 0.2 6)",
   unavailable: "oklch(56% 0.2 6)",
 };
@@ -41,7 +41,7 @@ const borderColorMap: Record<GradientVariant, string> = {
 const badgeBgMap: Record<GradientVariant, string> = {
   default: "#0A8754",
   available: "#0A76B9",
-  "upcoming-soon": "oklch(35% 0.1 57)",
+  "upcoming-soon": "#8A5A00",
   ongoing: "oklch(25% 0.12 6)",
   unavailable: "oklch(25% 0.12 6)",
 };
@@ -54,6 +54,7 @@ export default function BookingModal() {
 
   const isAvailable = variant === "available" || variant === "default";
   const isOngoing = variant === "ongoing" || variant === "unavailable";
+  const isUpcoming = variant === "upcoming-soon";
   const borderColor = borderColorMap[variant];
   const badgeBg = badgeBgMap[variant];
 
@@ -193,7 +194,9 @@ export default function BookingModal() {
                 ? "border-[#6CADD5]! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]! disabled:bg-white!"
                 : isOngoing
                   ? "border-[#C07090]! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]! disabled:bg-white!"
-                  : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
+                  : isUpcoming
+                    ? "border-[#EFB700]! bg-white! text-[#4A2F00] hover:bg-[#FFF8E5]! hover:text-[#4A2F00]! disabled:bg-white!"
+                    : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
             )}
           >
             {isSubmitting ? "Booking..." : "Confirm Booking"}

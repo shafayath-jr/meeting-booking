@@ -14,6 +14,7 @@ export default function DurationSlots() {
   const { variant } = useGradientContext();
   const isAvailable = variant === "available" || variant === "default";
   const isOngoing = variant === "ongoing" || variant === "unavailable";
+  const isUpcoming = variant === "upcoming-soon";
 
   const now = new Date();
 
@@ -55,8 +56,14 @@ export default function DurationSlots() {
                       selectedDuration === option.value &&
                         "border-[#7F012E] bg-[#7F012E] text-white hover:bg-[#7F012E]/90"
                     )
-                  : selectedDuration === option.value &&
-                    "border-secondary bg-secondary text-[#0F401D]"
+                  : isUpcoming
+                    ? cn(
+                        "border-[#EFB700]/40 bg-white text-[#8A5A00] hover:border-[#EFB700] hover:bg-[#EFB700]/20",
+                        selectedDuration === option.value &&
+                          "border-[#8A5A00] bg-[#8A5A00] text-white hover:bg-[#8A5A00]/90"
+                      )
+                    : selectedDuration === option.value &&
+                      "border-secondary bg-secondary text-[#0F401D]"
             )}
           >
             {option.label}
