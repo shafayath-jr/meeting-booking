@@ -20,11 +20,26 @@ function isCanceled(m: { title?: string | null }): boolean {
 
 export const getMeetingsByRoom = async (roomId: string, date?: string) => {
   const supabase = await createClient();
-  const dateObj = date ? new Date(date) : new Date();
 
-  const dayStart = startOfDay(dateObj).toISOString();
-  const dayEnd = endOfDay(dateObj).toISOString();
+  let dayStart: string;
+  let dayEnd: string;
   const currentTime = new Date().toISOString();
+
+  if (date) {
+    const startObj = new Date(date);
+    if (!isNaN(startObj.getTime())) {
+      dayStart = startObj.toISOString();
+      dayEnd = new Date(startObj.getTime() + 24 * 60 * 60 * 1000 - 1).toISOString();
+    } else {
+      const dateObj = new Date();
+      dayStart = startOfDay(dateObj).toISOString();
+      dayEnd = endOfDay(dateObj).toISOString();
+    }
+  } else {
+    const dateObj = new Date();
+    dayStart = startOfDay(dateObj).toISOString();
+    dayEnd = endOfDay(dateObj).toISOString();
+  }
 
   const { data, error } = await supabase
     .from("bookings")
