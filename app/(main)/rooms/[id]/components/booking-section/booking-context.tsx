@@ -1,12 +1,28 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { Meeting } from "@/types/meeting";
-import { getMeetingsByRoom } from "@/actions/meeting";
+import { getMeetingsByRoomForDateRange, getNextMeetingByRoom } from "@/actions/meeting";
 import { useMeetingsContext } from "@/components/providers/meetings-provider";
 import { TIME_SLOTS } from "@/lib/constants";
-import { parse, addMinutes, isToday, isBefore, startOfToday } from "date-fns";
 import { calculateAvailableDurations } from "@/lib/duration-helper";
+import { Meeting } from "@/types/meeting";
+import {
+  addMinutes,
+  endOfDay,
+  isBefore,
+  isToday,
+  parse,
+  startOfDay,
+  startOfToday,
+} from "date-fns";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export type SuccessData = {
   subject: string;
@@ -70,17 +86,68 @@ export function BookingProvider({
   const [showSuccess, setShowSuccess] = useState(false);
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+  const meetingsRef = useRef(meetings);
 
   const { refreshKey } = useMeetingsContext();
 
   useEffect(() => {
-    if (isModalOpen) return;
-    getMeetingsByRoom(roomId, selectedDate.toISOString()).then(
-      ({ meetings: fetched }) => {
-        if (fetched) setMeetings(fetched);
+    meetingsRef.current = meetings;
+  }, [meetings]);
+
+  const fetchMeetingsForDate = useCallback(
+    async (date: Date) => {
+      const { meetings: fetched } = await getMeetingsByRoomForDateRange(
+        roomId,
+        startOfDay(date).toISOString(),
+        endOfDay(date).toISOString()
+      );
+      if (!fetched) return;
+
+      const now = new Date();
+      const hasOngoing = fetched.some(
+        (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
+      );
+
+      if (hasOngoing) {
+        setMeetings(fetched);
+        return;
       }
-    );
-  }, [refreshKey, selectedDate]);
+
+      const { meeting } = await getNextMeetingByRoom(roomId);
+      const isOngoing =
+        meeting &&
+        new Date(meeting.start_time) <= now &&
+        new Date(meeting.end_time) > now;
+
+      const fallbackOngoing = meetingsRef.current.find(
+        (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
+      );
+
+      const ongoingMeeting = isOngoing ? meeting : (fallbackOngoing ?? null);
+
+      if (!ongoingMeeting) {
+        setMeetings(fetched);
+        return;
+      }
+
+      const merged = [ongoingMeeting, ...fetched].filter(
+        (m, index, arr) => arr.findIndex((other) => other.id === m.id) === index
+      );
+      merged.sort(
+        (a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+      );
+      setMeetings(merged);
+    },
+    [roomId]
+  );
+
+  useEffect(() => {
+    if (isModalOpen) return;
+    const id = setTimeout(() => {
+      void fetchMeetingsForDate(selectedDate);
+    }, 0);
+    return () => clearTimeout(id);
+  }, [fetchMeetingsForDate, isModalOpen, refreshKey, selectedDate]);
 
   const hasAvailableSlots = calcHasAvailableSlots(meetings);
 
@@ -96,9 +163,7 @@ export function BookingProvider({
     setSelectedDateState(date);
     setSelectedTimeState(null);
     setSelectedDurationState(null);
-    getMeetingsByRoom(roomId, date.toISOString()).then(({ meetings: fetched }) => {
-      if (fetched) setMeetings(fetched);
-    });
+    fetchMeetingsForDate(date);
   };
 
   const setSelectedTime = (time: string) => {
@@ -130,9 +195,7 @@ export function BookingProvider({
     setSelectedDurationState(null);
     setShowSuccess(false);
     setSuccessData(null);
-    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
-      if (fetched) setMeetings(fetched);
-    });
+    fetchMeetingsForDate(startOfToday());
   };
 
   const setBookingSuccess = (data: SuccessData) => {

@@ -1,15 +1,25 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
-import { Meeting } from "@/types/meeting";
 import { Event } from "@/types/event";
-import { startOfDay, endOfDay } from "date-fns";
+import { Meeting } from "@/types/meeting";
+import { endOfDay, startOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { syncBookingToTeams } from "./teams-sync";
 
+function normalizeTimestamp(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (value.includes("T")) return value;
+  return value.replace(" ", "T");
+}
+
 function parseMeeting(raw: Record<string, unknown>): Meeting {
+  const start_time = normalizeTimestamp(raw.start_time) ?? "";
+  const end_time = normalizeTimestamp(raw.end_time) ?? "";
   return {
     ...raw,
+    start_time,
+    end_time,
     guests: typeof raw.guests === "string" ? JSON.parse(raw.guests) : (raw.guests ?? []),
   } as Meeting;
 }
@@ -23,7 +33,6 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 
   let dayStart: string;
   let dayEnd: string;
-  const currentTime = new Date().toISOString();
 
   if (date) {
     const startObj = new Date(date);
@@ -45,16 +54,32 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .gte("start_time", dayStart)
     .lte("start_time", dayEnd)
-    .gte("end_time", currentTime)
+    .gte("end_time", dayStart)
     .order("start_time", { ascending: true });
+
+  console.log("getMeetingsByRoom debug:", {
+    roomId,
+    date,
+    dayStart,
+    dayEnd,
+    count: data?.length,
+    error,
+  });
 
   return {
     error: error?.message,
     meetings: (data ?? [])
       .map((m) => parseMeeting(m as Record<string, unknown>))
       .filter((m) => !isCanceled(m)),
+    debug: {
+      roomId,
+      date,
+      dayStart,
+      dayEnd,
+      fetchedCount: data?.length ?? 0,
+      sqlError: error?.message,
+    },
   };
 };
 
@@ -197,8 +222,8 @@ export const getMeetingsByRoomForDateRange = async (
     .from("bookings")
     .select("*")
     .eq("room_id", roomId)
-    .gte("start_time", startDate)
     .lte("start_time", endDate)
+    .gte("end_time", startDate)
     .order("start_time", { ascending: true });
 
   return {
