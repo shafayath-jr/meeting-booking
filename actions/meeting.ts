@@ -7,9 +7,19 @@ import { endOfDay, startOfDay } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { syncBookingToTeams } from "./teams-sync";
 
+function normalizeTimestamp(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  if (value.includes("T")) return value;
+  return value.replace(" ", "T");
+}
+
 function parseMeeting(raw: Record<string, unknown>): Meeting {
+  const start_time = normalizeTimestamp(raw.start_time) ?? "";
+  const end_time = normalizeTimestamp(raw.end_time) ?? "";
   return {
     ...raw,
+    start_time,
+    end_time,
     guests: typeof raw.guests === "string" ? JSON.parse(raw.guests) : (raw.guests ?? []),
   } as Meeting;
 }

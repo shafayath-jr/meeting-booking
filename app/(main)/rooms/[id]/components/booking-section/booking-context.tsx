@@ -20,6 +20,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 
@@ -85,8 +86,13 @@ export function BookingProvider({
   const [showSuccess, setShowSuccess] = useState(false);
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+  const meetingsRef = useRef(meetings);
 
   const { refreshKey } = useMeetingsContext();
+
+  useEffect(() => {
+    meetingsRef.current = meetings;
+  }, [meetings]);
 
   const fetchMeetingsForDate = useCallback(
     async (date: Date) => {
@@ -113,12 +119,18 @@ export function BookingProvider({
         new Date(meeting.start_time) <= now &&
         new Date(meeting.end_time) > now;
 
-      if (!meeting || !isOngoing) {
+      const fallbackOngoing = meetingsRef.current.find(
+        (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
+      );
+
+      const ongoingMeeting = isOngoing ? meeting : (fallbackOngoing ?? null);
+
+      if (!ongoingMeeting) {
         setMeetings(fetched);
         return;
       }
 
-      const merged = [meeting, ...fetched].filter(
+      const merged = [ongoingMeeting, ...fetched].filter(
         (m, index, arr) => arr.findIndex((other) => other.id === m.id) === index
       );
       merged.sort(
