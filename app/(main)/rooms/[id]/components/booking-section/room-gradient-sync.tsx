@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
-import { differenceInMinutes } from "date-fns";
-import { useBookingContext } from "./booking-context";
 import {
-  useGradientContext,
   GradientVariant,
+  useGradientContext,
 } from "@/components/providers/gradient-context";
 import { Meeting } from "@/types/meeting";
+import { differenceInMinutes } from "date-fns";
+import { useEffect } from "react";
+import { useBookingContext } from "./booking-context";
 
 function computeVariant(
   meetings: Meeting[],
