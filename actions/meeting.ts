@@ -23,7 +23,6 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
 
   let dayStart: string;
   let dayEnd: string;
-  const currentTime = new Date().toISOString();
 
   if (date) {
     const startObj = new Date(date);
@@ -47,7 +46,6 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
     .eq("room_id", roomId)
     .gte("start_time", dayStart)
     .lte("start_time", dayEnd)
-    .gte("end_time", currentTime)
     .order("start_time", { ascending: true });
 
   console.log("getMeetingsByRoom debug:", {
@@ -55,7 +53,6 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
     date,
     dayStart,
     dayEnd,
-    currentTime,
     count: data?.length,
     error,
   });
@@ -70,7 +67,6 @@ export const getMeetingsByRoom = async (roomId: string, date?: string) => {
       date,
       dayStart,
       dayEnd,
-      currentTime,
       fetchedCount: data?.length ?? 0,
       sqlError: error?.message,
     },
