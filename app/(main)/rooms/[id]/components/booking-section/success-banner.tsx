@@ -18,7 +18,7 @@ export default function SuccessBanner() {
     return () => {
       clearTimeout(timer);
     };
-  }, [resetFlow]);
+  }, [resetFlow, successData]);
 
   if (!successData) return null;
 
@@ -95,7 +95,7 @@ export default function SuccessBanner() {
 
         <Button
           variant="transparent"
-          className="mt-8 w-full rounded-xl border border-white/40 py-6 text-white"
+          className="mx-auto mt-8 w-fit rounded-xl border border-[#F3F8FC] px-13 py-5.5 text-[18px] leading-[26px] font-medium tracking-normal text-[#F4FAF6]"
           onClick={resetFlow}
         >
           Book a New Meeting

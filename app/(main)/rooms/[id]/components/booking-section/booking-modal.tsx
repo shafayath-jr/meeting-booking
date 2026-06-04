@@ -1,6 +1,9 @@
 "use client";
 
-import { isToday, format } from "date-fns";
+import {
+  useGradientContext,
+  type GradientVariant,
+} from "@/components/providers/gradient-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,17 +12,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format, isToday } from "date-fns";
+import { XIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useBookingContext } from "./booking-context";
-import TimeSlots from "./time-slots";
+import BookingDatePicker from "./booking-date-picker";
 import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
-import BookingDatePicker from "./booking-date-picker";
-import {
-  useGradientContext,
-  type GradientVariant,
-} from "@/components/providers/gradient-context";
+import TimeSlots from "./time-slots";
 
 const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
@@ -48,11 +49,43 @@ const badgeBgMap: Record<GradientVariant, string> = {
 export default function BookingModal() {
   const { isModalOpen, isSubmitting, selectedDate, closeModal } = useBookingContext();
   const { variant } = useGradientContext();
+  const [secondsLeft, setSecondsLeft] = useState(120);
+  const deadlineRef = useRef<number | null>(null);
 
   const isAvailable = variant === "available" || variant === "default";
   const isOngoing = variant === "ongoing" || variant === "unavailable";
   const borderColor = borderColorMap[variant];
   const badgeBg = badgeBgMap[variant];
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      deadlineRef.current = null;
+      const resetId = setTimeout(() => setSecondsLeft(120), 0);
+      return () => clearTimeout(resetId);
+    }
+
+    if (!deadlineRef.current) {
+      deadlineRef.current = Date.now() + 120_000;
+    }
+
+    const tick = () => {
+      if (!deadlineRef.current) return;
+      const remaining = Math.max(0, Math.ceil((deadlineRef.current - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+      if (remaining <= 0) {
+        closeModal();
+      }
+    };
+
+    tick();
+    const intervalId = setInterval(tick, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [closeModal, isModalOpen]);
+
+  const minutes = Math.floor(secondsLeft / 60);
+  const seconds = secondsLeft % 60;
+  const timerDisplay = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
@@ -62,17 +95,27 @@ export default function BookingModal() {
         style={{ borderColor }}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl">Book a Meeting</DialogTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <DialogTitle className="text-xl">Book a Meeting</DialogTitle>
+            <div className="mr-8 flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-[12px] font-semibold text-secondary shadow-sm">
+              <span
+                className="h-2 w-2 animate-pulse rounded-full bg-emerald-400"
+                aria-hidden="true"
+              />
+              <span className="tracking-[0.08em] text-black/90 uppercase">Time left</span>
+              <span className="text-black/80 tabular-nums">{timerDisplay}</span>
+            </div>
+          </div>
         </DialogHeader>
 
         <Button
           asChild
           variant="transparent"
           size="icon-sm"
-          className="absolute top-4 right-4 rounded-full"
+          className="absolute top-5 right-4 rounded-full"
         >
           <DialogClose>
-            <XIcon />
+            <XIcon className="text-[#07200E]" />
             <span className="sr-only">Close</span>
           </DialogClose>
         </Button>
