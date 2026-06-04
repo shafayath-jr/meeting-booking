@@ -2,12 +2,11 @@ import Clock from "@/app/(main)/components/clock";
 import PageContainer from "@/components/page-container";
 import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import LoadingGradient from "./loading-gradient";
 
 export default function RoomLoading() {
   return (
-    <>
-      <LoadingGradient />
+    <div className="relative isolate min-h-screen">
+      <div className="pointer-events-none fixed inset-0 -z-20 bg-[linear-gradient(to_bottom_right,#F3F8FC,#C2DDF0,#8BBCD6)]" />
       <Image
         src="/pen_pattern.svg"
         alt=""
@@ -68,6 +67,6 @@ export default function RoomLoading() {
           </div>
         </div>
       </PageContainer>
-    </>
+    </div>
   );
 }
