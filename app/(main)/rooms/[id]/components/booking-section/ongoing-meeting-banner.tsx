@@ -5,10 +5,10 @@ import { differenceInSeconds, format } from "date-fns";
 import { useBookingContext } from "./booking-context";
 
 export default function OngoingMeetingBanner() {
-  const { meetings, showSuccess } = useBookingContext();
+  const { todayMeetings, showSuccess } = useBookingContext();
   const now = useCurrentTime(1000);
 
-  const ongoing = meetings.find(
+  const ongoing = todayMeetings.find(
     (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
   );
 

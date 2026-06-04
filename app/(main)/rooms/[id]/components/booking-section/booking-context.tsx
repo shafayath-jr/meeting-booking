@@ -22,9 +22,11 @@ type BookingContextType = {
   selectedTime: string | null;
   selectedDuration: string | null;
   meetings: Meeting[];
+  todayMeetings: Meeting[];
   showSuccess: boolean;
   successData: SuccessData | null;
   hasAvailableSlots: boolean;
+  todayHasAvailableSlots: boolean;
   openModal: () => void;
   closeModal: () => void;
   setSelectedDate: (date: Date) => void;
@@ -70,6 +72,7 @@ export function BookingProvider({
   const [showSuccess, setShowSuccess] = useState(false);
   const [successData, setSuccessData] = useState<SuccessData | null>(null);
   const [meetings, setMeetings] = useState<Meeting[]>(initialMeetings);
+  const [todayMeetings, setTodayMeetings] = useState<Meeting[]>(initialMeetings);
 
   const { refreshKey } = useMeetingsContext();
 
@@ -82,7 +85,15 @@ export function BookingProvider({
     );
   }, [refreshKey, selectedDate]);
 
+  useEffect(() => {
+    if (isModalOpen) return;
+    getMeetingsByRoom(roomId).then(({ meetings: fetched }) => {
+      if (fetched) setTodayMeetings(fetched);
+    });
+  }, [refreshKey]);
+
   const hasAvailableSlots = calcHasAvailableSlots(meetings);
+  const todayHasAvailableSlots = calcHasAvailableSlots(todayMeetings);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => {
@@ -149,9 +160,11 @@ export function BookingProvider({
         selectedTime,
         selectedDuration,
         meetings,
+        todayMeetings,
         showSuccess,
         successData,
         hasAvailableSlots,
+        todayHasAvailableSlots,
         openModal,
         closeModal,
         setSelectedDate,

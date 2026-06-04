@@ -13,7 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { format, isToday } from "date-fns";
+import { addMinutes, format, isToday, parse } from "date-fns";
 import { XIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useBookingContext } from "./booking-context";
@@ -47,7 +47,21 @@ const badgeBgMap: Record<GradientVariant, string> = {
 };
 
 export default function BookingModal() {
-  const { isModalOpen, isSubmitting, selectedDate, closeModal } = useBookingContext();
+  const {
+    isModalOpen,
+    isSubmitting,
+    selectedDate,
+    selectedTime,
+    selectedDuration,
+    closeModal,
+  } = useBookingContext();
+
+  const meetingStart =
+    selectedTime && selectedDuration ? parse(selectedTime, "HH:mm", selectedDate) : null;
+  const meetingEnd =
+    meetingStart && selectedDuration
+      ? addMinutes(meetingStart, Number(selectedDuration))
+      : null;
   const { variant } = useGradientContext();
   const [secondsLeft, setSecondsLeft] = useState(120);
   const deadlineRef = useRef<number | null>(null);
@@ -165,6 +179,29 @@ export default function BookingModal() {
               <h5 className="font-medium text-secondary">Choose meeting duration</h5>
             </div>
             <DurationSlots />
+            {meetingStart && meetingEnd && (
+              <div
+                className={cn(
+                  "mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border bg-white/70 px-4 py-3 text-sm shadow-sm",
+                  isAvailable
+                    ? "text-[#06476F]"
+                    : isOngoing
+                      ? "text-[#2D0808]"
+                      : isUpcoming
+                        ? "text-[#3D1800]"
+                        : "text-secondary"
+                )}
+                style={{ borderColor }}
+              >
+                <span className="font-semibold tracking-[0.08em] uppercase opacity-70">
+                  Meeting time
+                </span>
+                <span className="font-medium tabular-nums">
+                  {format(meetingStart, "EEE, MMM d")} · {format(meetingStart, "h:mm a")}{" "}
+                  – {format(meetingEnd, "h:mm a")}
+                </span>
+              </div>
+            )}
           </div>
 
           <div

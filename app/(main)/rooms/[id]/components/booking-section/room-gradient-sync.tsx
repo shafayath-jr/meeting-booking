@@ -30,21 +30,21 @@ function computeVariant(
 }
 
 export default function RoomGradientSync() {
-  const { meetings, hasAvailableSlots } = useBookingContext();
+  const { todayMeetings, todayHasAvailableSlots } = useBookingContext();
   const { setVariant } = useGradientContext();
 
   useEffect(() => {
-    setVariant(computeVariant(meetings, hasAvailableSlots));
+    setVariant(computeVariant(todayMeetings, todayHasAvailableSlots));
 
     const interval = setInterval(() => {
-      setVariant(computeVariant(meetings, hasAvailableSlots));
+      setVariant(computeVariant(todayMeetings, todayHasAvailableSlots));
     }, 30_000);
 
     return () => {
       clearInterval(interval);
       setVariant("default");
     };
-  }, [meetings, hasAvailableSlots]);
+  }, [todayMeetings, todayHasAvailableSlots]);
 
   return null;
 }
