@@ -9,8 +9,21 @@ import { syncBookingToTeams } from "./teams-sync";
 
 function normalizeTimestamp(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
-  if (value.includes("T")) return value;
-  return value.replace(" ", "T");
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+
+  const normalized = trimmed.includes("T") ? trimmed : trimmed.replace(" ", "T");
+  if (normalized.endsWith("Z")) return normalized;
+
+  const tzMatch = normalized.match(/([+-]\d{2})(:?)(\d{2})?$/);
+  if (!tzMatch) return normalized;
+
+  const hours = tzMatch[1];
+  const minutes = tzMatch[3] ?? "00";
+  if (hours === "+00" || hours === "-00") {
+    return normalized.replace(tzMatch[0], "Z");
+  }
+  return normalized.replace(tzMatch[0], `${hours}:${minutes}`);
 }
 
 function parseMeeting(raw: Record<string, unknown>): Meeting {

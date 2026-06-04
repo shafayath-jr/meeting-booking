@@ -103,12 +103,26 @@ export function BookingProvider({
       );
       if (!fetched) return;
 
+      if (process.env.NODE_ENV === "production") {
+        const sample = fetched[0];
+        console.log("[booking-context] now", new Date().toISOString());
+        console.log("[booking-context] sample.start_time", sample?.start_time);
+        console.log("[booking-context] sample.end_time", sample?.end_time);
+        console.log(
+          "[booking-context] parsed.start",
+          sample?.start_time ? new Date(sample.start_time).toString() : "n/a"
+        );
+      }
+
       const now = new Date();
       const hasOngoing = fetched.some(
         (m) => new Date(m.start_time) <= now && new Date(m.end_time) > now
       );
 
       if (hasOngoing) {
+        if (process.env.NODE_ENV === "production") {
+          console.log("[booking-context] hasOngoing: true");
+        }
         setMeetings(fetched);
         return;
       }
@@ -126,6 +140,9 @@ export function BookingProvider({
       const ongoingMeeting = isOngoing ? meeting : (fallbackOngoing ?? null);
 
       if (!ongoingMeeting) {
+        if (process.env.NODE_ENV === "production") {
+          console.log("[booking-context] hasOngoing: false");
+        }
         setMeetings(fetched);
         return;
       }
