@@ -1,6 +1,9 @@
 "use client";
 
-import { isToday, format } from "date-fns";
+import {
+  useGradientContext,
+  type GradientVariant,
+} from "@/components/providers/gradient-context";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -9,22 +12,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format, isToday } from "date-fns";
+import { XIcon } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useBookingContext } from "./booking-context";
-import TimeSlots from "./time-slots";
+import BookingDatePicker from "./booking-date-picker";
 import DurationSlots from "./duration-slots";
 import MeetingDetailsForm from "./meeting-details-form";
-import BookingDatePicker from "./booking-date-picker";
-import {
-  useGradientContext,
-  type GradientVariant,
-} from "@/components/providers/gradient-context";
+import TimeSlots from "./time-slots";
 
 const gradientMap: Record<GradientVariant, string> = {
   default: "gradient-mesh",
   available: "bg-linear-to-br from-[#F3F8FC] via-[#C2DDF0] to-[#8BBCD6]",
-  "upcoming-soon": "gradient-standby",
+  "upcoming-soon": "bg-linear-to-br from-[#FFFFFF] via-[#E3CA78] to-[#EFB700]",
   ongoing: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
   unavailable: "gradient-grain bg-linear-to-t from-[#7F012E] via-[#C07090] to-[#FFFFFF]",
 };
@@ -32,7 +33,7 @@ const gradientMap: Record<GradientVariant, string> = {
 const borderColorMap: Record<GradientVariant, string> = {
   default: "#35AD57",
   available: "#6CADD5",
-  "upcoming-soon": "oklch(65.438% 0.14546 57.442)",
+  "upcoming-soon": "#EFB700",
   ongoing: "oklch(56% 0.2 6)",
   unavailable: "oklch(56% 0.2 6)",
 };
@@ -40,7 +41,7 @@ const borderColorMap: Record<GradientVariant, string> = {
 const badgeBgMap: Record<GradientVariant, string> = {
   default: "#0A8754",
   available: "#0A76B9",
-  "upcoming-soon": "oklch(35% 0.1 57)",
+  "upcoming-soon": "#8A5A00",
   ongoing: "oklch(25% 0.12 6)",
   unavailable: "oklch(25% 0.12 6)",
 };
@@ -48,11 +49,44 @@ const badgeBgMap: Record<GradientVariant, string> = {
 export default function BookingModal() {
   const { isModalOpen, isSubmitting, selectedDate, closeModal } = useBookingContext();
   const { variant } = useGradientContext();
+  const [secondsLeft, setSecondsLeft] = useState(120);
+  const deadlineRef = useRef<number | null>(null);
 
   const isAvailable = variant === "available" || variant === "default";
   const isOngoing = variant === "ongoing" || variant === "unavailable";
+  const isUpcoming = variant === "upcoming-soon";
   const borderColor = borderColorMap[variant];
   const badgeBg = badgeBgMap[variant];
+
+  useEffect(() => {
+    if (!isModalOpen) {
+      deadlineRef.current = null;
+      const resetId = setTimeout(() => setSecondsLeft(120), 0);
+      return () => clearTimeout(resetId);
+    }
+
+    if (!deadlineRef.current) {
+      deadlineRef.current = Date.now() + 120_000;
+    }
+
+    const tick = () => {
+      if (!deadlineRef.current) return;
+      const remaining = Math.max(0, Math.ceil((deadlineRef.current - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+      if (remaining <= 0) {
+        closeModal();
+      }
+    };
+
+    tick();
+    const intervalId = setInterval(tick, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [closeModal, isModalOpen]);
+
+  const minutes = Math.floor(secondsLeft / 60);
+  const seconds = secondsLeft % 60;
+  const timerDisplay = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 
   return (
     <Dialog open={isModalOpen} onOpenChange={(open) => !open && closeModal()}>
@@ -62,17 +96,27 @@ export default function BookingModal() {
         style={{ borderColor }}
       >
         <DialogHeader>
-          <DialogTitle className="text-xl">Book a Meeting</DialogTitle>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <DialogTitle className="text-xl">Book a Meeting</DialogTitle>
+            <div className="mr-8 flex items-center gap-2 rounded-full border border-black/10 bg-white/70 px-3 py-1 text-[12px] font-semibold text-secondary shadow-sm">
+              <span
+                className="h-2 w-2 animate-pulse rounded-full bg-emerald-400"
+                aria-hidden="true"
+              />
+              <span className="tracking-[0.08em] text-black/90 uppercase">Time left</span>
+              <span className="text-black/80 tabular-nums">{timerDisplay}</span>
+            </div>
+          </div>
         </DialogHeader>
 
         <Button
           asChild
           variant="transparent"
           size="icon-sm"
-          className="absolute top-4 right-4 rounded-full"
+          className="absolute top-5 right-4 rounded-full"
         >
           <DialogClose>
-            <XIcon />
+            <XIcon className="text-[#07200E]" />
             <span className="sr-only">Close</span>
           </DialogClose>
         </Button>
@@ -150,7 +194,9 @@ export default function BookingModal() {
                 ? "border-[#6CADD5]! bg-white! text-[#06476F] hover:bg-[#F3F8FC]! hover:text-[#06476F]! disabled:bg-white!"
                 : isOngoing
                   ? "border-[#C07090]! bg-white! text-[#2D0808] hover:bg-white/90! hover:text-[#2D0808]! disabled:bg-white!"
-                  : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
+                  : isUpcoming
+                    ? "border-[#EFB700]! bg-white! text-[#4A2F00] hover:bg-[#FFF8E5]! hover:text-[#4A2F00]! disabled:bg-white!"
+                    : "border-secondary bg-white! text-secondary hover:bg-white/90! disabled:bg-white!"
             )}
           >
             {isSubmitting ? "Booking..." : "Confirm Booking"}
